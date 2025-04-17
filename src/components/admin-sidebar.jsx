@@ -12,6 +12,19 @@ import {
   Shield,
   Users,
   Wallet,
+  UserCog,
+  ScrollText,
+  AlertCircle,
+  BadgeCheck,
+  Lock,
+  Key,
+  UserPlus,
+  MessageSquare,
+  DollarSign,
+  AlertTriangle,
+  FileKey,
+  Scale,
+  Bell as BellIcon,
 } from "lucide-react"
 import { useAdmin } from "./admin-context"
 import {
@@ -24,12 +37,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  // SidebarRail,
 } from "./ui/sidebar.jsx"
 
 export function AdminSidebar() {
   const location = useLocation()
-  const { hasPermission } = useAdmin()
+  const { hasPermission, userRole } = useAdmin()
 
   const isActive = (path) => {
     return location.pathname === path || location.pathname.startsWith(`${path}/`)
@@ -39,24 +51,12 @@ export function AdminSidebar() {
     <Sidebar>
       <SidebarHeader className="flex items-center justify-center py-4">
         <Link to="/" className="flex items-center gap-2 font-semibold">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-6 w-6"
-          >
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
-          <span className="hidden md:inline-block">Financial Admin</span>
+          <Shield className="h-6 w-6 text-primary" />
+          <span className="hidden md:inline-block">Admin Portal</span>
         </Link>
       </SidebarHeader>
       <SidebarContent>
+        {/* Dashboard - Available to all */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -72,16 +72,25 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {hasPermission("users", "view") && (
+        {/* Super Admin and General Manager Section */}
+        {(userRole === "super_admin" || userRole === "general_manager") && (
           <SidebarGroup>
-            <SidebarGroupLabel>User Management</SidebarGroupLabel>
+            <SidebarGroupLabel>Administration</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/users")}>
-                    <Link to="/dashboard/users">
-                      <Users className="h-4 w-4 mr-2" />
-                      Users
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/admin-roles")}>
+                    <Link to="/dashboard/admin-roles">
+                      <UserCog className="h-4 w-4 mr-2" />
+                      Admin Roles
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/system-policies")}>
+                    <Link to="/dashboard/system-policies">
+                      <Lock className="h-4 w-4 mr-2" />
+                      System Policies
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -90,113 +99,69 @@ export function AdminSidebar() {
           </SidebarGroup>
         )}
 
-        {hasPermission("transactions", "view") && (
+        {/* User Management Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>User Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive("/dashboard/users")}>
+                  <Link to="/dashboard/users">
+                    <Users className="h-4 w-4 mr-2" />
+                    User Accounts
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              {(userRole === "super_admin" || userRole === "operations_manager") && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/account-suspensions")}>
+                    <Link to="/dashboard/account-suspensions">
+                      <AlertCircle className="h-4 w-4 mr-2" />
+                      Account Actions
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+              {userRole === "customer_care" && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/password-resets")}>
+                    <Link to="/dashboard/password-resets">
+                      <Key className="h-4 w-4 mr-2" />
+                      Password Reset
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Financial Operations */}
+        {(userRole === "super_admin" || userRole === "finance_manager") && (
           <SidebarGroup>
-            <SidebarGroupLabel>Transactions</SidebarGroupLabel>
+            <SidebarGroupLabel>Financial Operations</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions")}>
                     <Link to="/dashboard/transactions">
                       <CreditCard className="h-4 w-4 mr-2" />
-                      All Transactions
+                      Transactions
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/money-transfers")}>
-                    <Link to="/dashboard/transactions/money-transfers">
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Money Transfers
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/withdrawals")}>
+                    <Link to="/dashboard/withdrawals">
+                      <DollarSign className="h-4 w-4 mr-2" />
+                      Withdrawals
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
-        {hasPermission("wallets", "view") && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Wallets</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/wallets")}>
-                    <Link to="/dashboard/wallets">
-                      <Wallet className="h-4 w-4 mr-2" />
-                      Wallets Management
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
-        {hasPermission("analytics", "view") && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Analytics</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/analytics")}>
-                    <Link to="/dashboard/analytics">
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/financial-reports")}>
+                    <Link to="/dashboard/financial-reports">
                       <BarChart3 className="h-4 w-4 mr-2" />
-                      Analytics Dashboard
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
-        {hasPermission("compliance", "view") && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Compliance</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/compliance")}>
-                    <Link to="/dashboard/compliance">
-                      <Shield className="h-4 w-4 mr-2" />
-                      Compliance Dashboard
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
-        {hasPermission("support", "view") && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Support</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/support")}>
-                    <Link to="/dashboard/support">
-                      <LifeBuoy className="h-4 w-4 mr-2" />
-                      Support Dashboard
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
-        {hasPermission("reports", "view") && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Reports</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/reports")}>
-                    <Link to="/dashboard/reports">
-                      <FileText className="h-4 w-4 mr-2" />
                       Reports
                     </Link>
                   </SidebarMenuButton>
@@ -206,27 +171,66 @@ export function AdminSidebar() {
           </SidebarGroup>
         )}
 
-        <SidebarGroup>
-          <SidebarGroupLabel>System</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive("/dashboard/notifications")}>
-                  <Link to="/dashboard/notifications">
-                    <Bell className="h-4 w-4 mr-2" />
-                    Notifications
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive("/dashboard/system")}>
-                  <Link to="/dashboard/system">
-                    <PieChart className="h-4 w-4 mr-2" />
-                    System Status
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              {hasPermission("settings", "view") && (
+        {/* Compliance and Risk */}
+        {(userRole === "super_admin" || userRole === "operations_manager") && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Compliance & Risk</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/fraud-alerts")}>
+                    <Link to="/dashboard/fraud-alerts">
+                      <AlertTriangle className="h-4 w-4 mr-2" />
+                      Fraud Alerts
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/kyc-verification")}>
+                    <Link to="/dashboard/kyc-verification">
+                      <BadgeCheck className="h-4 w-4 mr-2" />
+                      KYC Verification
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* Customer Support */}
+        {(userRole === "customer_care" || userRole === "operations_manager") && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Customer Support</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/support-tickets")}>
+                    <Link to="/dashboard/support-tickets">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Support Tickets
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/notifications")}>
+                    <Link to="/dashboard/notifications">
+                      <BellIcon className="h-4 w-4 mr-2" />
+                      Notifications
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* Settings - Available to Super Admin */}
+        {userRole === "super_admin" && (
+          <SidebarGroup>
+            <SidebarGroupLabel>System</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={isActive("/dashboard/settings")}>
                     <Link to="/dashboard/settings">
@@ -235,20 +239,19 @@ export function AdminSidebar() {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              )}
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive("/dashboard/help")}>
-                  <Link to="/dashboard/help">
-                    <HelpCircle className="h-4 w-4 mr-2" />
-                    Help & Documentation
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/audit-logs")}>
+                    <Link to="/dashboard/audit-logs">
+                      <ScrollText className="h-4 w-4 mr-2" />
+                      Audit Logs
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
-      <SidebarRail />
     </Sidebar>
   )
 }
