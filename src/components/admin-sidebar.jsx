@@ -110,6 +110,84 @@ export function AdminSidebar() {
                       Money Transfers
                     </Link>
                   </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/bills")}>
+                    <Link to="/dashboard/transactions/bills">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Bills & Utilities
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/airtime")}>
+                    <Link to="/dashboard/transactions/airtime">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Airtime & Data
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/tv")}>
+                    <Link to="/dashboard/transactions/tv">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Tv Subscriptions
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/electricity")}>
+                    <Link to="/dashboard/transactions/electricity">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Electricity
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/transport")}>
+                    <Link to="/dashboard/transactions/transport">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Electricity
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/betting")}>
+                    <Link to="/dashboard/transactions/betting">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Betting & Lottery 
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/collections")}>
+                    <Link to="/dashboard/transactions/collections">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Collections
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/church")}>
+                    <Link to="/dashboard/transactions/church">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Church Collections
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/events")}>
+                    <Link to="/dashboard/transactions/events">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Events & Lifestyle
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/international-airtime")}>
+                    <Link to="/dashboard/transactions/international-airtime">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      International Airtime
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/virtusl-cards")}>
+                    <Link to="/dashboard/transactions/virtusl-cards">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Virtual Cards
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/payroll")}>
+                    <Link to="/dashboard/transactions/payroll">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Payroll
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/scan-to=pay")}>
+                    <Link to="/dashboard/transactions/scan-to=pay">
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Scan To Pay
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
