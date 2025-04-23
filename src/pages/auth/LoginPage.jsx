@@ -22,7 +22,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 text-black">
       <Card className="max-w-md w-full space-y-8 p-8">
         <div className="flex flex-col items-center justify-center">
           <Shield className="h-12 w-12 text-primary" />

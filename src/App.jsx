@@ -78,7 +78,7 @@ import TwoFactorPage from "./pages/auth/TwoFactorPage";
 import InviteAdminPage from "./pages/auth/InviteAdminPage";
 import CompleteRegistrationPage from "./pages/auth/CompleteRegistrationPage";
 import {SidebarProvider} from "./components/ui/sidebar.jsx";
-import GeneralSettingsPage from "./pages/settings/GeneralSettingsPage.jsx";
+// import GeneralSettingsPage from "./pages/settings/GeneralSettingsPage.jsx";
 
 function App() {
     return (
@@ -104,7 +104,7 @@ function App() {
                             <Route path="dashboard/wallets" element={<WalletsPage />} />
                             <Route path="dashboard/analytics" element={<AnalyticsPage />} />
                             <Route path="dashboard/support" element={<SupportPage />} />
-                            <Route path="dashboard/general-settings" element={<GeneralSettingsPage />} />
+                            {/*<Route path="dashboard/general-settings" element={<GeneralSettingsPage />} />*/}
                             <Route path="dashboard/compliance" element={<CompliancePage />} />
                             <Route path="dashboard/notifications" element={<NotificationsPage />} />
                             <Route path="dashboard/settings" element={<SettingsPage />} />
