@@ -51,105 +51,13 @@ const kycVerifications = [
   },
 ]
 
-const CompliancePage = () => {
+const AmlMonitoring = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
 
-  const getStatusBadge = (status) => {
-    const classes = {
-      Pending: "border-yellow-200 bg-yellow-50 text-yellow-700",
-      Approved: "border-green-200 bg-green-50 text-green-700",
-      Rejected: "border-red-200 bg-red-50 text-red-700",
-    }
+  
 
-    return (
-      <Badge variant="outline" className={classes[status]}>
-        {status}
-      </Badge>
-    )
-  }
 
-  const columns = [
-    {
-      key: "id",
-      header: "VERIFICATION ID",
-      render: (row) => <span className="font-medium">{row.id}</span>,
-    },
-    {
-      key: "user",
-      header: "USER",
-      render: (row) => (
-        <div className="flex items-center gap-2">
-          <User className="h-4 w-4" />
-          {row.user}
-        </div>
-      ),
-    },
-    {
-      key: "documentType",
-      header: "DOCUMENT TYPE",
-      render: (row) => (
-        <div className="flex items-center gap-2">
-          <FileText className="h-4 w-4" />
-          {row.documentType}
-        </div>
-      ),
-    },
-    {
-      key: "status",
-      header: "STATUS",
-      render: (row) => getStatusBadge(row.status),
-    },
-    {
-      key: "submittedAt",
-      header: "SUBMITTED",
-      render: (row) => (
-        <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4" />
-          {row.submittedAt}
-        </div>
-      ),
-    },
-    ...(hasPermission("viewAdminActivityLogs")
-      ? [
-          {
-            key: "reviewedBy",
-            header: "REVIEWED BY",
-            render: (row) => row.reviewedBy || "-",
-          },
-        ]
-      : []),
-    {
-      key: "actions",
-      header: "ACTIONS",
-      render: (row) => (
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm">
-            <Shield className="mr-2 h-4 w-4" />
-            View Documents
-          </Button>
-          {row.status === "Pending" && (
-            <>
-              <Button variant="ghost" size="sm" className="text-green-600">
-                <CheckCircle className="mr-2 h-4 w-4" />
-                Approve
-              </Button>
-              <Button variant="ghost" size="sm" className="text-red-600">
-                <XCircle className="mr-2 h-4 w-4" />
-                Reject
-              </Button>
-            </>
-          )}
-          {hasPermission("monitorHighRiskTransactions") && (
-            <Button variant="ghost" size="sm">
-              <AlertCircle className="mr-2 h-4 w-4" />
-              Flag
-            </Button>
-          )}
-        </div>
-      ),
-    },
-  ]
 
   const suspiciousActivities = [
     {
@@ -157,15 +65,54 @@ const CompliancePage = () => {
       user: "John Doe",
       activityType: "Multiple large transactions",
       riskLevel: "High",
+      status: "Cleared",
       detectedAt: "2024-04-23 10:45 AM",
     },
     {
       id: "AML-002",
       user: "Sarah Miller",
       activityType: "Unusual login pattern",
-      riskLevel: "Medium",
+      riskLevel: "High",
+      status: "Cleared",
+
       detectedAt: "2024-04-22 09:30 AM",
     },
+    {
+        id: "AML-002",
+        user: "James Smith",
+        activityType: "Multiple Login attempts",
+        riskLevel: "High",
+        status: "UnderReview",
+
+        detectedAt: "2024-04-22 09:30 AM",
+      },
+      {
+        id: "AML-002",
+        user: "Sarah Miller",
+        activityType: "Unusual login pattern",
+        riskLevel: "High",
+        status: "Cleared",
+
+        detectedAt: "2024-04-22 09:30 AM",
+      },
+      {
+        id: "AML-002",
+        user: "Sarah Miller",
+        activityType: "Unusual login pattern",
+        riskLevel: "High",
+        status: "Under review",
+
+        detectedAt: "2024-04-22 09:30 AM",
+      },
+      {
+        id: "AML-002",
+        user: "Sarah Miller",
+        activityType: "Unusual login pattern",
+        riskLevel: "High",
+        status: "Under review",
+
+        detectedAt: "2024-04-22 09:30 AM",
+      },
   ]
 
   const suspiciousColumns = [
@@ -199,6 +146,22 @@ const CompliancePage = () => {
       ),
     },
     {
+        key: "status",
+        header: "STATUS",
+        render: (row) => (
+          <Badge
+            variant="outline"
+            className={
+              row.status === "Cleared"
+                ? "border-green-200 bg-green-50 text-green-700"
+                : "border-yellow-200 bg-yellow-50 text-yellow-700"
+            }
+          >
+            {row.status}
+          </Badge>
+        ),
+      },
+    {
       key: "detectedAt",
       header: "DETECTED",
     },
@@ -224,14 +187,14 @@ const CompliancePage = () => {
     <div className="flex flex-col">
  <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
-          <h1 className="text-xl font-semibold">Compliance Dashboard</h1>
-          <span className="text-sm text-muted-foreground">Monitor Compliance and Manage KYC Verification</span>
+          <h1 className="text-xl font-semibold">AML Dashboard</h1>
+          <span className="text-sm text-muted-foreground">Monitor AML</span>
           <div className="ml-auto flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search users..."
+                placeholder="Search..."
                 className="w-[250px] pl-8"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -243,10 +206,10 @@ const CompliancePage = () => {
       </header>
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-4">
-          <StatCard title="Pending KYC" value="32" subtitle="+8 new today" />
-          <StatCard title="Approved KYC" value="1,245" subtitle="+15 today" />
-          <StatCard title="Suspicious Activities" value="7" subtitle="Require attention" trend="neutral" />
-          <StatCard title="Avg. Verification Time" value="4.2h" subtitle="-30min from last week" trend="down" />
+          <StatCard title="Total Flagged Transactions" value="32" subtitle="+8 new today" />
+          <StatCard title="Users Under Review" value="10" subtitle="+5 today" />
+          <StatCard title="High-risk users" value="7" subtitle="Require attention" trend="neutral" />
+          <StatCard title="Pending SARs (Suspicious Activity Reports)" value="40" subtitle="10 from last week" trend="down" />
         </div>
 
         <div className="flex items-center justify-between">
@@ -254,7 +217,7 @@ const CompliancePage = () => {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search verifications..."
+              placeholder="Search..."
               className="w-[300px] pl-8"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -263,38 +226,12 @@ const CompliancePage = () => {
           <Button>Export Report</Button>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>KYC Verifications</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="all">
-              <TabsList>
-                <TabsTrigger value="all">All Verifications</TabsTrigger>
-                <TabsTrigger value="pending">Pending</TabsTrigger>
-                <TabsTrigger value="approved">Approved</TabsTrigger>
-                <TabsTrigger value="rejected">Rejected</TabsTrigger>
-              </TabsList>
-              <TabsContent value="all" className="mt-4">
-                <DataTable columns={columns} data={kycVerifications} />
-              </TabsContent>
-              <TabsContent value="pending" className="mt-4">
-                <DataTable columns={columns} data={kycVerifications.filter((v) => v.status === "Pending")} />
-              </TabsContent>
-              <TabsContent value="approved" className="mt-4">
-                <DataTable columns={columns} data={kycVerifications.filter((v) => v.status === "Approved")} />
-              </TabsContent>
-              <TabsContent value="rejected" className="mt-4">
-                <DataTable columns={columns} data={kycVerifications.filter((v) => v.status === "Rejected")} />
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+      
 
         {hasPermission("monitorHighRiskTransactions") && (
           <Card>
             <CardHeader>
-              <CardTitle>Suspicious Activities</CardTitle>
+              <CardTitle>High-risk Users</CardTitle>
             </CardHeader>
             <CardContent>
               <DataTable columns={suspiciousColumns} data={suspiciousActivities} />
@@ -306,4 +243,4 @@ const CompliancePage = () => {
   )
 }
 
-export default CompliancePage
+export default AmlMonitoring;
