@@ -6,7 +6,6 @@ import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { fetchAdmin } from '../../redux/LoggedInAdminSlice';
-import apiService from '../../Services/api-service';
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);

@@ -24,14 +24,11 @@ import SuspendAccount from "./pages/users/ActionPages/SuspendAccount";
 import KycVerifications from "./pages/compliance/KycVerification";
 import SuspiciousActivities from "./pages/compliance/SuspiciousActivities";
 import AmlMonitoring from "./pages/compliance/AmlMonitoring";
-import LoginPage from "./pages/Login/log";
 function App() {
     return (
         <BrowserRouter>
         <Routes>
                             <Route path="/login" element={<LoginForm />} />
-                            <Route path="/log" element={<LoginPage />} />
-
                             </Routes>
 
             <AdminProvider>
