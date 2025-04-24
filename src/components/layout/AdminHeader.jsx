@@ -14,9 +14,12 @@ import {
 } from "../ui/dropdown-menu"
 import { useAdmin } from "../../contexts/AdminContext"
 import { Badge } from "../ui/badge"
+import { useSelector } from "react-redux"
 
 export function AdminHeader({ title, subtitle }) {
   const [searchQuery, setSearchQuery] = useState("")
+  const admin = useSelector((state) => state.admin.admin);
+  
   const { currentRole, setCurrentRole, allRoles } = useAdmin()
 
   return (
@@ -42,12 +45,11 @@ export function AdminHeader({ title, subtitle }) {
               <Button variant="outline" className="gap-2">
                 <span>Role:</span>
                 <Badge variant="secondary" className="font-normal">
-                  {currentRole}
+                  {admin?.adminUserType}
                 </Badge>
-                <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            {/* <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden ">             
               <DropdownMenuLabel>Switch Admin Role</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {allRoles.map((role) => (
@@ -60,7 +62,7 @@ export function AdminHeader({ title, subtitle }) {
                   {currentRole === role && <span className="ml-auto">✓</span>}
                 </DropdownMenuItem>
               ))}
-            </DropdownMenuContent>
+            </DropdownMenuContent> */}
           </DropdownMenu>
 
           <Button variant="outline" size="icon" className="relative">
@@ -74,10 +76,10 @@ export function AdminHeader({ title, subtitle }) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="gap-2">
                 <User className="h-4 w-4" />
-                <span>Admin</span>
+                <span>{admin?.firstName} {admin?.lastName}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "     >        
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Profile</DropdownMenuItem>

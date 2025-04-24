@@ -81,10 +81,10 @@ export function AdminProvider({ children }) {
     return initialAdminState
   })
 
-  // Update localStorage when role changes
   useEffect(() => {
-    localStorage.setItem("adminRole", adminState.currentRole)
-  }, [adminState.currentRole])
+    localStorage.getItem("adminRole")
+  },
+)
 
   // Change admin role
   const changeRole = (roleId) => {
