@@ -6,10 +6,10 @@ export default function AirtimeAndData() {
     <>
       <Breadcrumb
         items={[
-          { label: "Dashboard", path: "/" },
-          { label: "Transactions", path: "/dashboard/transactions" },
-          { label: "Money Transfers", path: "/dashboard/transactions/money-transfers" },
-          { label: "Bills & Utilities", path: "/dashboard/transactions/bills" },
+          // { label: "Dashboard", path: "/" },
+          // { label: "Transactions", path: "/dashboard/transactions" },
+          // { label: "Money Transfers", path: "/dashboard/transactions/money-transfers" },
+          // { label: "Bills & Utilities", path: "/dashboard/transactions/bills" },
           { label: "Bills & Utilities", path: "/dashboard/transactions/airtime" },
         ]}
       />

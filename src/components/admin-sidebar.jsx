@@ -289,6 +289,30 @@ export function AdminSidebar() {
                       Support Tickets
                     </Link>
                   </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/support/tickets")}>
+                    <Link to="/dashboard/support/tickets">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Tickets
+                    </Link>
+                  </SidebarMenuButton> 
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/support/chat")}>
+                    <Link to="/dashboard/support/chat">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Live Chat
+                    </Link>
+                  </SidebarMenuButton> 
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/support/dispute")}>
+                    <Link to="/dashboard/support/dispute">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Dispute Resolutions
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/support/knowledge")}>
+                    <Link to="/dashboard/support/knowledge">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Knowledge Base
+                    </Link>
+                  </SidebarMenuButton>  
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={isActive("/dashboard/notifications")}>
