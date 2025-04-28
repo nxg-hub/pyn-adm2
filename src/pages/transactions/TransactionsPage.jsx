@@ -98,8 +98,38 @@ function TransactionsPage() {
         </div>
       </header>
 
-      <main className="flex-1 p-4 md:p-6">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-3 p-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">957</div>
+                <p className="text-xs text-muted-foreground">+4.3% from last month</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Transaction Volume</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">$1,445,021</div>
+                <p className="text-xs text-muted-foreground">+3.18% from last month</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Failed Transactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">33</div>
+                <p className="text-xs text-red-500">1.8% failure rate</p>
+              </CardContent>
+            </Card>
+      </div>
+
+      <main  className="grid gap-6 md:grid-cols-7">
+        <Card className="md:col-span-4">
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
           </CardHeader>
@@ -207,8 +237,9 @@ function TransactionsPage() {
             </Table>
           </CardContent>
         </Card>
-
-        <Card className="md:col-span-3 mt-6">
+        
+        
+        <Card className="md:col-span-3">
               <CardHeader>
                 <CardTitle>Transaction Details</CardTitle>
               </CardHeader>

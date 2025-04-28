@@ -33,8 +33,11 @@ function Transactions() {
       <Route path="virtual-cards" element={<VirtualCardsePage />} />
       <Route path="payroll" element={<PayrollPage />} />
       <Route path="scan-to-pay" element={<ScanToPayPage />} />
+      
     </Routes>
   );
 }
 
 export default Transactions;
+
+

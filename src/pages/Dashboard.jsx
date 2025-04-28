@@ -4,6 +4,12 @@ import { Button } from "../components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { useAdmin } from "../contexts/AdminContext"
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsers } from "../redux/UsersSlice";
+import { fetchAdmins } from "../redux/adminsSlice"
+import { useState, useEffect } from "react"
+
+
 
 const transactionData = [
   { name: "Jan", value: 1200 },
@@ -15,15 +21,45 @@ const transactionData = [
   { name: "Jul", value: 3800 },
 ]
 
-const userSegments = [
-  { name: "Regular", value: 60, color: "#3b82f6" },
-  { name: "Business", value: 25, color: "#10b981" },
-  { name: "Premium", value: 10, color: "#f59e0b" },
-  { name: "Other", value: 5, color: "#6366f1" },
-]
+
 
 function Dashboard() {
-  const { currentRole, hasPermission } = useAdmin()
+  const dispatch = useDispatch()
+
+  const { currentRole, hasPermission } = useAdmin();
+  const users = useSelector((state) => state.users.users); 
+
+
+   useEffect(() => { 
+          dispatch(fetchUsers());
+          dispatch(fetchAdmins());
+          localStorage.getItem("adminRole")
+        }
+  , [dispatch]);
+
+  const personalUsers = users.filter((user) => user.userType === "PERSONAL");
+const businessUsers = users.filter((user) => user.userType === "CORPORATE");
+
+  const totalUsers = users?.length;
+
+const personalPercent = Math.round((personalUsers.length / totalUsers) * 100);
+const businessPercent = Math.round((businessUsers.length / totalUsers) * 100);
+
+const userSegments = [
+  {
+    name: "Personal",
+    value: personalPercent,
+    color: "#3b82f6", 
+  },
+  {
+    name: "Business",
+    value: businessPercent,
+    color: "#f59e0b", 
+  },
+];
+
+const personalAngle = (personalPercent / 100) * 360;
+const businessAngle = (businessPercent / 100) * 360;
 
   return (
     <div className="flex flex-col">
@@ -35,7 +71,7 @@ function Dashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">24,521</div>
+              <div className="text-2xl font-bold">{totalUsers}</div>
               <p className="text-xs text-muted-foreground">+12.5% from last month</p>
             </CardContent>
           </Card>
@@ -101,11 +137,14 @@ function Dashboard() {
                 <div
                   className="w-[200px] h-[200px] relative rounded-full"
                   style={{
-                    background: "conic-gradient(#3b82f6 0% 60%, #10b981 60% 85%, #f59e0b 85% 95%, #6366f1 95% 100%)",
+                    background: `conic-gradient(
+                      #3b82f6 0deg ${personalAngle}deg,
+                      #f59e0b ${personalAngle}deg ${personalAngle + businessAngle}deg
+                    )`,
                   }}
                 >
                   <div className="absolute inset-[15%] bg-white rounded-full flex items-center justify-center">
-                    <span className="font-bold">24,521</span>
+                    <span className="font-bold text-black">{totalUsers}</span>
                   </div>
                 </div>
               </div>
@@ -259,7 +298,7 @@ function Dashboard() {
                     {[1, 2, 3, 4, 5].map((i) => (
                       <div key={i} className="grid grid-cols-5 items-center px-4 py-3">
                         <div className="font-mono text-sm">TRX-{Math.floor(Math.random() * 1000000)}</div>
-                        <div>John Doe</div>
+                        <div>Jane Doe</div>
                         <div>${(Math.random() * 1000).toFixed(2)}</div>
                         <div>
                           <span
@@ -284,7 +323,7 @@ function Dashboard() {
                   </div>
                 </div>
               </TabsContent>
-              <TabsContent value="pending" className="mt-4">
+              <TabsContent value="peing" className="mt-4">
                 {/* Similar content for pending transactions */}
               </TabsContent>
               <TabsContent value="completed" className="mt-4">

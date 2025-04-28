@@ -1,228 +1,326 @@
 "use client"
 
 import { useState } from "react"
-import { Eye, FileText, AlertTriangle } from "lucide-react"
-import {
-  Card, CardContent, CardDescription, CardHeader, CardTitle
-} from "../../components/ui/card"
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
-} from "../../components/ui/table"
+import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download } from "lucide-react"
 import { Button } from "../../components/ui/button"
-import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
-} from "../../components/ui/dialog"
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
+import { Input } from "../../components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table"
 import { useAdmin } from "../../contexts/AdminContext"
-import ActionMenu from "../../components/common/ActionMenu"
-import StatusBadge from "../../components/common/StatusBadge"
-import Pagination from "../../components/common/Pagination"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
+import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
 
 const payrollTransactions = [
   {
-    id: "PAY-101",
-    employeeName: "Alice Green",
-    payrollId: "P-1001",
-    amount: "$2000.00",
-    status: "paid",
-    paymentDate: "2024-04-10",
+    id: "PAY-001",
+    employee: "Alice Johnson",
+    amount: 3500,
+    date: "2024-04-10",
+    status: "Completed",
   },
   {
-    id: "PAY-102",
-    employeeName: "Bob Brown",
-    payrollId: "P-1002",
-    amount: "$1800.00",
-    status: "pending",
-    paymentDate: "2024-04-12",
+    id: "PAY-002",
+    employee: "Bob Williams",
+    amount: 4200,
+    date: "2024-04-15",
+    status: "Pending",
   },
   {
-    id: "PAY-103",
-    employeeName: "Charlie White",
-    payrollId: "P-1003",
-    amount: "$2200.00",
-    status: "failed",
-    paymentDate: "2024-04-14",
-  },
-  {
-    id: "PAY-104",
-    employeeName: "James Black",
-    payrollId: "P-1004",
-    amount: "$2500.00",
-    status: "successful",
-    paymentDate: "2024-04-12",
+    id: "PAY-003",
+    employee: "Charlie Davis",
+    amount: 2800,
+    date: "2024-04-20",
+    status: "Failed",
   },
 ]
 
-const normalizeStatus = (status) => {
-  if (status === "successful") return "paid"
-  return status
-}
-
-export default function PayrollPage() {
+function PayrollPage() {
+  const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
-  const [currentPage, setCurrentPage] = useState(1)
   const [selectedTransaction, setSelectedTransaction] = useState(null)
-  const [isFlagDialogOpen, setIsFlagDialogOpen] = useState(false)
+
+  const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
+  const [showFlagDialog, setShowFlagDialog] = useState(false)
+  const [showAdjustDialog, setShowAdjustDialog] = useState(false)
+
   const [flagReason, setFlagReason] = useState("")
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [adjustAmount, setAdjustAmount] = useState("")
 
-  const handleViewDetails = (txn) => {
-    setSelectedTransaction(txn)
-    setIsDetailsOpen(true)
+  const handleViewDetails = (transaction) => {
+    setSelectedTransaction(transaction)
   }
 
-  const handleDownloadPayslip = (txnId) => {
-    console.log("Downloading payslip for:", txnId)
+  const handleMarkSuccess = () => {
+    setShowMarkSuccessDialog(false)
+    // logic to mark as success
   }
 
-  const handleFlagSubmit = () => {
-    if (!flagReason.trim()) return
-    console.log(`Flagged payroll ${selectedTransaction?.id} for: ${flagReason}`)
-    setIsFlagDialogOpen(false)
-    setIsDetailsOpen(false)
+  const handleFlagTransaction = () => {
+    setShowFlagDialog(false)
     setFlagReason("")
-    setSelectedTransaction(null)
+    // logic to flag transaction
   }
 
-  const getActionItems = (txn) => {
-    const actions = [
-      {
-        label: "View Details",
-        icon: Eye,
-        onClick: () => handleViewDetails(txn),
-        ariaLabel: "View payroll details"
-      },
-    ]
-
-    if (normalizeStatus(txn.status) === "paid" && hasPermission("viewPayrollReports")) {
-      actions.push({
-        label: "Download Payslip",
-        icon: FileText,
-        onClick: () => handleDownloadPayslip(txn.id),
-        ariaLabel: "Download payroll payslip"
-      })
-    }
-
-    if (hasPermission("monitorPayrollIssues")) {
-      actions.push({
-        label: "Flag as Suspicious",
-        icon: AlertTriangle,
-        onClick: () => {
-          setSelectedTransaction(txn)
-          setIsFlagDialogOpen(true)
-        },
-        className: "text-amber-600 hover:text-amber-700",
-        ariaLabel: "Flag payroll as suspicious"
-      })
-    }
-
-    return actions
+  const handleAdjustAmount = () => {
+    setShowAdjustDialog(false)
+    setAdjustAmount("")
+    // logic to adjust amount
   }
+
+  const handleDownloadReceipt = (id) => {
+    // This is where the actual download logic would go. For now, let's log the ID.
+    console.log(`Download receipt for transaction: ${id}`)
+    // You can replace the console log with actual logic like fetching a PDF or image.
+  }
+
+  const filteredTransactions = payrollTransactions.filter((transaction) =>
+    transaction.employee.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Payroll Transactions</CardTitle>
-          <CardDescription>
-            Review and manage payroll transactions.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Payroll ID</TableHead>
-                <TableHead>Employee Name</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Payment Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            {payrollTransactions.length === 0 ? (
-              <tbody>
-                <tr>
-                  <td colSpan={6} className="text-center py-6 text-muted-foreground">
-                    No payroll transactions found.
-                  </td>
-                </tr>
-              </tbody>
-            ) : (
+    <div className="flex flex-col">
+      <header className="border-b">
+        <div className="flex h-16 items-center px-4 gap-4">
+          <h1 className="text-xl font-semibold">Payroll Transactions</h1>
+          <span className="text-sm text-muted-foreground">Manage payroll transactions</span>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search by employee..."
+                className="w-[250px] pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <Button>Export</Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="grid gap-6 md:grid-cols-3 p-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">320</div>
+            <p className="text-xs text-muted-foreground">+3.1% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Amount</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">$1,080,000</div>
+            <p className="text-xs text-muted-foreground">+4.3% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Failed Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">15</div>
+            <p className="text-xs text-red-500">4.7% failure rate</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <main className="grid gap-6 md:grid-cols-7">
+        <Card className="md:col-span-4">
+          <CardHeader>
+            <CardTitle>Recent Payroll Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Employee</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
               <TableBody>
-                {payrollTransactions.map((txn) => (
-                  <TableRow key={txn.id}>
-                    <TableCell>{txn.payrollId}</TableCell>
-                    <TableCell>{txn.employeeName}</TableCell>
-                    <TableCell>{txn.amount}</TableCell>
-                    <TableCell><StatusBadge status={normalizeStatus(txn.status)} /></TableCell>
-                    <TableCell>{txn.paymentDate}</TableCell>
-                    <TableCell className="text-right">
-                      <ActionMenu actions={getActionItems(txn)} />
+                {filteredTransactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>{transaction.id}</TableCell>
+                    <TableCell>{transaction.employee}</TableCell>
+                    <TableCell>${transaction.amount}</TableCell>
+                    <TableCell>{transaction.date}</TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          transaction.status === "Completed"
+                            ? "bg-green-100 text-green-800"
+                            : transaction.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {transaction.status}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
+                            <CheckCircle className="mr-2 h-4 w-4" /> View Details
+                          </DropdownMenuItem>
+
+                          {transaction.status === "Completed" && (
+                            <DropdownMenuItem onClick={() => handleDownloadReceipt(transaction.id)}>
+                              <Download className="mr-2 h-4 w-4 text-blue-600" /> Download Receipt
+                            </DropdownMenuItem>
+                          )}
+
+                          {hasPermission("managePayrollTransactions") && transaction.status === "Pending" && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedTransaction(transaction)
+                                setShowMarkSuccessDialog(true)
+                              }}
+                            >
+                              <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Mark as Completed
+                            </DropdownMenuItem>
+                          )}
+
+                          {hasPermission("monitorSuspiciousPayrollTransactions") && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedTransaction(transaction)
+                                setShowFlagDialog(true)
+                              }}
+                            >
+                              <AlertCircle className="mr-2 h-4 w-4 text-red-600" /> Flag as Suspicious
+                            </DropdownMenuItem>
+                          )}
+
+                          {hasPermission("adjustPayrollAmounts") && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedTransaction(transaction)
+                                setAdjustAmount(transaction.amount.toString())
+                                setShowAdjustDialog(true)
+                              }}
+                            >
+                              <Pencil className="mr-2 h-4 w-4 text-blue-600" /> Adjust Amount
+                            </DropdownMenuItem>
+                          )}
+
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem>
+                            <AlertCircle className="mr-2 h-4 w-4" /> Contact Employee
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
-            )}
-          </Table>
-          <div className="mt-4">
-            <Pagination currentPage={currentPage} totalPages={1} onPageChange={setCurrentPage} />
-          </div>
-        </CardContent>
-      </Card>
+            </Table>
+          </CardContent>
+        </Card>
 
-      {/* Flag Dialog */}
-      <Dialog open={isFlagDialogOpen} onOpenChange={(open) => {
-        setIsFlagDialogOpen(open)
-        if (!open) setSelectedTransaction(null)
-      }}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Flag Payroll as Suspicious</DialogTitle>
-            <DialogDescription>
-              Provide a reason for flagging <strong>{selectedTransaction?.payrollId}</strong>:
-            </DialogDescription>
-          </DialogHeader>
-          <Textarea
-            placeholder="Enter reason..."
-            value={flagReason}
-            onChange={(e) => setFlagReason(e.target.value)}
-          />
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setIsFlagDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleFlagSubmit} disabled={!flagReason.trim()}>Submit</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Details Dialog */}
-      <Dialog open={isDetailsOpen} onOpenChange={(open) => {
-        setIsDetailsOpen(open)
-        if (!open) setSelectedTransaction(null)
-      }}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Transaction Details</DialogTitle>
-            <DialogDescription>
-              Full details of payroll transaction <strong>{selectedTransaction?.payrollId}</strong>.
-            </DialogDescription>
-          </DialogHeader>
-          {selectedTransaction && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div><h3 className="font-medium text-sm">Payroll ID</h3><p>{selectedTransaction.payrollId}</p></div>
-                <div><h3 className="font-medium text-sm">Status</h3><StatusBadge status={normalizeStatus(selectedTransaction.status)} /></div>
-                <div><h3 className="font-medium text-sm">Employee Name</h3><p>{selectedTransaction.employeeName}</p></div>
-                <div><h3 className="font-medium text-sm">Amount</h3><p>{selectedTransaction.amount}</p></div>
-                <div><h3 className="font-medium text-sm">Payment Date</h3><p>{selectedTransaction.paymentDate}</p></div>
+        <Card className="md:col-span-3">
+          <CardHeader>
+            <CardTitle>Transaction Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {selectedTransaction ? (
+              <div className="space-y-4">
+                <div><strong>Employee:</strong> {selectedTransaction.employee}</div>
+                <div><strong>Amount:</strong> ${selectedTransaction.amount}</div>
+                <div><strong>Status:</strong> {selectedTransaction.status}</div>
+                <div><strong>Date:</strong> {selectedTransaction.date}</div>
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-muted-foreground text-sm">Select a transaction to view details.</p>
+            )}
+          </CardContent>
+        </Card>
+      </main>
+
+      {/* Mark Completed Modal */}
+      <Dialog open={showMarkSuccessDialog} onOpenChange={setShowMarkSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mark Transaction as Completed?</DialogTitle>
+          </DialogHeader>
           <DialogFooter>
-            <Button onClick={() => setIsDetailsOpen(false)}>Close</Button>
+            <Button variant="ghost" onClick={() => setShowMarkSuccessDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleMarkSuccess}>Confirm</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+
+      {/* Flag Transaction Modal */}
+      <Dialog open={showFlagDialog} onOpenChange={setShowFlagDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Flag Transaction as Suspicious</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Label>Reason</Label>
+            <Textarea
+              placeholder="Enter reason for flagging"
+              value={flagReason}
+              onChange={(e) => setFlagReason(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowFlagDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleFlagTransaction}>Flag Transaction</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Adjust Amount Modal */}
+      <Dialog open={showAdjustDialog} onOpenChange={setShowAdjustDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Adjust Payroll Amount</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Label>New Amount</Label>
+            <Input
+              type="number"
+              value={adjustAmount}
+              onChange={(e) => setAdjustAmount(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowAdjustDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAdjustAmount}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   )
 }
+
+export default PayrollPage

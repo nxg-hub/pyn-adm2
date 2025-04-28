@@ -13,6 +13,7 @@ import SettingsPage from "./pages/settings/SettingsPage";
 import ReportsPage from "./pages/reports/ReportsPage";
 
 
+
 function App() {
     return (
         <BrowserRouter>

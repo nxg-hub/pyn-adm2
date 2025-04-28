@@ -1,208 +1,326 @@
 "use client"
 
 import { useState } from "react"
-import { Eye, FileText, AlertTriangle } from "lucide-react"
-import {
-  Card, CardContent, CardDescription, CardHeader, CardTitle
-} from "../../components/ui/card"
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
-} from "../../components/ui/table"
+import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download } from "lucide-react"
 import { Button } from "../../components/ui/button"
-import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
-} from "../../components/ui/dialog"
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
+import { Input } from "../../components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table"
 import { useAdmin } from "../../contexts/AdminContext"
-import ActionMenu from "../../components/common/ActionMenu"
-import StatusBadge from "../../components/common/StatusBadge"
-import Pagination from "../../components/common/Pagination"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
+import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
 
-const airtimeTransactions = [
+const internationalAirtimeTransactions = [
   {
-    id: "INTAIR-501",
-    recipient: "+234 801 123 4567",
+    id: "IA-001",
     country: "Nigeria",
-    operator: "MTN",
-    amount: "$10.00",
-    method: "Card",
+    amount: 50,
     date: "2024-04-12",
-    status: "successful",
+    status: "Successful",
   },
   {
-    id: "INTAIR-502",
-    recipient: "+254 700 123 456",
+    id: "IA-002",
     country: "Kenya",
-    operator: "Safaricom",
-    amount: "$5.00",
-    method: "Wallet",
-    date: "2024-04-14",
-    status: "pending",
+    amount: 30,
+    date: "2024-04-15",
+    status: "Pending",
   },
   {
-    id: "INTAIR-503",
-    recipient: "+233 201 234 567",
+    id: "IA-003",
     country: "Ghana",
-    operator: "Vodafone",
-    amount: "$7.50",
-    method: "Bank Transfer",
-    date: "2024-04-10",
-    status: "failed",
+    amount: 70,
+    date: "2024-04-18",
+    status: "Failed",
   },
 ]
 
-export default function InternationalAirtimePage() {
+function InternationalAirtimePage() {
+  const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
-  const [currentPage, setCurrentPage] = useState(1)
   const [selectedTransaction, setSelectedTransaction] = useState(null)
-  const [isFlagDialogOpen, setIsFlagDialogOpen] = useState(false)
+
+  const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
+  const [showFlagDialog, setShowFlagDialog] = useState(false)
+  const [showAdjustDialog, setShowAdjustDialog] = useState(false)
+
   const [flagReason, setFlagReason] = useState("")
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [adjustAmount, setAdjustAmount] = useState("")
 
-  const handleViewDetails = (txn) => {
-    setSelectedTransaction(txn)
-    setIsDetailsOpen(true)
+  const handleViewDetails = (transaction) => {
+    setSelectedTransaction(transaction)
   }
 
-  const handleDownloadReceipt = (txnId) => {
-    console.log("Downloading receipt for:", txnId)
+  const handleMarkSuccess = () => {
+    setShowMarkSuccessDialog(false)
+    // logic to mark as success
   }
 
-  const handleFlagSubmit = () => {
-    if (!flagReason.trim()) return
-    console.log(`Flagged transaction ${selectedTransaction?.id} for: ${flagReason}`)
-    setIsFlagDialogOpen(false)
+  const handleFlagTransaction = () => {
+    setShowFlagDialog(false)
     setFlagReason("")
-    setSelectedTransaction(null)
+    // logic to flag transaction
   }
 
-  const getActionItems = (txn) => {
-    const actions = [
-      {
-        label: "View Details",
-        icon: Eye,
-        onClick: () => handleViewDetails(txn),
-      },
-    ]
-
-    if (txn.status === "successful" && hasPermission("viewFinancialReports")) {
-      actions.push({
-        label: "Download Receipt",
-        icon: FileText,
-        onClick: () => handleDownloadReceipt(txn.id),
-      })
-    }
-
-    if (hasPermission("monitorHighRiskTransactions")) {
-      actions.push({
-        label: "Flag as Suspicious",
-        icon: AlertTriangle,
-        onClick: () => {
-          setSelectedTransaction(txn)
-          setIsFlagDialogOpen(true)
-        },
-        className: "text-amber-600 hover:text-amber-700",
-      })
-    }
-
-    return actions
+  const handleAdjustAmount = () => {
+    setShowAdjustDialog(false)
+    setAdjustAmount("")
+    // logic to adjust amount
   }
+
+  const handleDownloadReceipt = (id) => {
+    // This is where the actual download logic would go. For now, let's log the ID.
+    console.log(`Download receipt for transaction: ${id}`)
+    // You can replace the console log with actual logic like fetching a PDF or image.
+  }
+
+  const filteredTransactions = internationalAirtimeTransactions.filter((transaction) =>
+    transaction.country.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>International Airtime Top-ups</CardTitle>
-          <CardDescription>
-            View and manage international airtime purchase transactions.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Transaction ID</TableHead>
-                <TableHead>Recipient</TableHead>
-                <TableHead>Country</TableHead>
-                <TableHead>Operator</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {airtimeTransactions.map((txn) => (
-                <TableRow key={txn.id}>
-                  <TableCell>{txn.id}</TableCell>
-                  <TableCell>{txn.recipient}</TableCell>
-                  <TableCell>{txn.country}</TableCell>
-                  <TableCell>{txn.operator}</TableCell>
-                  <TableCell>{txn.amount}</TableCell>
-                  <TableCell><StatusBadge status={txn.status} /></TableCell>
-                  <TableCell>{txn.date}</TableCell>
-                  <TableCell className="text-right">
-                    <ActionMenu actions={getActionItems(txn)} />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div className="mt-4">
-            <Pagination currentPage={currentPage} totalPages={1} onPageChange={setCurrentPage} />
+    <div className="flex flex-col">
+      <header className="border-b">
+        <div className="flex h-16 items-center px-4 gap-4">
+          <h1 className="text-xl font-semibold">International Airtime Transactions</h1>
+          <span className="text-sm text-muted-foreground">Manage international airtime top-up transactions</span>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search by country..."
+                className="w-[250px] pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <Button>Export</Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </header>
 
-      {/* Flag Dialog */}
-      <Dialog open={isFlagDialogOpen} onOpenChange={setIsFlagDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+      <div className="grid gap-6 md:grid-cols-3 p-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">250</div>
+            <p className="text-xs text-muted-foreground">+4.5% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Amount</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">$12,500</div>
+            <p className="text-xs text-muted-foreground">+3.2% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Failed Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">10</div>
+            <p className="text-xs text-red-500">4% failure rate</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <main className="grid gap-6 md:grid-cols-7">
+        <Card className="md:col-span-4">
+          <CardHeader>
+            <CardTitle>Recent International Airtime Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Country</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredTransactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>{transaction.id}</TableCell>
+                    <TableCell>{transaction.country}</TableCell>
+                    <TableCell>${transaction.amount}</TableCell>
+                    <TableCell>{transaction.date}</TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          transaction.status === "Successful"
+                            ? "bg-green-100 text-green-800"
+                            : transaction.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {transaction.status}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
+                            <CheckCircle className="mr-2 h-4 w-4" /> View Details
+                          </DropdownMenuItem>
+
+                          {transaction.status === "Successful" && (
+                            <DropdownMenuItem onClick={() => handleDownloadReceipt(transaction.id)}>
+                              <Download className="mr-2 h-4 w-4 text-blue-600" /> Download Receipt
+                            </DropdownMenuItem>
+                          )}
+
+                          {hasPermission("manageInternationalAirtimeTransactions") && transaction.status === "Pending" && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedTransaction(transaction)
+                                setShowMarkSuccessDialog(true)
+                              }}
+                            >
+                              <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Mark as Successful
+                            </DropdownMenuItem>
+                          )}
+
+                          {hasPermission("monitorSuspiciousAirtimeTransactions") && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedTransaction(transaction)
+                                setShowFlagDialog(true)
+                              }}
+                            >
+                              <AlertCircle className="mr-2 h-4 w-4 text-red-600" /> Flag as Suspicious
+                            </DropdownMenuItem>
+                          )}
+
+                          {hasPermission("adjustTransactionAmounts") && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedTransaction(transaction)
+                                setAdjustAmount(transaction.amount.toString())
+                                setShowAdjustDialog(true)
+                              }}
+                            >
+                              <Pencil className="mr-2 h-4 w-4 text-blue-600" /> Adjust Amount
+                            </DropdownMenuItem>
+                          )}
+
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem>
+                            <AlertCircle className="mr-2 h-4 w-4" /> Contact Recipient
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-3">
+          <CardHeader>
+            <CardTitle>Transaction Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {selectedTransaction ? (
+              <div className="space-y-4">
+                <div><strong>Country:</strong> {selectedTransaction.country}</div>
+                <div><strong>Amount:</strong> ${selectedTransaction.amount}</div>
+                <div><strong>Status:</strong> {selectedTransaction.status}</div>
+                <div><strong>Date:</strong> {selectedTransaction.date}</div>
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-sm">Select a transaction to view details.</p>
+            )}
+          </CardContent>
+        </Card>
+      </main>
+
+      {/* Mark Successful Modal */}
+      <Dialog open={showMarkSuccessDialog} onOpenChange={setShowMarkSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mark Transaction as Successful?</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowMarkSuccessDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleMarkSuccess}>Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Flag Transaction Modal */}
+      <Dialog open={showFlagDialog} onOpenChange={setShowFlagDialog}>
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Flag Transaction as Suspicious</DialogTitle>
-            <DialogDescription>
-              Provide a reason for flagging <strong>{selectedTransaction?.id}</strong>:
-            </DialogDescription>
           </DialogHeader>
-          <Textarea
-            placeholder="Enter reason..."
-            value={flagReason}
-            onChange={(e) => setFlagReason(e.target.value)}
-          />
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setIsFlagDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleFlagSubmit} disabled={!flagReason.trim()}>Submit</Button>
+          <div className="space-y-4">
+            <Label>Reason</Label>
+            <Textarea
+              placeholder="Enter reason for flagging"
+              value={flagReason}
+              onChange={(e) => setFlagReason(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowFlagDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleFlagTransaction}>Flag Transaction</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Details Dialog */}
-      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+      {/* Adjust Amount Modal */}
+      <Dialog open={showAdjustDialog} onOpenChange={setShowAdjustDialog}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Transaction Details</DialogTitle>
-            <DialogDescription>
-              Complete information for transaction <strong>{selectedTransaction?.id}</strong>.
-            </DialogDescription>
+            <DialogTitle>Adjust Transaction Amount</DialogTitle>
           </DialogHeader>
-          {selectedTransaction && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div><h3 className="font-medium text-sm">Transaction ID</h3><p>{selectedTransaction.id}</p></div>
-                <div><h3 className="font-medium text-sm">Status</h3><StatusBadge status={selectedTransaction.status} /></div>
-                <div><h3 className="font-medium text-sm">Recipient</h3><p>{selectedTransaction.recipient}</p></div>
-                <div><h3 className="font-medium text-sm">Country</h3><p>{selectedTransaction.country}</p></div>
-                <div><h3 className="font-medium text-sm">Operator</h3><p>{selectedTransaction.operator}</p></div>
-                <div><h3 className="font-medium text-sm">Amount</h3><p>{selectedTransaction.amount}</p></div>
-                <div><h3 className="font-medium text-sm">Payment Method</h3><p>{selectedTransaction.method}</p></div>
-                <div><h3 className="font-medium text-sm">Date</h3><p>{selectedTransaction.date}</p></div>
-              </div>
-            </div>
-          )}
+          <div className="space-y-4">
+            <Label>New Amount</Label>
+            <Input
+              type="number"
+              value={adjustAmount}
+              onChange={(e) => setAdjustAmount(e.target.value)}
+            />
+          </div>
           <DialogFooter>
-            <Button onClick={() => setIsDetailsOpen(false)}>Close</Button>
+            <Button variant="ghost" onClick={() => setShowAdjustDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAdjustAmount}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   )
 }
+
+export default InternationalAirtimePage

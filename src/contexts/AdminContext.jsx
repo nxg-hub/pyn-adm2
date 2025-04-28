@@ -3,15 +3,15 @@
 import { createContext, useContext, useState, useEffect } from "react"
 
 export const AdminRoles = [
-  "Super Admin",
-  "General Manager",
-  "Operations Manager",
-  "Finance Manager",
-  "Customer Care Rep",
+  "SUPER_ADMIN",
+  "GENERAL_MANAGER",
+  "OPERATIONS_MANAGER",
+  "FINANCE_MANAGER",
+  "CUSTOMER_CARE_REP",
 ]
 
 const rolePermissions = {
-  "Super Admin": {
+  "SUPER_ADMIN": {
     manageAdmins: true,
     approveRejectTransactions: true,
     approveWithdrawals: true,
@@ -32,7 +32,7 @@ const rolePermissions = {
     monitorHighRiskTransactions: true,
     assignSupportTickets: true,
   },
-  "General Manager": {
+  "GENERAL_MANAGER": {
     manageAdmins: true,
     approveRejectTransactions: true,
     approveWithdrawals: true,
@@ -53,7 +53,7 @@ const rolePermissions = {
     monitorHighRiskTransactions: true,
     assignSupportTickets: true,
   },
-  "Operations Manager": {
+  "OPERATIONS_MANAGER": {
     manageAdmins: false,
     approveRejectTransactions: true,
     approveWithdrawals: true,
@@ -74,7 +74,7 @@ const rolePermissions = {
     monitorHighRiskTransactions: true,
     assignSupportTickets: false,
   },
-  "Finance Manager": {
+  "FINANCE_MANAGER": {
     manageAdmins: false,
     approveRejectTransactions: true,
     approveWithdrawals: true,
@@ -95,7 +95,7 @@ const rolePermissions = {
     monitorHighRiskTransactions: false,
     assignSupportTickets: false,
   },
-  "Customer Care Rep": {
+  "CUSTOMER_CARE_REP": {
     manageAdmins: false,
     approveRejectTransactions: false,
     approveWithdrawals: false,
@@ -124,7 +124,7 @@ export function AdminProvider({ children }) {
   const [currentRole, setCurrentRole] = useState(() => {
     // Try to get the saved role from localStorage
     const savedRole = localStorage.getItem("adminRole")
-    return savedRole && AdminRoles.includes(savedRole) ? savedRole : "Super Admin"
+    return savedRole && AdminRoles.includes(savedRole) ? savedRole : "SUPER_ADMIN"
   })
 
   const allRoles = AdminRoles

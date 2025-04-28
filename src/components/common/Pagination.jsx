@@ -10,7 +10,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, pageSiz
       <div className="text-sm text-muted-foreground">
         Showing {startItem}-{endItem} of {totalItems} items
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-5">
         <Button variant="outline" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
           Previous
         </Button>

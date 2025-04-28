@@ -33,6 +33,7 @@ import {
   QrCode,
   Briefcase,
 } from "lucide-react"
+import { useEffect } from "react"
 
 import { useAdmin } from "../../contexts/AdminContext"
 import { cn } from "../../lib/utils"
@@ -86,9 +87,10 @@ export function AdminSidebar() {
     return location.pathname === path || location.pathname.startsWith(`${path}/`)
   }
 
+ 
   return (
     <div className="w-64 border-r bg-card h-screen overflow-y-auto">
-      <div className="flex h-14 items-center border-b px-4 font-bold text-xl bg-blue-600 text-white">Payina Admin</div>
+      <div className="flex h-14 items-center border-b px-4 font-bold text-xl bg-[#006181] text-white">Payina Admin</div>
       <nav className="space-y-1 p-2">
         <ul className="space-y-1">
           <SidebarItem
@@ -127,8 +129,8 @@ export function AdminSidebar() {
             />
             <SidebarSubItem
               label="Admin Users"
-              href="/dashboard/users/admins"
-              isActive={location.pathname === "/dashboard/users/admins"}
+              href="/dashboard/users/admin-users"
+              isActive={location.pathname === "/dashboard/users/admin-users"}
               hasPermission={hasPermission("manageAdmins")}
             />
           </SidebarItem>
@@ -324,8 +326,8 @@ export function AdminSidebar() {
             />
             <SidebarSubItem
               label="Suspicious Activities"
-              href="/dashboard/compliance/suspicious"
-              isActive={location.pathname === "/dashboard/compliance/suspicious"}
+              href="/dashboard/compliance/suspicious-activities"
+              isActive={location.pathname === "/dashboard/compliance/suspicious-activities"}
               hasPermission={hasPermission("monitorHighRiskTransactions")}
             />
             <SidebarSubItem
