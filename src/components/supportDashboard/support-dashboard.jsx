@@ -9,10 +9,10 @@ import { Button } from "/ui/button"
 import { Badge } from "/ui/badge"
 import { Avatar } from "/ui/avatar"
 import { Textarea } from "/ui/textarea"
-import DataTable from "../../src/components/common/DataTable"
-import Pagination from "../../src/components/common/Pagination"
-import StatCard from "../../src/components/common/StatCard"
-import { useAdmin } from "./admin-context"
+import DataTable from "../common/DataTable"
+import Pagination from "../common/Pagination"
+import StatCard from "../common/StatCard"
+import { useAdmin } from "../admin-context"
 
 export function SupportDashboard() {
   const { hasPermission } = useAdmin()

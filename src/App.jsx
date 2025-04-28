@@ -18,12 +18,17 @@ import SuspendedAccounts from "./pages/users/SuspendedAccounts";
 import RecentlyActive from "./pages/users/RecentlyActive";
 import PendingVerification from "./pages/users/PendingVerification";
 import UserProfile from "./pages/users/ActionPages/ViewProfile";
+import Transactions from "./pages/transactions/page";
+import Support from "./pages/support/page";
 import EditUser from "./pages/users/ActionPages/EditUser";
 import ChangePassword from "./pages/users/ActionPages/ChangePassword";
 import SuspendAccount from "./pages/users/ActionPages/SuspendAccount";
 import KycVerifications from "./pages/compliance/KycVerification";
 import SuspiciousActivities from "./pages/compliance/SuspiciousActivities";
 import AmlMonitoring from "./pages/compliance/AmlMonitoring";
+
+
+
 function App() {
     return (
         <BrowserRouter>
@@ -55,7 +60,8 @@ function App() {
                         <Route path="dashboard/compliance/kyc" element={<KycVerifications />} />
                         <Route path="dashboard/compliance/suspicious-activities" element={<SuspiciousActivities />} />
                         <Route path="dashboard/compliance/aml" element={<AmlMonitoring />} />
-
+                        <Route path="dashboard/transactions/*" element={<Transactions />} />
+                        <Route path="dashboard/support/*" element={<Support />} />
                         <Route path="dashboard/notifications" element={<NotificationsPage />} />
                         <Route path="dashboard/settings" element={<SettingsPage />} />
                         <Route path="dashboard/reports" element={<ReportsPage />} />

@@ -7,13 +7,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "/ui/tabs"
 import { Input } from "/ui/input"
 import { Button } from "/ui/button"
 import { Badge } from "/ui/badge"
-import StatCard from "../../src/components/common/StatCard"
-import DataTable from "../../src/components/common/DataTable"
-import { useAdmin } from "./admin-context"
+import StatCard from "../common/StatCard"
+import DataTable from "../common/DataTable"
+import { useAdmin } from "../admin-context"
+import ConfirmActionDialog from "../common/ConfirmActionDialog"
 
 export function ComplianceDashboard() {
   const { hasPermission, currentRole } = useAdmin()
   const [searchTerm, setSearchTerm] = useState("")
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogConfig, setDialogConfig] = useState({
+    title: "",
+    description: "",
+    confirmText: "",
+    onConfirm: () => {},
+  })
 
   // Sample data for KYC verifications
   const kycVerifications = [
