@@ -9,64 +9,47 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { AdminHeader } from "../../components/layout/AdminHeader"
 import { useAdmin } from "../../contexts/AdminContext"
 import { Badge } from "../../components/ui/badge"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog"
-import { Textarea } from "../../components/ui/textarea"
 import DataTable from "../../components/common/DataTable"
 import StatCard from "../../components/common/StatCard"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"  // Assuming you have a dialog component
 
-const tickets = [
+const disputes = [
   {
-    id: "TKT-001",
-    user: "John Doe",
-    subject: "Unable to complete transaction",
+    id: "DSP-001",
+    user: "Alice Morgan",
+    subject: "Incorrect charge on account",
     status: "Open",
     priority: "High",
-    createdAt: "2024-04-23 10:45 AM",
+    createdAt: "2024-04-23 11:30 AM",
   },
   {
-    id: "TKT-002",
-    user: "Sarah Miller",
-    subject: "Account verification issue",
+    id: "DSP-002",
+    user: "Tom Richards",
+    subject: "Unauthorized transaction",
     status: "In Progress",
-    priority: "Medium",
-    createdAt: "2024-04-22 09:30 AM",
-    assignedTo: "Support Agent 1",
-  },
-  {
-    id: "TKT-003",
-    user: "Robert Johnson",
-    subject: "Withdrawal not received",
-    status: "Open",
     priority: "Critical",
-    createdAt: "2024-04-23 08:15 AM",
+    createdAt: "2024-04-22 01:15 PM",
+    assignedTo: "Dispute Agent 1",
   },
   {
-    id: "TKT-004",
-    user: "Emily Davis",
-    subject: "Virtual card not working",
+    id: "DSP-003",
+    user: "Jane Smith",
+    subject: "Payment reversal issue",
     status: "Resolved",
     priority: "Medium",
-    createdAt: "2024-04-21 14:20 PM",
-    assignedTo: "Support Agent 2",
-  },
-  {
-    id: "TKT-005",
-    user: "Michael Wilson",
-    subject: "App crashing during payment",
-    status: "In Progress",
-    priority: "High",
-    createdAt: "2024-04-22 11:45 AM",
-    assignedTo: "Support Agent 3",
+    createdAt: "2024-04-21 03:40 PM",
+    assignedTo: "Dispute Agent 2",
   },
 ]
 
-const SupportPage = () => {
+const DisputeResolutionPage = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
 
-  const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false)
-  const [activeTicket, setActiveTicket] = useState(null)
-  const [replyMessage, setReplyMessage] = useState("")
+  // State for dialog visibility and content
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [dialogAction, setDialogAction] = useState("")  // 'respond', 'resolve', 'escalate'
+  const [dialogMessage, setDialogMessage] = useState("")
 
   const getPriorityBadge = (priority) => {
     const classes = {
@@ -101,7 +84,7 @@ const SupportPage = () => {
   const columns = [
     {
       key: "id",
-      header: "TICKET ID",
+      header: "DISPUTE ID",
       render: (row) => <span className="font-medium">{row.id}</span>,
     },
     {
@@ -128,7 +111,7 @@ const SupportPage = () => {
       header: "PRIORITY",
       render: (row) => getPriorityBadge(row.priority),
     },
-    ...(hasPermission("assignSupportTickets")
+    ...(hasPermission("assignDisputeAgents")
       ? [
           {
             key: "assignedTo",
@@ -160,22 +143,27 @@ const SupportPage = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => {
-              setActiveTicket(row)
-              setIsReplyDialogOpen(true)
-            }}
+            onClick={() => handleOpenDialog("respond", row.id)}
           >
             <MessageSquare className="mr-2 h-4 w-4" />
-            Reply
+            Respond
           </Button>
           {row.status !== "Resolved" && row.status !== "Closed" && (
-            <Button variant="ghost" size="sm">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleOpenDialog("resolve", row.id)}
+            >
               <CheckCircle className="mr-2 h-4 w-4" />
               Resolve
             </Button>
           )}
           {hasPermission("viewFullTransactionHistory") && (
-            <Button variant="ghost" size="sm">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleOpenDialog("escalate", row.id)}
+            >
               <AlertCircle className="mr-2 h-4 w-4" />
               Escalate
             </Button>
@@ -185,16 +173,33 @@ const SupportPage = () => {
     },
   ]
 
+  const handleOpenDialog = (action, disputeId) => {
+    setDialogAction(action)
+    setDialogMessage("")  // Clear previous message
+    setIsDialogOpen(true)
+  }
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleSubmitDialog = () => {
+    // Handle the submit logic (send the response/resolve/escalate)
+    console.log(`${dialogAction} submitted for dispute ID`)
+    console.log("Message:", dialogMessage)
+    handleCloseDialog()
+  }
+
   return (
     <div className="flex flex-col">
-      <AdminHeader title="Support Dashboard" subtitle="Manage customer support tickets and inquiries" />
+      <AdminHeader title="Dispute Resolution" subtitle="Manage and resolve customer disputes" />
 
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-4">
-          <StatCard title="Open Tickets" value="42" subtitle="+5 new today" />
-          <StatCard title="In Progress" value="28" subtitle="By 5 agents" />
-          <StatCard title="Resolved Today" value="17" subtitle="+23% from yesterday" trend="up" />
-          <StatCard title="Avg. Response Time" value="2.5h" subtitle="-15min from last week" trend="down" />
+          <StatCard title="Open Disputes" value="18" subtitle="+3 new today" />
+          <StatCard title="In Progress" value="12" subtitle="By 4 agents" />
+          <StatCard title="Resolved Today" value="9" subtitle="+12% from yesterday" trend="up" />
+          <StatCard title="Avg. Resolution Time" value="4.2h" subtitle="-10min from last week" trend="down" />
         </div>
 
         <div className="flex items-center justify-between">
@@ -202,75 +207,64 @@ const SupportPage = () => {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search tickets..."
+              placeholder="Search disputes..."
               className="w-[300px] pl-8"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          {hasPermission("assignSupportTickets") && <Button>Create New Ticket</Button>}
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Support Tickets</CardTitle>
+            <CardTitle>Dispute Tickets</CardTitle>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="all">
               <TabsList>
-                <TabsTrigger value="all">All Tickets</TabsTrigger>
+                <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="open">Open</TabsTrigger>
                 <TabsTrigger value="in-progress">In Progress</TabsTrigger>
                 <TabsTrigger value="resolved">Resolved</TabsTrigger>
               </TabsList>
               <TabsContent value="all" className="mt-4">
-                <DataTable columns={columns} data={tickets} />
+                <DataTable columns={columns} data={disputes} />
               </TabsContent>
               <TabsContent value="open" className="mt-4">
-                <DataTable columns={columns} data={tickets.filter((ticket) => ticket.status === "Open")} />
+                <DataTable columns={columns} data={disputes.filter((d) => d.status === "Open")} />
               </TabsContent>
               <TabsContent value="in-progress" className="mt-4">
-                <DataTable columns={columns} data={tickets.filter((ticket) => ticket.status === "In Progress")} />
+                <DataTable columns={columns} data={disputes.filter((d) => d.status === "In Progress")} />
               </TabsContent>
               <TabsContent value="resolved" className="mt-4">
-                <DataTable columns={columns} data={tickets.filter((ticket) => ticket.status === "Resolved")} />
+                <DataTable columns={columns} data={disputes.filter((d) => d.status === "Resolved")} />
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
-
-        {/* Reply Dialog */}
-        <Dialog open={isReplyDialogOpen} onOpenChange={setIsReplyDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Reply to Ticket {activeTicket?.id}</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">
-                <span className="font-semibold">{activeTicket?.user}</span>: {activeTicket?.subject}
-              </p>
-              <Textarea
-                placeholder="Write your reply..."
-                value={replyMessage}
-                onChange={(e) => setReplyMessage(e.target.value)}
-              />
-            </div>
-            <DialogFooter className="mt-4">
-              <Button
-                onClick={() => {
-                  console.log(`Reply to ${activeTicket?.id}:`, replyMessage)
-                  setReplyMessage("")
-                  setIsReplyDialogOpen(false)
-                }}
-              >
-                Send Reply
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </main>
+
+      {/* Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{dialogAction === "respond" ? "Respond to Dispute" : dialogAction === "resolve" ? "Resolve Dispute" : "Escalate Dispute"}</DialogTitle>
+          </DialogHeader>
+          <Input
+            type="text"
+            placeholder={`Enter a message to ${dialogAction}`}
+            value={dialogMessage}
+            onChange={(e) => setDialogMessage(e.target.value)}
+            className="mt-4"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleSubmitDialog}>Submit</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
 
-export default SupportPage
+export default DisputeResolutionPage

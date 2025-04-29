@@ -18,6 +18,8 @@ import SuspendedAccounts from "./pages/users/SuspendedAccounts";
 import RecentlyActive from "./pages/users/RecentlyActive";
 import PendingVerification from "./pages/users/PendingVerification";
 import UserProfile from "./pages/users/ActionPages/ViewProfile";
+import Transactions from "./pages/transactions/page";
+import Support from "./pages/support/page";
 import EditUser from "./pages/users/ActionPages/EditUser";
 import ChangePassword from "./pages/users/ActionPages/ChangePassword";
 import SuspendAccount from "./pages/users/ActionPages/SuspendAccount";
@@ -28,13 +30,18 @@ import SmsAlerts from "./pages/notifications/SmsAlerts";
 import EmailCampaigns from "./pages/notifications/EmailCampaigns";
 import Scheduled from "./pages/notifications/Scheduled";
 import DeliveryLogs from "./pages/notifications/DeliveryLogs";
+import VirtualCardsPage from "./pages/wallets/virtual-cards.jsx";
+// import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
+// import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
+// import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
+// import SystemBalancePage from "./pages/wallets/system.jsx";
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginForm />} />
       </Routes>
-
       <AdminProvider>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -83,7 +90,8 @@ function App() {
               path="dashboard/compliance/aml"
               element={<AmlMonitoring />}
             />
-
+            <Route path="dashboard/transactions/*" element={<Transactions />} />
+            <Route path="dashboard/support/*" element={<Support />} />
             <Route
               path="dashboard/notifications"
               element={<NotificationsPage />}
@@ -103,6 +111,26 @@ function App() {
             />
             <Route path="dashboard/settings" element={<SettingsPage />} />
             <Route path="dashboard/reports" element={<ReportsPage />} />
+            <Route
+              path="dashboard/wallets/virtual-cards"
+              element={<VirtualCardsPage />}
+            />
+            {/* <Route
+              path="dashboard/wallets/withdrawals"
+              element={<FundingWithdrawalsPage />}
+            /> */}
+            {/* <Route
+              path="dashboard/wallets/gateways"
+              element={<PaymentGatewaysPage />}
+            /> */}
+            {/* <Route
+              path="dashboard/wallets/corporate"
+              element={<CorporateAccountsPage />}
+            /> */}
+            {/* <Route
+              path="dashboard/wallets/system"
+              element={<SystemBalancePage />}
+            /> */}
           </Route>
         </Routes>
       </AdminProvider>

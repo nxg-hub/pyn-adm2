@@ -6,8 +6,8 @@ export default function MoneyTransfersPage() {
     <>
       <Breadcrumb
         items={[
-          { label: "Dashboard", path: "/" },
-          { label: "Transactions", path: "/dashboard/transactions" },
+          // { label: "Dashboard", path: "/" },
+          // { label: "Transactions", path: "/dashboard/transactions" },
           { label: "Money Transfers", path: "/dashboard/transactions/money-transfers" },
         ]}
       />
