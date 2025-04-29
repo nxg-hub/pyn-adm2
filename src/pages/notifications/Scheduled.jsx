@@ -1,20 +1,18 @@
-"use client";
-
 import { useState } from "react";
-import { Filter, Search, MoreHorizontal, Send, Trash2 } from "lucide-react";
+import { Filter, MoreHorizontal, Search, Send, Trash2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import {
   Tabs,
@@ -89,13 +87,13 @@ const notifications = [
   },
 ];
 
-const NotificationsPage = () => {
+const Scheduled = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [view, setView] = useState(false);
   const [edit, setEdit] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     message: "",
@@ -152,7 +150,6 @@ const NotificationsPage = () => {
       </div>
     );
   }
-
   return (
     <div className="flex flex-col">
       <main className="flex-1 p-4 md:p-6 space-y-6">
@@ -179,7 +176,7 @@ const NotificationsPage = () => {
               className="w-full md:w-auto cursor-pointer"
               onClick={() => setIsModalOpen(true)}>
               <Send className="mr-2 h-4 w-4" />
-              Create Notification
+              Create Scheduled Notification
             </Button>
           </div>
         </div>
@@ -195,7 +192,7 @@ const NotificationsPage = () => {
           <TabsContent value="all" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>All Notifications</CardTitle>
+                <CardTitle>All Scheduled Notifications</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -258,7 +255,13 @@ const NotificationsPage = () => {
                           </td>
                           <td className="px-4 py-3 text-sm">
                             <div className="flex items-center gap-2">
-                              {/* <Button variant="ghost" size="sm">
+                              {/* <Button
+                                onClick={() => {
+                                  setView(true);
+                                  setSelectedNotification(notification);
+                                }}
+                                variant="ghost"
+                                size="sm">
                                 View
                               </Button>
                               {notification.status === "Draft" && (
@@ -316,7 +319,7 @@ const NotificationsPage = () => {
           <TabsContent value="sent" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Sent Notifications</CardTitle>
+                <CardTitle>Sent Scheduled Notifications</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -396,7 +399,7 @@ const NotificationsPage = () => {
                                     <DropdownMenuItem
                                       onClick={() => {
                                         setEdit(true);
-                                        setFormData(notification);
+                                        setSelectedNotification(notification);
                                       }}
                                       className="hover:bg-green-400">
                                       Edit
@@ -504,7 +507,7 @@ const NotificationsPage = () => {
                                     <DropdownMenuItem
                                       onClick={() => {
                                         setEdit(true);
-                                        setFormData(notification);
+                                        setSelectedNotification(notification);
                                       }}
                                       className="hover:bg-green-400">
                                       Edit
@@ -529,7 +532,7 @@ const NotificationsPage = () => {
           <TabsContent value="draft" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Draft Notifications</CardTitle>
+                <CardTitle>Draft Scheduled Notifications</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -581,18 +584,6 @@ const NotificationsPage = () => {
                             </td>
                             <td className="px-4 py-3 text-sm">
                               <div className="flex items-center gap-2">
-                                {/* <Button variant="ghost" size="sm">
-                                  Edit
-                                </Button>
-                                <Button variant="ghost" size="sm">
-                                  Send
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-red-600">
-                                  <Trash2 className="h-4 w-4" />
-                                </Button> */}
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="icon">
@@ -609,12 +600,7 @@ const NotificationsPage = () => {
                                       className="hover:bg-[#3A859E]">
                                       View
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      onClick={() => {
-                                        setEdit(true);
-                                        setFormData(notification);
-                                      }}
-                                      className="hover:bg-green-400">
+                                    <DropdownMenuItem className="hover:bg-green-400">
                                       Send
                                     </DropdownMenuItem>
                                     <DropdownMenuItem className="hover:bg-[#3A859E]">
@@ -691,7 +677,7 @@ const NotificationsPage = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Create Notification"
-        description="Create and send a new notification to users">
+        description="Create a Scheduled notification">
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="title">Notification Title</Label>
@@ -757,6 +743,32 @@ const NotificationsPage = () => {
                   <SelectItem value="inactive">Inactive Users</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="date">Notification date</Label>
+              <Input
+                id="date"
+                name="date"
+                type="date"
+                placeholder="Enter notification date"
+                value={formData.date}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="time">Notification time</Label>
+              <Input
+                id="time"
+                name="time"
+                type="time"
+                placeholder="Enter notification time"
+                value={formData.time}
+                onChange={handleChange}
+                required
+              />
             </div>
           </div>
 
@@ -925,4 +937,4 @@ const NotificationsPage = () => {
   );
 };
 
-export default NotificationsPage;
+export default Scheduled;
