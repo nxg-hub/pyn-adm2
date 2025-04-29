@@ -6,8 +6,8 @@ import { useSelector } from "react-redux";
 
 
 
-const SuspendUserModal = ({ isOpen, onClose, }) => {
-    const user = useSelector((state) => state.users.selectedUser);
+const SuspendAdminModal = ({ isOpen, onClose, }) => {
+    const admin = useSelector((state) => state.admin.admin);
 
   const [loading, setLoading] = useState(false);
 
@@ -19,7 +19,7 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: user.email }),
+        body: JSON.stringify({ email: admin.email }),
       });
 
       const data = await response.json();
@@ -41,8 +41,8 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Suspend ${user.firstName} ${user.lastName}`}
-      description="Please provide a reason for suspending this account. This action can impact user access."
+      title={`Suspend ${admin.firstName} ${admin.lastName}`}
+      description="Please provide a reason for suspending this account."
 
       
       footer={
@@ -66,13 +66,12 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
                     name="reason"
                     // value={reason}
                     onChange={(e) => setReason(e.target.value)}
-                    placeholder="e.g. User violated terms of service..."
+                    placeholder="e.g. Admin violated terms of service..."
                     rows={5}
                     required
                   />
-      {/* You can add form elements or just leave it empty if it's a confirm dialog */}
     </FormModal>
   );
 };
 
-export default SuspendUserModal;
+export default SuspendAdminModal;

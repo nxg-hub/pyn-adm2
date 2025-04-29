@@ -21,9 +21,14 @@ import UserProfile from "./pages/users/ActionPages/ViewProfile";
 import EditUser from "./pages/users/ActionPages/EditUser";
 import ChangePassword from "./pages/users/ActionPages/ChangePassword";
 import SuspendAccount from "./pages/users/ActionPages/SuspendAccount";
+import ViewTransactions from "./pages/users/ActionPages/ViewTransactions";
 import KycVerifications from "./pages/compliance/KycVerification";
 import SuspiciousActivities from "./pages/compliance/SuspiciousActivities";
 import AmlMonitoring from "./pages/compliance/AmlMonitoring";
+import AuditLogs from "./pages/compliance/AuditLogs";
+import AdminProfile from "./pages/users/AdminActionPages/ViewProfile";
+import EditAdmin from "./pages/users/AdminActionPages/EditAdmin";
+import SuspendUserModal from "./pages/users/AdminActionPages/SuspendAdmin";
 function App() {
     return (
         <BrowserRouter>
@@ -38,10 +43,15 @@ function App() {
                     {/* <Route path="/login" element={<LoginForm />} /> */}
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="dashboard/users" element={<UsersPage />} />
-                        <Route path="/profile" element={<UserProfile />} />
+                        <Route path="/user-profile" element={<UserProfile />} />
                         <Route path="/edit-user" element={<EditUser />} />
                         <Route path="/reset-password" element={<ChangePassword />} />
                         <Route path="/suspend-account" element={<SuspendAccount/>} />
+                        <Route path="/transactions" element={<ViewTransactions />} />
+                        <Route path="/admin-profile" element={<AdminProfile/>} />
+                        <Route path="/edit-admin" element={<EditAdmin/>} />
+                        <Route path="/suspend-admin" element={<SuspendUserModal/>} />
+
                         <Route path="dashboard/users/admin-users" element={<AdminsPage />} />
                         <Route path="dashboard/users/suspended" element={<SuspendedAccounts />} />
                         <Route path="dashboard/users/active" element={<RecentlyActive />} />
@@ -55,7 +65,7 @@ function App() {
                         <Route path="dashboard/compliance/kyc" element={<KycVerifications />} />
                         <Route path="dashboard/compliance/suspicious-activities" element={<SuspiciousActivities />} />
                         <Route path="dashboard/compliance/aml" element={<AmlMonitoring />} />
-
+                        <Route path="dashboard/compliance/audit" element={<AuditLogs />} />
                         <Route path="dashboard/notifications" element={<NotificationsPage />} />
                         <Route path="dashboard/settings" element={<SettingsPage />} />
                         <Route path="dashboard/reports" element={<ReportsPage />} />

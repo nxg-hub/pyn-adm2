@@ -15,8 +15,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Avatar, AvatarFallback } from "../../components/ui/avatar"
 import avatar from "../../assets/avatar.png"
 import Pagination from "../../components/ui/pagination"
-import {  useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AdminInvite from "./AddAdminModal"
+import { useNavigate } from "react-router-dom";
+import SuspendAdminModal from "./AdminActionPages/SuspendAdmin"
+import AdminPasswordReset from "./AdminActionPages/ResetPassword"
+import { setSelectedAdmin } from "../../redux/adminsSlice"
   
 
 const ITEMS_PER_PAGE = 5;
@@ -26,15 +30,39 @@ const itemsPerPage =  ITEMS_PER_PAGE;
 
 function AdminsPage() {
   const admins = useSelector((state) => state.admins.admins); 
+  const admin = useSelector((state) => state.admin.admin);
+  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const [activeSection, setActiveSection] = useState("superAdmin");
+  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [showAdminPasswordModal, setAdminPasswordModal] = useState(false);
+
+
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [inviteModal, setInviteModal] = useState('')
 
-const filteredData = (admins)?.filter((admin) => {
-  const firstNameMatch = admin.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
-  const emailMatch = admin.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  return firstNameMatch || emailMatch
-})
+  const superAdmin = admins?.filter((a) => a.adminUserType === "SUPER_ADMIN") ;
+  const customerCareReps = admins?.filter((a) => a.adminUserType === "CUSTOMER_CARE_REP") ;
+  const financeManagers = admins?.filter((a) => a.adminUserType === "FINANCE_MANAGER") ;
+  const generalManagers = admins?.filter((a) => a.adminUserType === "GENERAL_MANAGER") ;
+  const operationsManager = admins?.filter((a) => a.adminUserType === "OPERATIONS_MANAGER") ;
+
+  const adminSections = {
+    superAdmin,
+    customerCareReps,
+    financeManagers,
+    generalManagers,
+    operationsManager,
+  };
+  const selectedAdmins = adminSections[activeSection] || [];
+
+  // Then, filter it
+  const filteredData = selectedAdmins.filter((admin) => {
+    const firstNameMatch = admin.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
+    const emailMatch = admin.email?.toLowerCase().includes(searchQuery.toLowerCase());
+    return firstNameMatch || emailMatch;
+  });
 const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -66,29 +94,43 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
               <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
-            <Button 
-            onClick={handleAddAdminClick}>
-              <UserPlus className="mr-2 h-4 w-4" />
-              Add New Admin
-            </Button>
+            {admin.adminUserType === "SUPER_ADMIN" && (
+  <Button onClick={handleAddAdminClick}>
+    <UserPlus className="mr-2 h-4 w-4" />
+    Add New Admin
+  </Button>
+)}
+
           </div>
         </div>
-      </header>
- {/* Tabs */}
-     
+      </header>   
 
       <main className="flex-1 p-4 md:p-6">
         <Card>
           <CardHeader>
             <CardTitle>ADMINS</CardTitle>
           </CardHeader>
+          <div className="flex gap-5 px-4 py-2 border-b text-gray-600">
+        {["superAdmin", "customerCareReps", "financeManagers", "generalManagers", "operationsMangers"].map((section) => (
+          <div key={section} className="cursor-pointer group" onClick={() => setActiveSection(section)}>
+            <h1
+              className={`relative text-lg transition-colors duration-300 ${
+                activeSection === section ? "text-white font-bold" : "text-white"
+              }`}
+            >
+              {section.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
+              
+            </h1>
+          </div>
+        ))}
+      </div>
+
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>NAME</TableHead>
                   <TableHead>EMAIL</TableHead>
-                  <TableHead>ROLE</TableHead>
                   <TableHead>STATUS</TableHead>
                   <TableHead>ACTIONS</TableHead>
                 </TableRow>
@@ -113,7 +155,6 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                       </div>
                     </TableCell>
                     <TableCell>{admin.email}</TableCell>
-                    <TableCell>{admin.adminUserType}</TableCell>
 
                     <TableCell>
                       <span
@@ -137,13 +178,23 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                           </Button>
                         </DropdownMenuTrigger>
 
-                        <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             
+                        <DropdownMenuContent   className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             
                         >
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">View Profile</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">Edit User</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">Reset Password</DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
+                                                      dispatch(setSelectedAdmin(admin));
+                                                      navigate("/admin-profile"); }}>View Profile</DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]"
+                          onClick={() => {
+                                                      dispatch(setSelectedAdmin(admin));
+                                                      navigate("/edit-admin"); }}>Edit Admin</DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]"
+                          onClick={() => { setAdminPasswordModal(true)
+                            dispatch(setSelectedAdmin(admin));
+                             }}>Reset Password</DropdownMenuItem>
                           {admin.enabled === true && (
-                            <DropdownMenuItem className="hover:bg-red-500">Suspend Account</DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowSuspendModal(true)
+                              dispatch(setSelectedAdmin(admin));
+                             }}>Suspend Admin</DropdownMenuItem>
                           )}
                           {admin.enabled === false && (
                             <DropdownMenuItem className="hover:bg-green-400">Reactivate Account</DropdownMenuItem>
@@ -158,6 +209,14 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                 ))}
               </TableBody>
             </Table>
+            <SuspendAdminModal
+      isOpen={showSuspendModal}
+      onClose={() => setShowSuspendModal(false)}
+    />
+    <AdminPasswordReset
+      isOpen={showAdminPasswordModal}
+      onClose={() => setAdminPasswordModal(false)}
+    />
             <div className="flex items-center justify-between mt-4">
             
                <Pagination
@@ -167,7 +226,6 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
         totalItems={totalAdmins}
       itemsPerPage={itemsPerPage}
       itemLabel="admins"
-
 
       />
             </div>

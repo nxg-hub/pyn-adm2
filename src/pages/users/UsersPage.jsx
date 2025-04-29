@@ -18,8 +18,10 @@ import Pagination from "../../components/ui/pagination"
 import { fetchUsers } from "../../redux/UsersSlice"
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedUser } from "../../redux/UsersSlice"
+import { setSelectedWalletId } from "../../redux/fetchUserTransactionsSlice"
 import { useNavigate } from "react-router-dom";
-
+import SuspendUserModal from "./ActionPages/SuspendAccount"
+import InitiatePasswordReset from "./ActionPages/ChangePassword"
   
 const ITEMS_PER_PAGE = 5;
 
@@ -34,6 +36,9 @@ function UsersPage() {
   const [activeSection, setActiveSection] = useState("personalUsers");
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
+  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [showInitiatePasswordModal, setInitiatePasswordModal] = useState(false);
+
 
   useEffect(() => { 
         dispatch(fetchUsers());
@@ -43,12 +48,13 @@ function UsersPage() {
 const personalUsers = users?.filter((u) => u.userType === "PERSONAL") ;
 const businessUsers = users?.filter((u) => u.userType === "CORPORATE") ;
 
-console.log(personalUsers.length)
 const filteredData = (activeSection === "personalUsers" ? personalUsers : businessUsers)?.filter((user) => {
   const firstNameMatch = user.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
   const emailMatch = user.email?.toLowerCase().includes(searchQuery.toLowerCase())
   return firstNameMatch || emailMatch
 })
+
+
 const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -83,31 +89,26 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
           </div>
         </div>
       </header>
- {/* Tabs */}
-      <div className="flex gap-10 px-6 py-4 border-b text-gray-600">
-        {["personalUsers", "businessUsers"].map((section) => (
-          <div key={section} className="cursor-pointer group" onClick={() => setActiveSection(section)}>
-            <h1
-              className={`relative text-lg transition-colors duration-300 ${
-                activeSection === section ? "text-[#3A859E] font-bold" : "text-gray-600"
-              }`}
-            >
-              {section.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
-              <span
-                className={`absolute left-0 right-0 top-8 h-[2px] bg-[#3A859E] transition-all duration-300 ${
-                  activeSection === section ? "w-full" : "w-0"
-                }`}
-              />
-            </h1>
-          </div>
-        ))}
-      </div>
 
       <main className="flex-1 p-4 md:p-6">
         <Card>
           <CardHeader>
             <CardTitle>Users</CardTitle>
           </CardHeader>
+          <div className="flex gap-10 px-6 py-4 border-b text-gray-600">
+        {["personalUsers", "businessUsers"].map((section) => (
+          <div key={section} className="cursor-pointer group" onClick={() => setActiveSection(section)}>
+            <h1
+              className={`relative text-lg transition-colors duration-300 ${
+                activeSection === section ? "text-white font-bold" : "text-white"
+              }`}
+            >
+              {section.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
+              
+            </h1>
+          </div>
+        ))}
+      </div>
           <CardContent>
             <Table>
               <TableHeader>
@@ -160,21 +161,29 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                           </Button>
                         </DropdownMenuTrigger>
 
-                        <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             
+                        <DropdownMenuContent   className=" right-0 mb-5 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             
                         >
                           <DropdownMenuItem className="hover:bg-[#3A859E]"
                            onClick={() => {
                             dispatch(setSelectedUser(user));
-                            navigate("/profile"); }}>View Profile</DropdownMenuItem>
+                            navigate("/user-profile"); }}>View Profile</DropdownMenuItem>
                           <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
                             dispatch(setSelectedUser(user));
                             navigate("/edit-user"); }}>Edit User</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
-                            dispatch(setSelectedUser(user));
-                            navigate("/reset-password"); }}>Reset Password</DropdownMenuItem>
+                             <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
+    dispatch(setSelectedWalletId(user.walletId));
+    dispatch(setSelectedUser(user));
+
+    navigate("/transactions"); }}>View Transactions</DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => { setInitiatePasswordModal(true)
+                              dispatch(setSelectedUser(user));
+
+                             }}>initiate Reset Password</DropdownMenuItem>
                           {user.enabled === true && (
-                            <DropdownMenuItem className="hover:bg-red-400"onClick={() => {
-                              navigate("/suspend-account"); }}>Suspend Account</DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowSuspendModal(true)
+                              dispatch(setSelectedUser(user));
+
+                                                         }}>Suspend Account</DropdownMenuItem>
                           )}
                           {user.enabled === false && (
                             <DropdownMenuItem className="hover:bg-green-400">Reactivate Account</DropdownMenuItem>
@@ -189,6 +198,14 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                 ))}
               </TableBody>
             </Table>
+            <SuspendUserModal
+                  isOpen={showSuspendModal}
+                  onClose={() => setShowSuspendModal(false)}
+                />
+                <InitiatePasswordReset
+                  isOpen={showInitiatePasswordModal}
+                  onClose={() => setInitiatePasswordModal(false)}
+                />
             <div className="flex items-center justify-between mt-4">
             
                <Pagination

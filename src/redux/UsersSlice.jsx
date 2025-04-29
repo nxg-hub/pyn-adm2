@@ -27,7 +27,7 @@ export const fetchUsers = createAsyncThunk('user/fetchUsers',   async (_, { reje
 // Initial state
 const initialState = {
   users: [],
-  selectedUser: null, // Store the selected user details
+  selectedUser: null, 
   success: false,
   loading: false,
   error: null,

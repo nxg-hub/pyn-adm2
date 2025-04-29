@@ -87,7 +87,10 @@ export function AdminSidebar() {
     return location.pathname === path || location.pathname.startsWith(`${path}/`)
   }
 
- 
+  const adminRole = localStorage.getItem("adminRole"); // fetch the role properly
+  const hiddenFor = ["CUSTOMER_CARE_REP", "FINANCE_MANAGER"]; // example
+
+
   return (
     <div className="w-64 border-r bg-card h-screen overflow-y-auto">
       <div className="flex h-14 items-center border-b px-4 font-bold text-xl bg-[#006181] text-white">Payina Admin</div>
@@ -127,12 +130,15 @@ export function AdminSidebar() {
               href="/dashboard/users/suspended"
               isActive={location.pathname === "/dashboard/users/suspended"}
             />
-            <SidebarSubItem
-              label="Admin Users"
-              href="/dashboard/users/admin-users"
-              isActive={location.pathname === "/dashboard/users/admin-users"}
-              hasPermission={hasPermission("manageAdmins")}
-            />
+            
+           { !hiddenFor.includes(adminRole) && (
+  <SidebarSubItem
+    label="Admin Users"
+    href="/dashboard/users/admin-users"
+    isActive={location.pathname === "/dashboard/users/admin-users"}
+    hasPermission={hasPermission("manageAdmins")}
+  />
+)}
           </SidebarItem>
 
           <SidebarItem
