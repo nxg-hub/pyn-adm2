@@ -26,6 +26,11 @@ import SuspendAccount from "./pages/users/ActionPages/SuspendAccount";
 import KycVerifications from "./pages/compliance/KycVerification";
 import SuspiciousActivities from "./pages/compliance/SuspiciousActivities";
 import AmlMonitoring from "./pages/compliance/AmlMonitoring";
+import VirtualCardsPage from "./pages/wallets/virtual-cards.jsx";
+import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
+import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
+import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
+import SystemBalancePage from "./pages/wallets/system.jsx";
 
 
 
@@ -65,6 +70,11 @@ function App() {
                         <Route path="dashboard/notifications" element={<NotificationsPage />} />
                         <Route path="dashboard/settings" element={<SettingsPage />} />
                         <Route path="dashboard/reports" element={<ReportsPage />} />
+                        <Route path="dashboard/wallets/virtual-cards" element={<VirtualCardsPage />} />
+                        <Route path="dashboard/wallets/withdrawals" element={<FundingWithdrawalsPage />} />
+                        <Route path="dashboard/wallets/gateways" element={<PaymentGatewaysPage />} />
+                        <Route path="dashboard/wallets/corporate" element={<CorporateAccountsPage />} />
+                        <Route path="dashboard/wallets/system" element={<SystemBalancePage />} />
                     </Route>
                 </Routes>
             </AdminProvider>
