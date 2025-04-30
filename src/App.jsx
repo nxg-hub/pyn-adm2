@@ -36,6 +36,11 @@ import EmailCampaigns from "./pages/notifications/EmailCampaigns";
 import Scheduled from "./pages/notifications/Scheduled";
 import DeliveryLogs from "./pages/notifications/DeliveryLogs";
 import VirtualCardsPage from "./pages/wallets/virtual-cards.jsx";
+import UserAnalytics from "./pages/analytics/UserAnalytics.jsx";
+import PerformanceReports from "./pages/analytics/PerformanceReports.jsx";
+import TransactionAanlytics from "./pages/analytics/TransactionAanlytics.jsx";
+import FunnelCharts from "./pages/analytics/FunnelCharts.jsx";
+import ExportReports from "./pages/analytics/ExportReports.jsx";
 import TransactionsPage from "./pages/transactions/TransactionsPage.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
@@ -86,6 +91,27 @@ function App() {
             />
             <Route path="dashboard/wallets" element={<WalletsPage />} />
             <Route path="dashboard/analytics" element={<AnalyticsPage />} />
+
+            <Route
+              path="dashboard/analytics/users"
+              element={<UserAnalytics />}
+            />
+            <Route
+              path="dashboard/analytics/performance"
+              element={<PerformanceReports />}
+            />
+            <Route
+              path="dashboard/analytics/funnels"
+              element={<FunnelCharts />}
+            />
+            <Route
+              path="dashboard/analytics/export"
+              element={<ExportReports />}
+            />
+            <Route
+              path="dashboard/analytics/transactions"
+              element={<TransactionAanlytics />}
+            />
             <Route path="dashboard/support" element={<SupportPage />} />
             <Route path="dashboard/compliance" element={<CompliancePage />} />
             <Route
