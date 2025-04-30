@@ -82,7 +82,7 @@ const SidebarSubItem = ({
         className={cn(
           "flex items-center gap-2 rounded-md px-3 py-1 text-sm transition-colors",
           isActive
-            ? "bg-muted font-medium text-stone-600"
+            ? "bg-muted font-medium text-blue-300"
             : "text-muted-foreground hover:bg-muted hover:text-foreground"
         )}>
         {Icon && <Icon className="h-3 w-3" />}
@@ -381,8 +381,8 @@ export function AdminSidebar() {
             hasPermission={hasPermission("viewFinancialReports")}>
             <SidebarSubItem
               label="Revenue Analytics"
-              href="/dashboard/analytics/revenue"
-              isActive={location.pathname === "/dashboard/analytics/revenue"}
+              href="/dashboard/analytics"
+              isActive={location.pathname === "/dashboard/analytics"}
             />
             <SidebarSubItem
               label="User Analytics"
@@ -421,11 +421,11 @@ export function AdminSidebar() {
             href="/dashboard/notifications"
             isActive={isActive("/dashboard/notifications")}
             hasPermission={hasPermission("sendPushNotifications")}>
-            {/* <SidebarSubItem
+            <SidebarSubItem
               label="Push Notifications"
-              href="/dashboard/notifications/push"
-              isActive={location.pathname === "/dashboard/notifications/push"}
-            /> */}
+              href="/dashboard/notificationsh"
+              isActive={location.pathname === "/dashboard/notifications"}
+            />
             <SidebarSubItem
               label="SMS Alerts"
               href="/dashboard/notifications/sms"
