@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { Filter, Search, MoreHorizontal, Send, Trash2 } from "lucide-react";
+import { Filter, MoreHorizontal, Search, Send, Trash2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -9,12 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
 import { Input } from "../../components/ui/input";
 import {
   Tabs,
@@ -31,6 +23,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 import { Switch } from "../../components/ui/switch";
 import { AdminHeader } from "../../components/layout/AdminHeader";
 import { useAdmin } from "../../contexts/AdminContext";
@@ -88,8 +86,7 @@ const notifications = [
     sentTo: "New Users",
   },
 ];
-
-const NotificationsPage = () => {
+const SmsAlerts = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -152,7 +149,6 @@ const NotificationsPage = () => {
       </div>
     );
   }
-
   return (
     <div className="flex flex-col">
       <main className="flex-1 p-4 md:p-6 space-y-6">
@@ -170,8 +166,10 @@ const NotificationsPage = () => {
             />
           </div>
 
-          <div className="flex gap-2 w-full md:w-auto cursor-pointer">
-            <Button variant="outline" className="w-full md:w-auto">
+          <div className="flex gap-2 w-full md:w-auto">
+            <Button
+              variant="outline"
+              className="w-full md:w-auto cursor-pointer">
               <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
@@ -179,7 +177,7 @@ const NotificationsPage = () => {
               className="w-full md:w-auto cursor-pointer"
               onClick={() => setIsModalOpen(true)}>
               <Send className="mr-2 h-4 w-4" />
-              Create Notification
+              Create SMS Alerts
             </Button>
           </div>
         </div>
@@ -195,7 +193,7 @@ const NotificationsPage = () => {
           <TabsContent value="all" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>All Notifications</CardTitle>
+                <CardTitle>Sms Alerts</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -316,7 +314,7 @@ const NotificationsPage = () => {
           <TabsContent value="sent" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Sent Notifications</CardTitle>
+                <CardTitle>Sent SMS</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -421,7 +419,7 @@ const NotificationsPage = () => {
           <TabsContent value="scheduled" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Scheduled Notifications</CardTitle>
+                <CardTitle>Scheduled SMS</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -529,7 +527,7 @@ const NotificationsPage = () => {
           <TabsContent value="draft" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Draft Notifications</CardTitle>
+                <CardTitle>Draft SMS</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -615,7 +613,7 @@ const NotificationsPage = () => {
                                         setFormData(notification);
                                       }}
                                       className="hover:bg-green-400">
-                                      Send
+                                      Edit
                                     </DropdownMenuItem>
                                     <DropdownMenuItem className="hover:bg-[#3A859E]">
                                       Delete
@@ -690,8 +688,8 @@ const NotificationsPage = () => {
       <FormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Create Notification"
-        description="Create and send a new notification to users">
+        title="Create SMS Alert"
+        description="Create and send new sms alerts to users">
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="title">Notification Title</Label>
@@ -706,7 +704,7 @@ const NotificationsPage = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">Notification Message</Label>
+            <Label htmlFor="message">Sms Alert Message</Label>
             <Textarea
               id="message"
               name="message"
@@ -925,4 +923,4 @@ const NotificationsPage = () => {
   );
 };
 
-export default NotificationsPage;
+export default SmsAlerts;

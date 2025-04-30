@@ -13,4 +13,4 @@ const Separator = React.forwardRef(({ className, orientation = "horizontal", dec
 ))
 Separator.displayName = "Separator"
 
-export default { Separator };
+export default Separator;

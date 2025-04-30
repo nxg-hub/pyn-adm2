@@ -115,9 +115,11 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
           <div key={section} className="cursor-pointer group" onClick={() => setActiveSection(section)}>
             <h1
               className={`relative text-lg transition-colors duration-300 ${
-                activeSection === section ? "text-white font-bold" : "text-white"
+                activeSection === section ? "text-white bg-gray-600 px-1 rounded-md" : "text-white"
               }`}
-            >
+
+>
+  
               {section.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
               
             </h1>

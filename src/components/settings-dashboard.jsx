@@ -1,14 +1,14 @@
-import { Badge } from "/ui/badge"
+import { Badge } from "./ui/badge"
 import { Save, User, Shield, Bell, Globe, CreditCard, Lock } from "lucide-react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "/ui/tabs"
-import { Input } from "/ui/input"
-import { Button } from "/ui/button"
-import { Label } from "/ui/label"
-import { Switch } from "/ui/switch"
-import { useAdmin } from "./admin-context"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
+import { Input } from "./ui/input"
+import { Button } from "./ui/button"
+import { Label } from "./ui/label"
+import { Switch } from "./ui/switch"
+import { useAdmin } from "../contexts/AdminContext"
 
-export function SettingsDashboard() {
+ function SettingsDashboard() {
   const { hasPermission, currentRole } = useAdmin()
   const canEditSettings = hasPermission("settings", "edit")
 
@@ -506,3 +506,4 @@ export function SettingsDashboard() {
     </div>
   )
 }
+export default SettingsDashboard

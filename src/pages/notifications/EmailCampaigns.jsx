@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { Filter, Search, MoreHorizontal, Send, Trash2 } from "lucide-react";
+import { Filter, Search, Send, MoreHorizontal, Trash2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -9,12 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
 import { Input } from "../../components/ui/input";
 import {
   Tabs,
@@ -22,6 +14,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 import { Textarea } from "../../components/ui/textarea";
 import { Label } from "../../components/ui/label";
 import {
@@ -89,7 +87,7 @@ const notifications = [
   },
 ];
 
-const NotificationsPage = () => {
+const EmailCampaigns = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -152,7 +150,6 @@ const NotificationsPage = () => {
       </div>
     );
   }
-
   return (
     <div className="flex flex-col">
       <main className="flex-1 p-4 md:p-6 space-y-6">
@@ -170,8 +167,10 @@ const NotificationsPage = () => {
             />
           </div>
 
-          <div className="flex gap-2 w-full md:w-auto cursor-pointer">
-            <Button variant="outline" className="w-full md:w-auto">
+          <div className="flex gap-2 w-full md:w-auto">
+            <Button
+              variant="outline"
+              className="w-full md:w-auto cursor-pointer">
               <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
@@ -179,7 +178,7 @@ const NotificationsPage = () => {
               className="w-full md:w-auto cursor-pointer"
               onClick={() => setIsModalOpen(true)}>
               <Send className="mr-2 h-4 w-4" />
-              Create Notification
+              Create Email Campaigns
             </Button>
           </div>
         </div>
@@ -195,7 +194,7 @@ const NotificationsPage = () => {
           <TabsContent value="all" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>All Notifications</CardTitle>
+                <CardTitle>Email Campaigns</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -925,4 +924,4 @@ const NotificationsPage = () => {
   );
 };
 
-export default NotificationsPage;
+export default EmailCampaigns;
