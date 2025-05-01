@@ -137,7 +137,7 @@ export function AdminSidebar() {
         </SidebarGroup>
 
         {/* Financial Operations */}
-        {(userRole === "super_admin" || userRole === "finance_manager") && (
+        {(userRole === "super_admin" || userRole === "finance_manager" ) && (
           <SidebarGroup>
             <SidebarGroupLabel>Financial Operations</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -237,10 +237,16 @@ export function AdminSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/financial-reports")}>
-                    <Link to="/dashboard/financial-reports">
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/reports")}>
+                    <Link to="/dashboard/reports">
                       <BarChart3 className="h-4 w-4 mr-2" />
                       Reports
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild isActive={isActive("/dashboard/reports/daily")}>
+                    <Link to="/dashboard/reports/daily">
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Daily Reports
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

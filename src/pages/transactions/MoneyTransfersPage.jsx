@@ -1,103 +1,99 @@
 "use client"
 
 import { useState } from "react"
-import { 
-  AlertCircle, CheckCircle, Download, Eye, Filter, MoreHorizontal, Search, XCircle 
-} from "lucide-react"
+import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { Input } from "../../components/ui/input"
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
-} from "../../components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table"
 import { useAdmin } from "../../contexts/AdminContext"
-import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert"
-import { ConfirmModal, FormModal } from "../../components/ui/modal"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
+import { Label } from "../../components/ui/label"
+import { Textarea } from "../../components/ui/textarea"
 
-const transactions = [
-  { id: "TRX-20240423-001", sender: "John Doe", recipient: "Robert Johnson", amount: 2500.0, status: "Success", date: "2024-04-23 10:45 AM", riskLevel: "Low" },
-  { id: "TRX-20240423-002", sender: "Jane Smith", recipient: "Michael Williams", amount: 1200.0, status: "Pending", date: "2024-04-23 11:30 AM", riskLevel: "Medium" },
-  { id: "TRX-20240422-003", sender: "Robert Johnson", recipient: "Sarah Miller", amount: 3500.0, status: "Failed", date: "2024-04-22 03:15 PM", riskLevel: "High" },
-  { id: "TRX-20240422-004", sender: "Emily Davis", recipient: "William Brown", amount: 5000.0, status: "Pending", date: "2024-04-22 09:20 AM", riskLevel: "High" },
-  { id: "TRX-20240421-005", sender: "Michael Wilson", recipient: "Jennifer Taylor", amount: 1800.0, status: "Success", date: "2024-04-21 02:10 PM", riskLevel: "Low" },
+const moneyTransfers = [
+  {
+    id: "TRANS-001",
+    user: "John Doe",
+    amount: 200,
+    date: "2024-04-12",
+    status: "Successful",
+    receiver: "Receiver A",
+  },
+  {
+    id: "TRANS-002",
+    user: "Emma Green",
+    amount: 300,
+    date: "2024-04-15",
+    status: "Pending",
+    receiver: "Receiver B",
+  },
+  {
+    id: "TRANS-003",
+    user: "Olivia White",
+    amount: 150,
+    date: "2024-04-20",
+    status: "Failed",
+    receiver: "Receiver C",
+  },
 ]
 
 function MoneyTransfersPage() {
-  const [selectedTransaction, setSelectedTransaction] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
-  const [showReverseDialog, setShowReverseDialog] = useState(false)
+  const { hasPermission } = useAdmin()
+  const [selectedTransaction, setSelectedTransaction] = useState(null)
+
+  const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
   const [showFlagDialog, setShowFlagDialog] = useState(false)
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
-  const [reverseReason, setReverseReason] = useState("")
+
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false)
-  const [alertMessage, setAlertMessage] = useState("")
 
-  const { hasPermission } = useAdmin()
-
-  const handleViewDetails = (transaction) => setSelectedTransaction(transaction)
-
-  const handleApprove = (transaction) => {
-    setAlertMessage(`Transaction ${transaction.id} approved successfully.`)
-    setShowSuccessAlert(true)
-    setTimeout(() => setShowSuccessAlert(false), 3000)
+  const handleViewDetails = (transaction) => {
+    setSelectedTransaction(transaction)
   }
 
-  const handleDecline = (transaction) => {
-    setAlertMessage(`Transaction ${transaction.id} declined.`)
-    setShowSuccessAlert(true)
-    setTimeout(() => setShowSuccessAlert(false), 3000)
-  }
-
-  const handleDownloadReceipt = (transaction) => {
-    const receiptContent = `Receipt for Transaction ID: ${transaction.id}\nAmount: $${transaction.amount}\nSender: ${transaction.sender}\nRecipient: ${transaction.recipient}\nDate: ${transaction.date}`
-    const blob = new Blob([receiptContent], { type: "text/plain;charset=utf-8" })
-    const link = document.createElement("a")
-    link.href = URL.createObjectURL(blob)
-    link.download = `${transaction.id}-receipt.txt`
-    link.click()
-  }
-
-  const handleReverseTransaction = () => {
-    setShowReverseDialog(false)
-    setAlertMessage(`Transaction ${selectedTransaction?.id} reversed successfully.`)
-    setShowSuccessAlert(true)
-    setTimeout(() => setShowSuccessAlert(false), 3000)
+  const handleMarkSuccess = () => {
+    setShowMarkSuccessDialog(false)
+    // logic to mark as success
   }
 
   const handleFlagTransaction = () => {
     setShowFlagDialog(false)
-    setAlertMessage(`Transaction ${selectedTransaction?.id} flagged for review.`)
-    setShowSuccessAlert(true)
-    setTimeout(() => setShowSuccessAlert(false), 3000)
+    setFlagReason("")
+    // logic to flag transaction
   }
 
   const handleAdjustAmount = () => {
     setShowAdjustDialog(false)
-    setAlertMessage(`Transaction ${selectedTransaction?.id} amount adjusted to ${adjustAmount}.`)
-    setShowSuccessAlert(true)
-    setTimeout(() => setShowSuccessAlert(false), 3000)
+    setAdjustAmount("")
+    // logic to adjust amount
   }
 
-  const filteredTransactions = transactions.filter((t) =>
-    t.id.toLowerCase().includes(searchQuery.toLowerCase())
+  const handleDownloadReceipt = (id) => {
+    // This is where the actual download logic would go. For now, let's log the ID.
+    console.log(`Download receipt for transaction: ${id}`)
+  }
+
+  const filteredTransactions = moneyTransfers.filter((transaction) =>
+    transaction.user.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
     <div className="flex flex-col">
-      <main className="flex-1 p-4 md:p-6 space-y-6">
-        {showSuccessAlert && (
-          <Alert className="bg-green-50 border-green-200">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertTitle>Success</AlertTitle>
-            <AlertDescription>{alertMessage}</AlertDescription>
-          </Alert>
-        )}
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      <header className="border-b">
+        <div className="flex h-16 items-center px-4 gap-4">
+          <h1 className="text-xl font-semibold">Money Transfers Overview</h1>
+          <span className="text-sm text-muted-foreground">Manage money transfer transactions</span>
+          <div className="ml-auto flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -108,29 +104,56 @@ function MoneyTransfersPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
+            <Button>Export</Button>
           </div>
-          <Button>
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
         </div>
+      </header>
 
+      <div className="grid gap-6 md:grid-cols-3 p-6">
         <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">320</div>
+            <p className="text-xs text-muted-foreground">+4.5% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Successful Amount</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">$7,000</div>
+            <p className="text-xs text-muted-foreground">+3.2% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Failed Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">10</div>
+            <p className="text-xs text-red-500">3.2% failure rate</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <main className="grid gap-6 md:grid-cols-7">
+        <Card className="md:col-span-4">
           <CardHeader>
-            <CardTitle>Money Transfers</CardTitle>
+            <CardTitle>Recent Money Transfers</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Transaction ID</TableHead>
+                  <TableHead>ID</TableHead>
+                  <TableHead>User</TableHead>
+                  <TableHead>Receiver</TableHead>
                   <TableHead>Amount</TableHead>
+                  <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
-                  {hasPermission("monitorHighRiskTransactions") && <TableHead>Risk</TableHead>}
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -138,27 +161,23 @@ function MoneyTransfersPage() {
                 {filteredTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.id}</TableCell>
-                    <TableCell>${transaction.amount.toFixed(2)}</TableCell>
+                    <TableCell>{transaction.user}</TableCell>
+                    <TableCell>{transaction.receiver}</TableCell>
+                    <TableCell>${transaction.amount}</TableCell>
+                    <TableCell>{transaction.date}</TableCell>
                     <TableCell>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        transaction.status === "Success" ? "bg-green-100 text-green-800" :
-                        transaction.status === "Pending" ? "bg-yellow-100 text-yellow-800" :
-                        "bg-red-100 text-red-800"
-                      }`}>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          transaction.status === "Successful"
+                            ? "bg-green-100 text-green-800"
+                            : transaction.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
                         {transaction.status}
                       </span>
                     </TableCell>
-                    {hasPermission("monitorHighRiskTransactions") && (
-                      <TableCell>
-                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          transaction.riskLevel === "Low" ? "bg-green-100 text-green-800" :
-                          transaction.riskLevel === "Medium" ? "bg-yellow-100 text-yellow-800" :
-                          "bg-red-100 text-red-800"
-                        }`}>
-                          {transaction.riskLevel}
-                        </span>
-                      </TableCell>
-                    )}
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -168,52 +187,53 @@ function MoneyTransfersPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
-                            <Eye className="mr-2 h-4 w-4" /> View Details
+                            <CheckCircle className="mr-2 h-4 w-4" /> View Details
                           </DropdownMenuItem>
 
-                          {hasPermission("approveRejectTransactions") && transaction.status === "Pending" && (
-                            <>
-                              <DropdownMenuItem onClick={() => handleApprove(transaction)}>
-                                <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Approve
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDecline(transaction)}>
-                                <XCircle className="mr-2 h-4 w-4 text-red-600" /> Decline
-                              </DropdownMenuItem>
-                            </>
+                          {transaction.status === "Successful" && (
+                            <DropdownMenuItem onClick={() => handleDownloadReceipt(transaction.id)}>
+                              <Download className="mr-2 h-4 w-4 text-blue-600" /> Download Receipt
+                            </DropdownMenuItem>
                           )}
 
-                          {hasPermission("approveRejectTransactions") && transaction.status === "Success" && (
-                            <>
-                              <DropdownMenuItem onClick={() => {
+                          {hasPermission("manageMoneyTransfers") && transaction.status === "Pending" && (
+                            <DropdownMenuItem
+                              onClick={() => {
                                 setSelectedTransaction(transaction)
-                                setShowReverseDialog(true)
-                              }}>
-                                <AlertCircle className="mr-2 h-4 w-4 text-amber-600" /> Reverse Transaction
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDownloadReceipt(transaction)}>
-                                <Download className="mr-2 h-4 w-4 text-blue-600" /> Download Receipt
-                              </DropdownMenuItem>
-                            </>
+                                setShowMarkSuccessDialog(true)
+                              }}
+                            >
+                              <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Mark as Successful
+                            </DropdownMenuItem>
                           )}
 
                           {hasPermission("monitorHighRiskTransactions") && (
-                            <DropdownMenuItem onClick={() => {
-                              setSelectedTransaction(transaction)
-                              setShowFlagDialog(true)
-                            }}>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedTransaction(transaction)
+                                setShowFlagDialog(true)
+                              }}
+                            >
                               <AlertCircle className="mr-2 h-4 w-4 text-red-600" /> Flag as Suspicious
                             </DropdownMenuItem>
                           )}
 
-                          {hasPermission("adjustWalletBalances") && (
-                            <DropdownMenuItem onClick={() => {
-                              setSelectedTransaction(transaction)
-                              setAdjustAmount(transaction.amount.toString())
-                              setShowAdjustDialog(true)
-                            }}>
-                              <AlertCircle className="mr-2 h-4 w-4 text-blue-600" /> Adjust Amount
+                          {hasPermission("adjustTransactionAmounts") && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedTransaction(transaction)
+                                setAdjustAmount(transaction.amount.toString())
+                                setShowAdjustDialog(true)
+                              }}
+                            >
+                              <Pencil className="mr-2 h-4 w-4 text-blue-600" /> Adjust Amount
                             </DropdownMenuItem>
                           )}
+
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem>
+                            <AlertCircle className="mr-2 h-4 w-4" /> Contact User
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -223,7 +243,87 @@ function MoneyTransfersPage() {
             </Table>
           </CardContent>
         </Card>
+
+        <Card className="md:col-span-3">
+          <CardHeader>
+            <CardTitle>Transaction Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {selectedTransaction ? (
+              <div className="space-y-4">
+                <div><strong>Receiver:</strong> {selectedTransaction.receiver}</div>
+                <div><strong>Amount:</strong> ${selectedTransaction.amount}</div>
+                <div><strong>Status:</strong> {selectedTransaction.status}</div>
+                <div><strong>Date:</strong> {selectedTransaction.date}</div>
+              </div>
+            ) : (
+              <div>Select a transaction to view details</div>
+            )}
+          </CardContent>
+        </Card>
       </main>
+
+      {/* Dialogs */}
+      <Dialog open={showMarkSuccessDialog} onOpenChange={setShowMarkSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mark as Successful</DialogTitle>
+          </DialogHeader>
+          <div>Are you sure you want to mark this transaction as successful?</div>
+          <DialogFooter>
+            <Button onClick={handleMarkSuccess}>Confirm</Button>
+            <Button variant="outline" onClick={() => setShowMarkSuccessDialog(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showFlagDialog} onOpenChange={setShowFlagDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Flag Transaction as Suspicious</DialogTitle>
+          </DialogHeader>
+          <div>
+            <Label htmlFor="flag-reason">Reason for flagging</Label>
+            <Textarea
+              id="flag-reason"
+              value={flagReason}
+              onChange={(e) => setFlagReason(e.target.value)}
+              placeholder="Provide a reason"
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={handleFlagTransaction}>Flag</Button>
+            <Button variant="outline" onClick={() => setShowFlagDialog(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showAdjustDialog} onOpenChange={setShowAdjustDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Adjust Transaction Amount</DialogTitle>
+          </DialogHeader>
+          <div>
+            <Label htmlFor="adjust-amount">New Amount</Label>
+            <Input
+              id="adjust-amount"
+              value={adjustAmount}
+              onChange={(e) => setAdjustAmount(e.target.value)}
+              placeholder="Enter new amount"
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={handleAdjustAmount}>Adjust</Button>
+            <Button variant="outline" onClick={() => setShowAdjustDialog(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
