@@ -8,12 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { useSelector } from 'react-redux';
 
-const InitiatePasswordReset = ({ isOpen, onClose, }) => {
+const AdminPasswordReset = ({ isOpen, onClose, }) => {
       const navigate = useNavigate()
       const [loading, setLoading] = useState(false);
       const [successMessage, setSuccessMessage] = useState('')
 
-      const user = useSelector((state) => state.users.selectedUser);
+      const admin = useSelector((state) => state.admins.selectedAdmin);
 
       const handleBack = () => {
         navigate (-1);
@@ -22,14 +22,14 @@ const InitiatePasswordReset = ({ isOpen, onClose, }) => {
       const handleResetPassword = async (e) => {
         e.preventDefault(); // prevent the form from submitting
 
-        if (!user.email) {
+        if (!admin.email) {
           console.error('No user email found.');
           return;
         }
     
         setLoading(true);
         try {
-          const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/auth/initiate-password-reset?email=${user.email}`, {
+          const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/auth/initiate-password-reset?email=${admin.email}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ const InitiatePasswordReset = ({ isOpen, onClose, }) => {
           <Input
             type="email"
             name="email"
-            value={user?.email}
+            value={admin?.email}
             required
           />
           {successMessage && (
@@ -91,4 +91,4 @@ const InitiatePasswordReset = ({ isOpen, onClose, }) => {
   );
 };
 
-export default InitiatePasswordReset;
+export default AdminPasswordReset;

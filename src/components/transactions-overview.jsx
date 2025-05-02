@@ -12,8 +12,7 @@ import Pagination from "../../src/components/common/Pagination"
 import StatCard from "../../src/components/common/StatCard"
 import ChartCard from "../../src/components/common/ChartCard"
 import ActionMenu from "../../src/components/common/ActionMenu"
-import { useAdmin } from "./admin-context"
-
+import { useAdmin } from "../contexts/AdminContext.jsx"
 export function TransactionsOverview() {
   const { hasPermission } = useAdmin()
   const [searchTerm, setSearchTerm] = useState("")

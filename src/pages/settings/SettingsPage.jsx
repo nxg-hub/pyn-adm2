@@ -9,8 +9,7 @@ import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
 import { Label } from "../../components/ui/label"
 import { Switch } from "../../components/ui/switch"
-import Separator from "../../components/ui/separator.jsx"
-
+import Separator from "../../components/ui/separator"
 const SettingsPage = () => {
   const { currentRole, hasPermission } = useAdmin()
   const [generalSettings, setGeneralSettings] = useState({
@@ -41,8 +40,17 @@ const SettingsPage = () => {
 
   return (
     <div className="flex flex-col">
-      <AdminHeader title="System Settings" subtitle="Configure platform settings and parameters" />
-
+ <header className="border-b">
+        <div className="flex h-16 items-center px-4 gap-4">
+          <h1 className="text-xl font-bold">Settings</h1>
+          <span className="text-sm text-muted-foreground">
+            Configure Platform Settings
+          </span>
+           
+            </div>
+           
+        
+      </header>
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <Tabs defaultValue="general">
           <TabsList className="grid w-full grid-cols-4 lg:w-auto">
@@ -347,4 +355,4 @@ const SettingsPage = () => {
   )
 }
 
-export default SettingsPage
+export default SettingsPage;
