@@ -13,8 +13,8 @@ import CompliancePage from "./pages/compliance/CompliancePage";
 import TransactionLimits from "./pages/settings/TransactionLimit.jsx";
 import ServiceFees from "./pages/settings/ServiceFees.jsx";
 import Security from "./pages/settings/Security.jsx";
-// import SettingsPage from "./pages/settings/SettingsPage.jsx";
-import SettingsPage from "./pages/dashboard/settings/page.jsx";
+import SettingsPage from "./pages/settings/SettingsPage.jsx";
+// import SettingsPage from "./pages/dashboard/settings/page.jsx";
 import ReportsPage from "./pages/reports/ReportsPage";
 import AdminsPage from "./pages/users/AdminUsers";
 import LoginForm from "./pages/Login/login";
@@ -45,6 +45,7 @@ import TransactionsPage from "./pages/transactions/TransactionsPage.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
+import SystemStatusPage from "./pages/system/SystemStatusPage.jsx";
 // // import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
 // // import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
 // // import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
@@ -60,7 +61,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route element={<AdminLayout />}>
-            {/* <Route path="/login" element={<LoginForm />} /> */}
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="dashboard/users" element={<UsersPage />} />
             <Route path="/user-profile" element={<UserProfile />} />
@@ -153,6 +153,7 @@ function App() {
             <Route path="dashboard/settings/admins" element={<SystemAdminSettings />} />
             <Route path="dashboard/settings/2fa" element={<TwoFactorSettings />} />
 
+            <Route path="dashboard/system" element={<SystemStatusPage />} />
 
             <Route path="dashboard/reports" element={<ReportsPage />} />
             <Route
