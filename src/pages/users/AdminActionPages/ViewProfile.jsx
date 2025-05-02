@@ -1,78 +1,69 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 
-const UserProfile = ({}) => {
-    const user = useSelector((state) => state.users.selectedUser);
+
+const AdminProfile = ({}) => {
+    const admin = useSelector((state) => state.admins.selectedAdmin);
     const navigate = useNavigate()
 
-  if (!user) {
+  if (!admin) {
     return <div className="text-center mt-10">No user data available.</div>;
   }
-const handleBack = () => {
-  navigate (-1);
-}
+  const handleBack = () => {
+    navigate (-1);
+  }
 
   return (
     <div className="max-w-8xl text-lg mx-auto p-6">
-      <button
-        onClick={handleBack}
-        className="mb-9 text-white text-xl font-medium flex items-center gap-5 hover:underline hover:text-[#006181] group-hover:decoration-[#006181]">
-        <ChevronLeft className="h-8 w-8" />
-        Back
-      </button>
+          <button
+                onClick={handleBack}
+                className="mb-9 text-white text-xl font-medium flex items-center gap-5 hover:underline hover:text-[#006181] group-hover:decoration-[#006181]">
+                <ChevronLeft className="h-8 w-8" />
+                Back
+              </button>
       <Card>
         <CardHeader>
-          <CardTitle>{user.firstName} {user.lastName}'s Profile</CardTitle>
+          <CardTitle>{admin.firstName} {admin.lastName}'s Profile</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Full Name</p>
-              <p className="text-lg font-medium">{user.firstName} {user.lastName}</p>
+              <p className="text-lg font-medium">{admin.firstName} {admin.lastName}</p>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Username</p>
-              <p className="text-lg font-medium">{user.payinaUserName}</p>
-            </div>
+            
             <div>
               <p className="text-sm text-muted-foreground">Email</p>
-              <p className="text-lg font-medium">{user.email}</p>
+              <p className="text-lg font-medium">{admin.email}</p>
             </div>
 
             <div>
               <p className="text-sm text-muted-foreground">Phone Number</p>
-              <p className="text-lg font-medium">{user.phoneNumber}</p>
+              <p className="text-lg font-medium">{admin.phoneNumber}</p>
             </div>
             
 
             <div>
-              <p className="text-sm text-muted-foreground">Account Type</p>
-              <p className="text-lg font-medium">{user.userType}</p>
+              <p className="text-sm text-muted-foreground">Role</p>
+              <p className="text-lg font-medium">{admin.adminUserType}</p>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Account Number</p>
-              <p className="text-lg font-medium">{user.accountNumber}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Tier Level</p>
-              <p className="text-lg font-medium">{user.tierLevel}</p>
-            </div>
+           
             <div>
               <p className="text-sm text-muted-foreground">Status</p>
               <p
                 className={`text-lg font-medium ${
-                  user.enabled === true
+                  admin.enabled === true
                     ? "text-green-600"
-                    : user.enabled === false
+                    : admin.enabled === false
                     ? "text-yellow-600"
                     : "text-red-600"
                 }`}
               >
-    {user.enabled === true ? "Active" : "Inactive"} 
+    {admin.enabled === true ? "Active" : "Inactive"} 
     </p>
             </div>
 
@@ -91,4 +82,4 @@ const handleBack = () => {
   );
 };
 
-export default UserProfile;
+export default AdminProfile;

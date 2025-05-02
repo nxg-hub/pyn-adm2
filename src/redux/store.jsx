@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage';
 import usersReducer from './UsersSlice';
 import adminsReducer from './adminsSlice';
 import adminReducer from './LoggedInAdminSlice'
+import transactionsReducer from './fetchUserTransactionsSlice'
 
 
 // Configuration for redux-persist
@@ -15,6 +16,7 @@ const persistConfig = {
     'users',
     'admins',
     'admin',
+    'transactions'
   ], 
 };
 
@@ -22,6 +24,7 @@ const rootReducer = combineReducers({
   users: usersReducer,
   admins: adminsReducer,
   admin: adminReducer,
+  transactions: transactionsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
