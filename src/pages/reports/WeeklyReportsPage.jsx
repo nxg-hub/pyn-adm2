@@ -8,47 +8,54 @@ import { AdminHeader } from "../../components/layout/AdminHeader"
 import { Breadcrumb } from "../../components/common/Breadcrumb"
 import { useAdmin } from "../../contexts/AdminContext"
 
-const dailyReports = [
+const weeklyReports = [
   {
     id: 1,
-    name: "Daily Transaction Report",
-    description: "Detailed list of all transactions processed today",
-    lastGenerated: "2025-05-01 10:00 AM",
+    name: "User Growth Report",
+    description: "Analysis of user growth and retention",
+    lastGenerated: "2024-04-25 09:15 AM",
     format: "PDF",
   },
   {
     id: 2,
-    name: "Login Activity Report",
-    description: "User login sessions and IP logs",
-    lastGenerated: "2025-05-01 09:45 AM",
-    format: "Excel",
+    name: "Weekly Revenue Report",
+    description: "Summary of total revenue generated this week",
+    lastGenerated: "2025-04-30 10:00 AM",
+    format: "PDF",
   },
   {
     id: 3,
-    name: "Failed Transaction Summary",
-    description: "Transactions that failed today with reasons",
-    lastGenerated: "2025-05-01 09:30 AM",
+    name: "Weekly Login Activity",
+    description: "User login sessions and patterns this week",
+    lastGenerated: "2025-04-29 09:45 AM",
+    format: "Excel",
+  },
+  {
+    id: 4,
+    name: "Top Failing Transactions",
+    description: "Most common transaction failures this week",
+    lastGenerated: "2025-04-29 09:30 AM",
     format: "PDF",
   },
 ]
 
-const DailyReportsPage = () => {
+const WeeklyReportsPage = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
 
   const breadcrumbItems = [
     { label: "Reports", href: "/reports" },
-    { label: "Daily Reports", href: "/reports/daily" },
+    { label: "Weekly Reports", href: "/reports/weekly" },
   ]
 
-  const filteredReports = dailyReports.filter((report) =>
+  const filteredReports = weeklyReports.filter((report) =>
     report.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   if (!hasPermission("reports", "view")) {
     return (
       <div className="flex flex-col">
-        <AdminHeader title="Daily Reports" subtitle="View and manage daily report logs" />
+        <AdminHeader title="Weekly Reports" subtitle="View and manage weekly report summaries" />
         <main className="flex-1 p-4 md:p-6">
           <Breadcrumb items={breadcrumbItems} />
           <div className="mt-6 rounded-md bg-yellow-50 p-4 text-yellow-700">
@@ -61,7 +68,7 @@ const DailyReportsPage = () => {
 
   return (
     <div className="flex flex-col">
-      <AdminHeader title="Daily Reports" subtitle="View and manage daily report logs" />
+      <AdminHeader title="Weekly Reports" subtitle="View and manage weekly report summaries" />
 
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <Breadcrumb items={breadcrumbItems} />
@@ -84,13 +91,13 @@ const DailyReportsPage = () => {
 
           <Button>
             <CalendarDays className="mr-2 h-4 w-4" />
-            Generate Today’s Report
+            Generate This Week’s Report
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Reports Generated Today</CardTitle>
+            <CardTitle>Reports Generated This Week</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -138,16 +145,4 @@ const DailyReportsPage = () => {
   )
 }
 
-export default DailyReportsPage
-
-
-
-// import React from "react";
-
-// const DailyReportsPage = () => {
-//   return(
-//     <div>hey there</div>
-//   )
-// }
-
-// export default DailyReportsPage
+export default WeeklyReportsPage

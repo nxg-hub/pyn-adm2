@@ -8,47 +8,47 @@ import { AdminHeader } from "../../components/layout/AdminHeader"
 import { Breadcrumb } from "../../components/common/Breadcrumb"
 import { useAdmin } from "../../contexts/AdminContext"
 
-const dailyReports = [
+const monthlyReports = [
   {
     id: 1,
-    name: "Daily Transaction Report",
-    description: "Detailed list of all transactions processed today",
-    lastGenerated: "2025-05-01 10:00 AM",
+    name: "Monthly Transaction Summary",
+    description: "Summary of all transactions for the current month",
+    lastGenerated: "2025-04-30 10:00 AM",
     format: "PDF",
   },
   {
     id: 2,
-    name: "Login Activity Report",
-    description: "User login sessions and IP logs",
-    lastGenerated: "2025-05-01 09:45 AM",
+    name: "Monthly User Engagement Report",
+    description: "Detailed user activity and usage trends",
+    lastGenerated: "2025-04-30 09:45 AM",
     format: "Excel",
   },
   {
     id: 3,
-    name: "Failed Transaction Summary",
-    description: "Transactions that failed today with reasons",
-    lastGenerated: "2025-05-01 09:30 AM",
+    name: "Monthly Failed Transactions",
+    description: "Comprehensive list of failed transactions in April",
+    lastGenerated: "2025-04-30 09:30 AM",
     format: "PDF",
   },
 ]
 
-const DailyReportsPage = () => {
+const MonthlyReportsPage = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
 
   const breadcrumbItems = [
     { label: "Reports", href: "/reports" },
-    { label: "Daily Reports", href: "/reports/daily" },
+    { label: "Monthly Reports", href: "/reports/monthly" },
   ]
 
-  const filteredReports = dailyReports.filter((report) =>
+  const filteredReports = monthlyReports.filter((report) =>
     report.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   if (!hasPermission("reports", "view")) {
     return (
       <div className="flex flex-col">
-        <AdminHeader title="Daily Reports" subtitle="View and manage daily report logs" />
+        <AdminHeader title="Monthly Reports" subtitle="View and manage monthly report archives" />
         <main className="flex-1 p-4 md:p-6">
           <Breadcrumb items={breadcrumbItems} />
           <div className="mt-6 rounded-md bg-yellow-50 p-4 text-yellow-700">
@@ -61,7 +61,7 @@ const DailyReportsPage = () => {
 
   return (
     <div className="flex flex-col">
-      <AdminHeader title="Daily Reports" subtitle="View and manage daily report logs" />
+      <AdminHeader title="Monthly Reports" subtitle="View and manage monthly report archives" />
 
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <Breadcrumb items={breadcrumbItems} />
@@ -84,13 +84,13 @@ const DailyReportsPage = () => {
 
           <Button>
             <CalendarDays className="mr-2 h-4 w-4" />
-            Generate Today’s Report
+            Generate Monthly Report
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Reports Generated Today</CardTitle>
+            <CardTitle>Reports Generated This Month</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -138,16 +138,4 @@ const DailyReportsPage = () => {
   )
 }
 
-export default DailyReportsPage
-
-
-
-// import React from "react";
-
-// const DailyReportsPage = () => {
-//   return(
-//     <div>hey there</div>
-//   )
-// }
-
-// export default DailyReportsPage
+export default MonthlyReportsPage

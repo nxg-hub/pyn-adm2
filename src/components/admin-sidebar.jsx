@@ -157,7 +157,7 @@ export function AdminSidebar() {
                       Withdrawals
                     </Link>
                   </SidebarMenuButton>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/bills")}>
+                  {/* <SidebarMenuButton asChild isActive={isActive("/dashboard/transactions/bills")}>
                     <Link to="/dashboard/transactions/bills">
                       <CreditCard className="h-4 w-4 mr-2" />
                       Bills & Utilities
@@ -234,19 +234,13 @@ export function AdminSidebar() {
                       <CreditCard className="h-4 w-4 mr-2" />
                       Scan To Pay
                     </Link>
-                  </SidebarMenuButton>
+                  </SidebarMenuButton> */}
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={isActive("/dashboard/reports")}>
                     <Link to="/dashboard/reports">
                       <BarChart3 className="h-4 w-4 mr-2" />
                       Reports
-                    </Link>
-                  </SidebarMenuButton>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/reports/daily")}>
-                    <Link to="/dashboard/reports/daily">
-                      <BarChart3 className="h-4 w-4 mr-2" />
-                      Daily Reports
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -295,7 +289,7 @@ export function AdminSidebar() {
                       Support Tickets
                     </Link>
                   </SidebarMenuButton>
-                  <SidebarMenuButton asChild isActive={isActive("/dashboard/support/tickets")}>
+                  {/* <SidebarMenuButton asChild isActive={isActive("/dashboard/support/tickets")}>
                     <Link to="/dashboard/support/tickets">
                       <MessageSquare className="h-4 w-4 mr-2" />
                       Tickets
@@ -318,7 +312,7 @@ export function AdminSidebar() {
                       <MessageSquare className="h-4 w-4 mr-2" />
                       Knowledge Base
                     </Link>
-                  </SidebarMenuButton>  
+                  </SidebarMenuButton>   */}
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={isActive("/dashboard/notifications")}>

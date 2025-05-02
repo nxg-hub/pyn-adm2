@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { CalendarDays, Download, Printer, Search } from "lucide-react"
+import { FileSearch, Download, Printer, Search } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { Input } from "../../components/ui/input"
@@ -8,47 +8,47 @@ import { AdminHeader } from "../../components/layout/AdminHeader"
 import { Breadcrumb } from "../../components/common/Breadcrumb"
 import { useAdmin } from "../../contexts/AdminContext"
 
-const dailyReports = [
+const reconciliationReports = [
   {
     id: 1,
-    name: "Daily Transaction Report",
-    description: "Detailed list of all transactions processed today",
-    lastGenerated: "2025-05-01 10:00 AM",
-    format: "PDF",
-  },
-  {
-    id: 2,
-    name: "Login Activity Report",
-    description: "User login sessions and IP logs",
-    lastGenerated: "2025-05-01 09:45 AM",
+    name: "Bank Reconciliation - April 2025",
+    description: "Matched transactions between system and bank for April",
+    lastGenerated: "2025-05-01 09:00 AM",
     format: "Excel",
   },
   {
+    id: 2,
+    name: "Payment Gateway Reconciliation",
+    description: "Detailed comparison of gateway and internal records",
+    lastGenerated: "2025-04-30 04:45 PM",
+    format: "PDF",
+  },
+  {
     id: 3,
-    name: "Failed Transaction Summary",
-    description: "Transactions that failed today with reasons",
-    lastGenerated: "2025-05-01 09:30 AM",
+    name: "Wallet Funding Reconciliation",
+    description: "Wallet funding logs reconciled with financial partners",
+    lastGenerated: "2025-04-29 02:30 PM",
     format: "PDF",
   },
 ]
 
-const DailyReportsPage = () => {
+const ReconciliationReportsPage = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
 
   const breadcrumbItems = [
     { label: "Reports", href: "/reports" },
-    { label: "Daily Reports", href: "/reports/daily" },
+    { label: "Reconciliation Reports", href: "/reports/reconciliation" },
   ]
 
-  const filteredReports = dailyReports.filter((report) =>
+  const filteredReports = reconciliationReports.filter((report) =>
     report.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   if (!hasPermission("reports", "view")) {
     return (
       <div className="flex flex-col">
-        <AdminHeader title="Daily Reports" subtitle="View and manage daily report logs" />
+        <AdminHeader title="Reconciliation Reports" subtitle="Compare and match financial records" />
         <main className="flex-1 p-4 md:p-6">
           <Breadcrumb items={breadcrumbItems} />
           <div className="mt-6 rounded-md bg-yellow-50 p-4 text-yellow-700">
@@ -61,7 +61,7 @@ const DailyReportsPage = () => {
 
   return (
     <div className="flex flex-col">
-      <AdminHeader title="Daily Reports" subtitle="View and manage daily report logs" />
+      <AdminHeader title="Reconciliation Reports" subtitle="Compare and match financial records" />
 
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <Breadcrumb items={breadcrumbItems} />
@@ -83,14 +83,14 @@ const DailyReportsPage = () => {
           </div>
 
           <Button>
-            <CalendarDays className="mr-2 h-4 w-4" />
-            Generate Today’s Report
+            <FileSearch className="mr-2 h-4 w-4" />
+            Run Reconciliation
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Reports Generated Today</CardTitle>
+            <CardTitle>Generated Reconciliation Reports</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -138,16 +138,4 @@ const DailyReportsPage = () => {
   )
 }
 
-export default DailyReportsPage
-
-
-
-// import React from "react";
-
-// const DailyReportsPage = () => {
-//   return(
-//     <div>hey there</div>
-//   )
-// }
-
-// export default DailyReportsPage
+export default ReconciliationReportsPage

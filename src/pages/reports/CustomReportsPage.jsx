@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { CalendarDays, Download, Printer, Search } from "lucide-react"
+import { FilePlus, Download, Printer, Search } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { Input } from "../../components/ui/input"
@@ -8,47 +8,47 @@ import { AdminHeader } from "../../components/layout/AdminHeader"
 import { Breadcrumb } from "../../components/common/Breadcrumb"
 import { useAdmin } from "../../contexts/AdminContext"
 
-const dailyReports = [
+const customReports = [
   {
     id: 1,
-    name: "Daily Transaction Report",
-    description: "Detailed list of all transactions processed today",
-    lastGenerated: "2025-05-01 10:00 AM",
-    format: "PDF",
-  },
-  {
-    id: 2,
-    name: "Login Activity Report",
-    description: "User login sessions and IP logs",
-    lastGenerated: "2025-05-01 09:45 AM",
+    name: "Custom Sales Report",
+    description: "Sales summary for selected vendors and date range",
+    lastGenerated: "2025-04-29 03:10 PM",
     format: "Excel",
   },
   {
+    id: 2,
+    name: "User Feedback Report",
+    description: "Manually compiled feedback across multiple products",
+    lastGenerated: "2025-04-28 11:20 AM",
+    format: "PDF",
+  },
+  {
     id: 3,
-    name: "Failed Transaction Summary",
-    description: "Transactions that failed today with reasons",
-    lastGenerated: "2025-05-01 09:30 AM",
+    name: "Custom Audit Report",
+    description: "Internal audit data filtered by custom criteria",
+    lastGenerated: "2025-04-25 09:45 AM",
     format: "PDF",
   },
 ]
 
-const DailyReportsPage = () => {
+const CustomReportsPage = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
 
   const breadcrumbItems = [
     { label: "Reports", href: "/reports" },
-    { label: "Daily Reports", href: "/reports/daily" },
+    { label: "Custom Reports", href: "/reports/custom" },
   ]
 
-  const filteredReports = dailyReports.filter((report) =>
+  const filteredReports = customReports.filter((report) =>
     report.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   if (!hasPermission("reports", "view")) {
     return (
       <div className="flex flex-col">
-        <AdminHeader title="Daily Reports" subtitle="View and manage daily report logs" />
+        <AdminHeader title="Custom Reports" subtitle="View and manage manually created reports" />
         <main className="flex-1 p-4 md:p-6">
           <Breadcrumb items={breadcrumbItems} />
           <div className="mt-6 rounded-md bg-yellow-50 p-4 text-yellow-700">
@@ -61,7 +61,7 @@ const DailyReportsPage = () => {
 
   return (
     <div className="flex flex-col">
-      <AdminHeader title="Daily Reports" subtitle="View and manage daily report logs" />
+      <AdminHeader title="Custom Reports" subtitle="View and manage manually created reports" />
 
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <Breadcrumb items={breadcrumbItems} />
@@ -83,14 +83,14 @@ const DailyReportsPage = () => {
           </div>
 
           <Button>
-            <CalendarDays className="mr-2 h-4 w-4" />
-            Generate Today’s Report
+            <FilePlus className="mr-2 h-4 w-4" />
+            Create Custom Report
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Reports Generated Today</CardTitle>
+            <CardTitle>Generated Custom Reports</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -138,16 +138,4 @@ const DailyReportsPage = () => {
   )
 }
 
-export default DailyReportsPage
-
-
-
-// import React from "react";
-
-// const DailyReportsPage = () => {
-//   return(
-//     <div>hey there</div>
-//   )
-// }
-
-// export default DailyReportsPage
+export default CustomReportsPage
