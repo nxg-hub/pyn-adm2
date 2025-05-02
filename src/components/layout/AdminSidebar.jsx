@@ -423,7 +423,7 @@ export function AdminSidebar() {
             hasPermission={hasPermission("sendPushNotifications")}>
             <SidebarSubItem
               label="Push Notifications"
-              href="/dashboard/notificationsh"
+              href="/dashboard/notifications"
               isActive={location.pathname === "/dashboard/notifications"}
             />
             <SidebarSubItem
