@@ -28,6 +28,7 @@ export const fetchAdmins = createAsyncThunk('admin/fetchAdmins',   async (_, { r
 // Initial state
 const initialState = {
   admins: [],
+  selectedAdmin: null,
   success: false,
   loading: false,
   error: null,
@@ -37,6 +38,9 @@ const adminsSlice = createSlice({
   name: 'admins',
   initialState,
   reducers: {
+    setSelectedAdmin: (state, action) => {
+      state.selectedAdmin = action.payload;
+    },
     logOut: (state) => {
       state.admins = null;
       state.success = false;
@@ -60,5 +64,5 @@ const adminsSlice = createSlice({
   },
 });
 
-export const { logOut } = adminsSlice.actions;
+export const { setSelectedAdmin, logOut } = adminsSlice.actions;
 export default adminsSlice.reducer;

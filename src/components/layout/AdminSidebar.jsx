@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import {
   AlertTriangle,
@@ -101,6 +102,9 @@ export function AdminSidebar() {
       location.pathname === path || location.pathname.startsWith(`${path}/`)
     );
   };
+  const adminRole = localStorage.getItem("adminRole"); // fetch the role properly
+
+  const hiddenFor = ["CUSTOMER_CARE_REP", "FINANCE_MANAGER"]; 
 
   return (
     <div className="w-64 border-r bg-card h-screen overflow-y-auto">
@@ -144,13 +148,15 @@ export function AdminSidebar() {
               href="/dashboard/users/suspended"
               isActive={location.pathname === "/dashboard/users/suspended"}
             />
-            <SidebarSubItem
-              label="Admin Users"
-              href="/dashboard/users/admin-users"
-              isActive={location.pathname === "/dashboard/users/admin-users"}
-              hasPermission={hasPermission("manageAdmins")}
-            />
-          </SidebarItem>
+            { !hiddenFor.includes(adminRole) && (
+  <SidebarSubItem
+    label="Admin Users"
+    href="/dashboard/users/admin-users"
+    isActive={location.pathname === "/dashboard/users/admin-users"}
+    hasPermission={hasPermission("manageAdmins")}
+  />
+)}
+</SidebarItem>
 
           <SidebarItem
             icon={DollarSign}

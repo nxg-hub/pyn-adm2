@@ -52,17 +52,17 @@ const handleInvite = async (values, {resetForm} ) => {
   
 
 return (
-    <div className="fixed inset-0 flex items-center justify-center border-2 border-[#a0a0a0] rounded-md overflow-y-auto p-4 z-50">
+    <div className="fixed inset-0 flex items-center justify-center border-2 border-[#a0a0a0] rounded-md overflow-y-auto p-2 z-50">
          
         
     <div className="relative bg-gray-800 p-11 rounded-[3%] shadow-lg w-[700px] max-h-[100%] overflow-y-auto">
     <button
-          className="absolute top-3 border border-gray-700  rounded-full p-2 right-2 text-gray-700 hover:text-red-500"
+          className="absolute top-3 border border-[#006181]  rounded-full p-2 right-2 text-[#006181] hover:text-red-500"
           onClick={onClose}
         >
           <X size={25} />
    </button>
-    <div className="text-center mt-10 xl:mt-0 text-[#006181] font-bold xl:text-5xl text-2xl py-10">
+    <div className="text-center mt-3 xl:mt-0 text-[#006181] font-bold xl:text-5xl text-2xl py-10">
       Invite an Admin
     </div>
           <Formik initialValues={{ email: '', adminUserType: '' }}

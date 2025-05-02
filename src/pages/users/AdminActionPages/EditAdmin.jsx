@@ -4,19 +4,18 @@ import { Button } from "../../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 
-const EditUser = () => {
-  const user = useSelector((state) => state.users.selectedUser);
+const EditAdmin = () => {
+    const admin = useSelector((state) => state.admins.selectedAdmin);
       const navigate = useNavigate()
   
 
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    phoneNumber: user?.phoneNumber || "",
-    payinaUserName: user?.payinaUserName || "",
-    userType: user?.userType || "",
-    status: user?.enabled || "",
+    firstName: admin?.firstName || "",
+    lastName: admin?.lastName || "",
+    email: admin?.email || "",
+    phoneNumber: admin?.phoneNumber || "",
+    Role: admin?.adminUserType || "",
+    status: admin?.enabled || "",
   });
 
   const handleChange = (e) => {
@@ -62,15 +61,6 @@ const EditUser = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">Username</label>
-          <input
-            name="payinaUserName"
-            value={formData.payinaUserName}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-        <div>
           <label className="block text-sm font-medium">Phone Number</label>
           <input
             name="phoneNumber"
@@ -80,16 +70,18 @@ const EditUser = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">Account Type</label>
+          <label className="block text-sm font-medium">Role</label>
           <select
-            name="userType"
-            value={formData.userType}
+            name="Role"
+            value={formData.adminUserType}
             onChange={handleChange}
             className="w-full border bg-black px-3 py-2 rounded"
           >
             <option value="">Select</option>
-            <option value="personal">Personal</option>
-            <option value="business">Business</option>
+            <option value="CUSTOMER_CARE_REP">Customer Care Rep</option>
+            <option value="GENERAL_MANAGER">General Manager</option>
+            <option value="FINANCE_MANAGER">Finance Manager</option>
+            <option value="OPERATIONS_MANAGER">Operations Manager</option>
           </select>
         </div>
         <div>
@@ -117,4 +109,4 @@ const EditUser = () => {
   );
 };
 
-export default EditUser;
+export default EditAdmin;
