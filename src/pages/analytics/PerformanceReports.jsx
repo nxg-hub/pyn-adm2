@@ -28,6 +28,9 @@ const revenueData = [
   { name: "Betting", value: 65000 },
   { name: "Events", value: 45000 },
   { name: "Others", value: 75000 },
+  { name: "Savings", value: 75000 },
+  { name: "Loan", value: 75000 },
+  { name: "Electricity", value: 75000 },
 ];
 
 const userSegmentData = [

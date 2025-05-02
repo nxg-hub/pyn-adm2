@@ -113,6 +113,7 @@ const UserAnalytics = () => {
             <TabsTrigger value="Total">Total Registered Users</TabsTrigger>
             <TabsTrigger value="Personal">Personal Users</TabsTrigger>
             <TabsTrigger value="Business">Business Users</TabsTrigger>
+            <TabsTrigger value="Admin">Admin Users</TabsTrigger>
           </TabsList>
 
           <TabsContent value="Total" className="mt-6">
@@ -159,6 +160,26 @@ const UserAnalytics = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Business Users</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={userData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#3b82f6" radius={4} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="Admin" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Admin Users</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">

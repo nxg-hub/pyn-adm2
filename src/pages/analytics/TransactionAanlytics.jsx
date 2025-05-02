@@ -43,7 +43,7 @@ const userData = [
 
 const userSegmentData = [
   { name: "Transfers", value: 60, color: "#3b82f6" },
-  { name: "Bills", value: 10, color: "#10b981" },
+  { name: "Data", value: 10, color: "#10b981" },
   { name: "Airtime", value: 20, color: "#f59e0b" },
   { name: "Betting", value: 10, color: "#f59e0b" },
 ];
@@ -112,7 +112,7 @@ const TransactionAanlytics = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Bills Transactions
+                Total Data Transactions
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -136,9 +136,12 @@ const TransactionAanlytics = () => {
           <TabsList>
             <TabsTrigger value="Transfers"> Transfers </TabsTrigger>
             <TabsTrigger value="Airtime">Airtime </TabsTrigger>
-            <TabsTrigger value="Bills">Bills</TabsTrigger>
+            <TabsTrigger value="Data">Data</TabsTrigger>
             <TabsTrigger value="TV">TV </TabsTrigger>
             <TabsTrigger value="Betting">Betting </TabsTrigger>
+            <TabsTrigger value="Electricity">Electricity </TabsTrigger>
+            <TabsTrigger value="Savings">Savings </TabsTrigger>
+            <TabsTrigger value="Loan">Loan </TabsTrigger>
           </TabsList>
 
           <TabsContent value="Transfers" className="mt-6">
@@ -181,10 +184,10 @@ const TransactionAanlytics = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          <TabsContent value="Bills" className="mt-6">
+          <TabsContent value="Data" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Bill Transactions</CardTitle>
+                <CardTitle>Data Transactions</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
@@ -225,6 +228,66 @@ const TransactionAanlytics = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Betting Transactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={userData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#3b82f6" radius={4} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="Electricity" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Electricity Transactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={userData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#3b82f6" radius={4} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="Savings" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Savings Transactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={userData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#3b82f6" radius={4} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="Loan" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Loan Transactions</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
