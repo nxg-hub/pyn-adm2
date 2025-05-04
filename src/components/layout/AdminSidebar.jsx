@@ -541,6 +541,11 @@ export function AdminSidebar() {
               }
               hasPermission={hasPermission("reconcileFinancialDiscrepancies")}
             />
+            <SidebarSubItem
+              label="Admin Reports"
+              href="/dashboard/reports/admin"
+              isActive={location.pathname === "/dashboard/reports/admin"}
+            />
           </SidebarItem>
 
           <SidebarItem

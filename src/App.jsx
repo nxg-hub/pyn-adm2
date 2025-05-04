@@ -4,25 +4,27 @@ import AdminLayout from "./components/layout/AdminLayout";
 import Dashboard from "./pages/Dashboard";
 import UsersPage from "./pages/users/UsersPage";
 // import TransactionsPage from "./pages/dashboard/transactions/page";
-import MoneyTransfersPage from "./pages/transactions/MoneyTransfersPage";
+// import MoneyTransfersPage from "./pages/transactions/MoneyTransfersPage";
 import WalletsPage from "./pages/wallets/WalletsPage";
 import AnalyticsPage from "./pages/analytics/AnalyticsPage";
-import SupportPage from "./pages/support/SupportPage";
 import NotificationsPage from "./pages/notifications/NotificationsPage";
 import CompliancePage from "./pages/compliance/CompliancePage";
+// import SettingsPage from "./pages/settings/SettingsPage";
 import TransactionLimits from "./pages/settings/TransactionLimit.jsx";
 import ServiceFees from "./pages/settings/ServiceFees.jsx";
 import Security from "./pages/settings/Security.jsx";
 // import SettingsPage from "./pages/settings/SettingsPage.jsx";
 import SettingsPage from "./pages/dashboard/settings/page.jsx";
-import ReportsPage from "./pages/reports/ReportsPage";
+// import ReportsPage from "./pages/reports/ReportsPage";
 import AdminsPage from "./pages/users/AdminUsers";
 import LoginForm from "./pages/Login/login";
 import SuspendedAccounts from "./pages/users/SuspendedAccounts";
 import RecentlyActive from "./pages/users/RecentlyActive";
 import PendingVerification from "./pages/users/PendingVerification";
 import UserProfile from "./pages/users/ActionPages/ViewProfile";
+import Transactions from "./pages/transactions/page"
 import Support from "./pages/support/page";
+import Report from "./pages/reports/page";
 import EditUser from "./pages/users/ActionPages/EditUser";
 import ViewTransactions from "./pages/users/ActionPages/ViewTransactions";
 import KycVerifications from "./pages/compliance/KycVerification";
@@ -41,7 +43,7 @@ import PerformanceReports from "./pages/analytics/PerformanceReports.jsx";
 import TransactionAanlytics from "./pages/analytics/TransactionAanlytics.jsx";
 import FunnelCharts from "./pages/analytics/FunnelCharts.jsx";
 import ExportReports from "./pages/analytics/ExportReports.jsx";
-import TransactionsPage from "./pages/transactions/TransactionsPage.jsx";
+// import TransactionsPage from "./pages/transactions/TransactionsPage.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
@@ -81,14 +83,14 @@ function App() {
               path="dashboard/users/pending"
               element={<PendingVerification />}
             />
-            <Route
+            {/* <Route
               path="dashboard/transactions"
               element={<TransactionsPage />}
-            />
-            <Route
+            /> */}
+            {/* <Route
               path="dashboard/transactions/money-transfers"
               element={<MoneyTransfersPage />}
-            />
+            /> */}
             <Route path="dashboard/wallets" element={<WalletsPage />} />
             <Route path="dashboard/analytics" element={<AnalyticsPage />} />
 
@@ -112,7 +114,7 @@ function App() {
               path="dashboard/analytics/transactions"
               element={<TransactionAanlytics />}
             />
-            <Route path="dashboard/support" element={<SupportPage />} />
+            {/* <Route path="dashboard/support" element={<SupportPage />} /> */}
             <Route path="dashboard/compliance" element={<CompliancePage />} />
             <Route
               path="dashboard/compliance/kyc"
@@ -126,8 +128,12 @@ function App() {
               path="dashboard/compliance/aml"
               element={<AmlMonitoring />}
             />
-            <Route path="dashboard/transactions/*" element={<TransactionsPage />} />
-            <Route path="dashboard/support/*" element={<Support />} />                        <Route path="dashboard/compliance/audit" element={<AuditLogs />} />
+            <Route path="dashboard/transactions/*" element={<Transactions />} />
+            <Route path="dashboard/support/*" element={<Support />} />
+            <Route path="dashboard/reports/*" element={<Report />} />
+            {/* <Route path="dashboard/transactions/*" element={<TransactionsPage />} /> */}
+            {/* <Route path="dashboard/support/*" element={<Support />} />                         */}
+            <Route path="dashboard/compliance/audit" element={<AuditLogs />} />
             <Route
               path="dashboard/notifications"
               element={<NotificationsPage />}
@@ -146,6 +152,7 @@ function App() {
               element={<DeliveryLogs />}
             />
             <Route path="dashboard/settings" element={<SettingsPage />} />
+            {/* <Route path="dashboard/reports" element={<ReportsPage />} /> */}
             <Route path="dashboard/settings/limits" element={<TransactionLimits />} />
             <Route path="dashboard/settings/fees" element={<ServiceFees />} />
             <Route path="dashboard/settings/security" element={<Security />} />
@@ -154,7 +161,7 @@ function App() {
             <Route path="dashboard/settings/2fa" element={<TwoFactorSettings />} />
 
 
-            <Route path="dashboard/reports" element={<ReportsPage />} />
+            {/* <Route path="dashboard/reports" element={<ReportsPage />} /> */}
             <Route
               path="dashboard/wallets/virtual-cards"
               element={<VirtualCardsPage />}
