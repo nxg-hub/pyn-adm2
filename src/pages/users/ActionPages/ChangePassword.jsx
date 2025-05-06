@@ -14,6 +14,7 @@ const InitiatePasswordReset = ({ isOpen, onClose, }) => {
       const [successMessage, setSuccessMessage] = useState('')
 
       const user = useSelector((state) => state.users.selectedUser);
+      console.log (user?.lastName)
 
       const handleBack = () => {
         navigate (-1);

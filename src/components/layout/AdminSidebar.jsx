@@ -429,7 +429,7 @@ export function AdminSidebar() {
             hasPermission={hasPermission("sendPushNotifications")}>
             <SidebarSubItem
               label="Push Notifications"
-              href="/dashboard/notificationsh"
+              href="/dashboard/notifications"
               isActive={location.pathname === "/dashboard/notifications"}
             />
             <SidebarSubItem
@@ -540,6 +540,11 @@ export function AdminSidebar() {
                 location.pathname === "/dashboard/reports/reconciliation"
               }
               hasPermission={hasPermission("reconcileFinancialDiscrepancies")}
+            />
+            <SidebarSubItem
+              label="Admin Reports"
+              href="/dashboard/reports/admin"
+              isActive={location.pathname === "/dashboard/reports/admin"}
             />
           </SidebarItem>
 

@@ -1,37 +1,58 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Calendar, Download } from "lucide-react"
-import { Button } from "../../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+import { useState } from "react";
+import { Calendar, Download } from "lucide-react";
+import { Button } from "../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 const revenueData = [
   { name: "Transfers", value: 125000 },
   { name: "Airtime", value: 85000 },
-  { name: "Bills", value: 175000 },
+  { name: "Data", value: 175000 },
   { name: "TV", value: 95000 },
   { name: "Betting", value: 65000 },
   { name: "Events", value: 45000 },
   { name: "Others", value: 75000 },
-]
+  { name: "Savings", value: 75000 },
+  { name: "Loan", value: 75000 },
+  { name: "Electricity", value: 75000 },
+];
 
 const userSegmentData = [
   { name: "Regular", value: 60, color: "#3b82f6" },
   { name: "Business", value: 25, color: "#10b981" },
   { name: "Students", value: 10, color: "#f59e0b" },
   { name: "Others", value: 5, color: "#6366f1" },
-]
+];
 
 function AnalyticsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div className="flex flex-col">
       <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
           <h1 className="text-xl font-semibold">Revenue Analytics</h1>
-          <span className="text-sm text-muted-foreground">Performance overview of revenue streams</span>
+          <span className="text-sm text-muted-foreground">
+            Performance overview of revenue streams
+          </span>
           <div className="ml-auto flex items-center gap-4">
             <Button variant="outline">
               <Calendar className="mr-2 h-4 w-4" />
@@ -49,25 +70,35 @@ function AnalyticsPage() {
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Revenue
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">$427,832.50</div>
-              <p className="text-xs text-green-500">+12.5% from previous period</p>
+              <p className="text-xs text-green-500">
+                +12.5% from previous period
+              </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Transaction Fees</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Transaction Fees
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">$58,456.75</div>
-              <p className="text-xs text-green-500">+8.3% from previous period</p>
+              <p className="text-xs text-green-500">
+                +8.3% from previous period
+              </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Subscription Revenue</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Subscription Revenue
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">$32,543.25</div>
@@ -112,8 +143,7 @@ function AnalyticsPage() {
                         innerRadius={60}
                         outerRadius={80}
                         paddingAngle={5}
-                        dataKey="value"
-                      >
+                        dataKey="value">
                         {userSegmentData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
@@ -126,7 +156,9 @@ function AnalyticsPage() {
               <div className="flex justify-center gap-4 mt-4">
                 {userSegmentData.map((segment) => (
                   <div key={segment.name} className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: segment.color }}></div>
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: segment.color }}></div>
                     <span className="text-xs">
                       {segment.name} ({segment.value}%)
                     </span>
@@ -171,7 +203,7 @@ function AnalyticsPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
 
-export default AnalyticsPage
+export default AnalyticsPage;

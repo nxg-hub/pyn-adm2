@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 
 const SuspendUserModal = ({ isOpen, onClose, }) => {
     const user = useSelector((state) => state.users.selectedUser);
-
+console.log (user?.lastName)
   const [loading, setLoading] = useState(false);
 
   const handleSuspend = async () => {
@@ -41,7 +41,7 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Suspend ${user.firstName} ${user.lastName}`}
+      title={`Suspend ${user?.firstName} ${user?.lastName}`}
       description="Please provide a reason for suspending this account. This action can impact user access."
 
       
@@ -70,7 +70,6 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
                     rows={5}
                     required
                   />
-      {/* You can add form elements or just leave it empty if it's a confirm dialog */}
     </FormModal>
   );
 };
