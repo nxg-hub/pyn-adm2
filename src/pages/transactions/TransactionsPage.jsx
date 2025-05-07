@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState, useEffect, useMemo } from 'react';
 import { Search } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -17,29 +17,18 @@ import {
 } from "../../components/ui/dropdown-menu"
 import { ConfirmModal, FormModal } from "../../components/ui/modal" 
 
-const transactions = [
-  {
-    id: "TXN-001",
-    user: "John Doe",
-    amount: 100,
-    date: "2024-01-01",
-    status: "Completed",
-  },
-  {
-    id: "TXN-002",
-    user: "Jane Smith",
-    amount: 50,
-    date: "2024-01-02",
-    status: "Pending",
-  },
-  {
-    id: "TXN-003",
-    user: "Peter Jones",
-    amount: 75,
-    date: "2024-01-03",
-    status: "Failed",
-  },
+const sampleTransactions = [
+  {id: "TXN-001", user: "John Doe", amount: 100, date: "2024-01-01", status: "Completed",},
+  {id: "TXN-002", user: "Jane Smith", amount: 50, date: "2024-01-02", status: "Pending",},
+  {id: "TXN-003", user: "Peter Jones", amount: 75,date: "2024-01-03", status: "Failed",},
+  {id: "TXN-004", user: "John Doe", amount: 150, date: "2024-01-01", status: "Completed",},
+  {id: "TXN-005", user: "Jane Smith", amount: 50, date: "2024-01-02", status: "Pending",},
+  {id: "TXN-006", user: "Peter Jones", amount: 75, date: "2024-01-03", status: "Failed",},
+  {id: "TXN-007", user: "John Doe", amount: 10, date: "2024-01-04", status: "Failed",},
+  {id: "TXN-008", user: "Jane Smith", amount: 50, date: "2024-01-02", status: "Pending",},
+  {id: "TXN-009", user: "Peter Jones", amount: 75, date: "2024-01-03", status: "Failed",},
 ]
+
 
 function TransactionsPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -50,6 +39,13 @@ function TransactionsPage() {
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
   const [adjustAmount, setAdjustAmount] = useState("")
   const [flagReason, setFlagReason] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [transactionsData, setTransactionsData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  // const [alertMessage, setAlertMessage] = useState("")
+  // const [showSuccessAlert, setShowSuccessAlert] = useState(false)
+
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -75,6 +71,62 @@ function TransactionsPage() {
     setShowSuccessAlert(true)
     setTimeout(() => setShowSuccessAlert(false), 3000)
   }
+
+  const filteredTransactions = useMemo(() => {
+    return (transactionsData.length ? transactionsData : sampleTransactions).filter(t =>
+      t.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.id.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, transactionsData]);
+  
+
+  
+
+  const ITEMS_PER_PAGE = 5;
+  
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+  
+  const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
+  
+  
+
+  const fetchTransactions = async () => {
+    setLoading(true); // Set loading state
+    try {
+      const response = await fetch(import.meta.env.VITE_GET_TRANSACTION_HISTORY, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Include any necessary authentication headers
+        },
+        body: JSON.stringify({
+          page: 1,
+          perPage: 50, // Adjust page size if needed
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch transactions");
+      }
+  
+      const data = await response.json();
+      setTransactionsData(data.transactions || []); // Set the fetched transactions in state
+    } catch (error) {
+      console.error(error.message);
+      setError(error.message || "Unexpected error occurred");
+    } finally {
+      setLoading(false); // Disable loading state
+    }
+  };
+  useEffect(() => {
+    fetchTransactions();
+    console.log("i'm here")
+  }, []);
+  
+
 
   return (
     <div className="flex flex-col">
@@ -146,8 +198,8 @@ function TransactionsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
+                {paginatedTransactions.map((transaction, index) => (
+                  <TableRow key={`${transaction.id}-${index}`}>
                     <TableCell>{transaction.id}</TableCell>
                     <TableCell>{transaction.user}</TableCell>
                     <TableCell>${transaction.amount}</TableCell>
@@ -189,7 +241,7 @@ function TransactionsPage() {
                                 </>
                               )}
 
-                              {hasPermission("approveRejectTransactions") && transaction.status === "Success" && (
+                              {hasPermission("approveRejectTransactions") && transaction.status === "Completed" && (
                                 <DropdownMenuItem
                                   onClick={() => {
                                     setSelectedTransaction(transaction)
@@ -235,6 +287,36 @@ function TransactionsPage() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex justify-end items-center mt-4 space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <div className="flex gap-1 flex-wrap">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <Button
+                    key={i + 1}
+                    variant={currentPage === i + 1 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
           </CardContent>
         </Card>
         
