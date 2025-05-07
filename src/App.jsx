@@ -9,14 +9,12 @@ import WalletsPage from "./pages/wallets/WalletsPage";
 import AnalyticsPage from "./pages/analytics/AnalyticsPage";
 import NotificationsPage from "./pages/notifications/NotificationsPage";
 import CompliancePage from "./pages/compliance/CompliancePage";
-// import SettingsPage from "./pages/settings/SettingsPage";
 import TransactionLimits from "./pages/settings/TransactionLimit.jsx";
 import ServiceFees from "./pages/settings/ServiceFees.jsx";
 import Security from "./pages/settings/Security.jsx";
-// import SettingsPage from "./pages/settings/SettingsPage.jsx";
-import SettingsPage from "./pages/dashboard/settings/page.jsx";
-// import ReportsPage from "./pages/reports/ReportsPage";
-import AdminsPage from "./pages/users/AdminUsers";
+import SettingsPage from "./pages/settings/SettingsPage.jsx";
+import ReportsPage from "./pages/reports/ReportsPage";
+import AdminsPage from "./pages/users/AdminUsers.jsx";
 import LoginForm from "./pages/Login/login";
 import SuspendedAccounts from "./pages/users/SuspendedAccounts";
 import RecentlyActive from "./pages/users/RecentlyActive";
@@ -47,6 +45,9 @@ import ExportReports from "./pages/analytics/ExportReports.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
+import SystemStatusPage from "./pages/system/SystemStatusPage.jsx";
+import CompleteRegForm from "./pages/users/InviteAdmin/complete-reg.jsx";
+import ActivityLogs from "./pages/users/AdminActionPages/ViewActivities.jsx";
 // // import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
 // // import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
 // // import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
@@ -57,19 +58,23 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/complete-reg" element={<CompleteRegForm />} />
+
+        
       </Routes>
       <AdminProvider>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route element={<AdminLayout />}>
-            {/* <Route path="/login" element={<LoginForm />} /> */}
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="dashboard/users" element={<UsersPage />} />
             <Route path="/user-profile" element={<UserProfile />} />
             <Route path="/edit-user" element={<EditUser />} />
             <Route path="/transactions" element={<ViewTransactions />} />
             <Route path="/admin-profile" element={<AdminProfile/>} />
-                        <Route path="/edit-admin" element={<EditAdmin />} />
+            <Route path="/edit-admin" element={<EditAdmin />} />
+            <Route path="/view-activities" element={<ActivityLogs />} />
+
             <Route
               path="dashboard/users/admin-users"
               element={<AdminsPage />}
@@ -160,6 +165,7 @@ function App() {
             <Route path="dashboard/settings/admins" element={<SystemAdminSettings />} />
             <Route path="dashboard/settings/2fa" element={<TwoFactorSettings />} />
 
+            <Route path="dashboard/system" element={<SystemStatusPage />} />
 
             {/* <Route path="dashboard/reports" element={<ReportsPage />} /> */}
             <Route

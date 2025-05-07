@@ -22,7 +22,7 @@ const AdminPasswordReset = ({ isOpen, onClose, }) => {
       const handleResetPassword = async (e) => {
         e.preventDefault(); // prevent the form from submitting
 
-        if (!admin.email) {
+        if (!admin?.email) {
           console.error('No user email found.');
           return;
         }

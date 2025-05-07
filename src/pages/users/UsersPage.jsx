@@ -109,7 +109,7 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
             className="cursor-pointer group"
             onClick={() => setActiveSection(section)}>
             <h1
-              className={`relative text-lg transition-colors duration-300 ${
+              className={`relative text-base font-semibold transition-colors duration-300 ${
                 activeSection === section ? "text-white bg-gray-600 px-2 rounded-md" : "text-white"
               }`}
             >
