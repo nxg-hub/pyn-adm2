@@ -3,14 +3,13 @@ import { FormModal } from "../../../components/ui/modal";
 import { Button } from "../../../components/ui/button";
 import { Textarea } from '../../../components/ui/textarea';
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUsers } from "../../../redux/UsersSlice";
+import { fetchFlaggedUsers } from "../../../redux/flaggedAccounts";
 
 
-const SuspendUserModal = ({ isOpen, onClose, }) => {
+const UnflagUserModal = ({ isOpen, onClose, }) => {
   const [reason, setReason] = useState("")
-  const user = useSelector((state) => state.users.selectedUser);
   const selected = useSelector((state) => state.flaggedUsers.selectedDetails);
-  const flaggeduser = selected?.userDetails;  
+  const user = selected?.userDetails;
   const super_admin = useSelector((state) => state.admin.admin);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
@@ -18,22 +17,22 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
   const dispatch = useDispatch();
        
 
-  const handleSuspend = async () => {
+  const handleUnflag = async () => {
     setLoading(true);
 
   const id = super_admin?.id
 
     const requestData = {
-      userId: user?.id || flaggeduser?.id,
-      email: user?.email || flaggeduser?.email,
-      phoneNumber: user?.phoneNumber || flaggeduser?.phoneNumber,
-      payinaUserName: user?.payinaUserName || flaggeduser?.payinaUserName,
-      accountNumber: user?.accountNumber || flaggeduser?.accountNumber,
+      userId: user?.id,
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+      payinaUserName: user?.payinaUserName,
+      accountNumber: user?.accountNumber,
       reason: reason
     }
     try {
-      const response = await fetch(import.meta.env.VITE_SUSPEND_USER, {
-        method: "PUT",
+      const response = await fetch(import.meta.env.VITE_UNFLAG_USER, {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           'X-Admin-Id': id
@@ -44,17 +43,17 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
 
       const data = await response.json();
 
-      if (!response.ok) throw new Error(data.message || "Failed to suspend user");
+      if (!response.ok) throw new Error(data.message || "Failed to unflag user");
 
-      setSuccessMessage("User suspended successfully!");
+      setSuccessMessage("Successful!");
        setTimeout(() => {
         setSuccessMessage('');
-        dispatch(fetchUsers()); 
+        dispatch(fetchFlaggedUsers()); 
       onClose() 
     }, 2000)
     } catch (err) {
       console.error("Error:", err.message);
-      setErrorMessage(`Error suspending user, ${err.message}`);
+      setErrorMessage(`Error unflagging user, ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -64,8 +63,8 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Suspend ${user?.firstName || flaggeduser?.firstName} ${user?.lastName || flaggeduser?.lastName}`}
-      description="Please provide a reason for suspending this account. This action can impact user access."
+      title={`Unflag ${user?.firstName} ${user?.lastName}`}
+      description="Please provide a reason for this action."
 
       
       footer={
@@ -75,11 +74,11 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
           </Button>
           <Button
             variant="destructive"
-            onClick={handleSuspend}
+            onClick={handleUnflag}
             disabled={loading}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-green-400"
           >
-            {loading ? "Suspending..." : "Confirm Suspend"}
+            {loading ? "Hold on..." : "Confirm"}
           </Button>
         </>
       }
@@ -89,7 +88,7 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
                     name="reason"
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
-                    placeholder="e.g. User violated terms of service..."
+                    placeholder="e.g. Suspicious activity resolved..."
                     rows={5}
                     required
                   />
@@ -107,4 +106,4 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
   );
 };
 
-export default SuspendUserModal;
+export default UnflagUserModal;

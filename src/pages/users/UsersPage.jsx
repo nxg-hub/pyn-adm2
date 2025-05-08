@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedUser } from "../../redux/UsersSlice"
 import { setSelectedWalletId } from "../../redux/fetchUserTransactionsSlice"
 import { useNavigate } from "react-router-dom";
+import FlagUser from "./ActionPages/FlagUser";
 import SuspendUserModal from "./ActionPages/SuspendAccount"
 import InitiatePasswordReset from "./ActionPages/ChangePassword"
   
@@ -40,6 +41,7 @@ function UsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [showFlagModal, setShowFlagModal] = useState(false);
   const [showInitiatePasswordModal, setInitiatePasswordModal] = useState(false);
 
 
@@ -191,12 +193,17 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                               dispatch(setSelectedUser(user));
 
                              }}>initiate Reset Password</DropdownMenuItem>
-                          {user.enabled === true && (
+                            <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowFlagModal(true)
+                              dispatch(setSelectedUser(user));
+
+                                                         }}>Flag User</DropdownMenuItem>
+                          
+                          
                             <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowSuspendModal(true)
                               dispatch(setSelectedUser(user));
 
                                                          }}>Suspend Account</DropdownMenuItem>
-                          )}
+                        
                           {user.enabled === false && (
                             <DropdownMenuItem className="hover:bg-green-400">
                               Reactivate Account
@@ -217,6 +224,10 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
             <SuspendUserModal
                   isOpen={showSuspendModal}
                   onClose={() => setShowSuspendModal(false)}
+                />
+                <FlagUser
+                  isOpen={showFlagModal}
+                  onClose={() => setShowFlagModal(false)}
                 />
                 <InitiatePasswordReset
                   isOpen={showInitiatePasswordModal}

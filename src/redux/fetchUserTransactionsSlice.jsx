@@ -14,9 +14,7 @@ export const fetchTransactions = createAsyncThunk(
         walletId: walletId,
       }).toString();
 
-      // const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/transactions/customer-history?${queryParams}`, {
-        const response = await fetch(`https://payina-be-6f08cdfb4414.herokuapp.com/api/v1/transactions/customer-history?${queryParams}`, {
-
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/transactions/customer-history?${queryParams}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

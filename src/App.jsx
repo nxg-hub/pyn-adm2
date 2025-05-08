@@ -41,13 +41,15 @@ import PerformanceReports from "./pages/analytics/PerformanceReports.jsx";
 import TransactionAanlytics from "./pages/analytics/TransactionAanlytics.jsx";
 import FunnelCharts from "./pages/analytics/FunnelCharts.jsx";
 import ExportReports from "./pages/analytics/ExportReports.jsx";
-// import TransactionsPage from "./pages/transactions/TransactionsPage.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
 import SystemStatusPage from "./pages/system/SystemStatusPage.jsx";
 import CompleteRegForm from "./pages/users/InviteAdmin/complete-reg.jsx";
 import ActivityLogs from "./pages/users/AdminActionPages/ViewActivities.jsx";
+import ViewSuspension from "./pages/users/ActionPages/ViewSuspensionDetails.jsx";
+import FlaggedAccounts from "./pages/users/FlaggedUsers.jsx";
+import ViewFlagDetails from "./pages/users/ActionPages/ViewFlaggedDetails.jsx";
 // // import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
 // // import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
 // // import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
@@ -83,6 +85,13 @@ function App() {
               path="dashboard/users/suspended"
               element={<SuspendedAccounts />}
             />
+             <Route
+              path="dashboard/users/flagged"
+              element={<FlaggedAccounts />}
+            />
+                        <Route path="/view-details" element={<ViewSuspension/>} />
+                        <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
+
             <Route path="dashboard/users/active" element={<RecentlyActive />} />
             <Route
               path="dashboard/users/pending"
