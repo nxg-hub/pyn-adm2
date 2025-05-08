@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
 import { fetchAdmins } from "../../../redux/adminsSlice";
 
 
@@ -10,8 +9,8 @@ const EditAdmin = () => {
     const admin = useSelector((state) => state.admins.selectedAdmin);
     const super_admin = useSelector((state) => state.admin.admin);
     const [loading, setLoading] = useState(false);
-          const [successMessage, setSuccessMessage] = useState('')
-          const [errorMessage, setErrorMessage] = useState('');       
+    const [successMessage, setSuccessMessage] = useState('')
+    const [errorMessage, setErrorMessage] = useState('');       
     const dispatch = useDispatch();
     const navigate = useNavigate();
   
@@ -24,8 +23,6 @@ const EditAdmin = () => {
     userType: admin?.adminUserType || "",
     status: admin?.enabled || "",
     password: admin?.password,
-    // confirmPassword: "$2a$10$/Bq27rcz.kOVLepW5LkA0uyX.vEoffEqpr4FSFO1XrXaUgl2hsOzO",
-
 
 
 

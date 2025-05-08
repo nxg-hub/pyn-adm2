@@ -16,78 +16,56 @@ import { Avatar, AvatarFallback } from "../../components/ui/avatar"
 import Pagination from "../../components/ui/pagination"
 import avatar from "../../assets/avatar.png"
 import { TableLoader } from "../../components/ui/loader"
+import { useSelector, useDispatch } from "react-redux"
+import { fetchFlaggedUsers, setSelectedDetails } from "../../redux/flaggedAccounts"
+import { useNavigate } from "react-router-dom";
+import UnflagUserModal from "./ActionPages/UnflagUser"
+import SuspendUserModal from "./ActionPages/SuspendAccount"
+
 
 const ITEMS_PER_PAGE = 5;
 const itemsPerPage =  ITEMS_PER_PAGE;
 
 
-function PendingVerification() {
+function FlaggedAccounts() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1);
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [activeSection, setActiveSection] = useState("personalUsers"); // if not already defined
-
-  const GetPendingVerifications= async () => {
-    setLoading(true);
-    const queryParams = new URLSearchParams({
-      page: 0,
-      size: 100,
-    }).toString();
+  const [ShowUnflagModal, setShowUnflagModal] = useState(false)
+  const [showSuspendModal, setShowSuspendModal] = useState(false);  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const flaggedUsers = useSelector(state => state.flaggedUsers.all);
 
 
-  try {
-      const response = await fetch(`${import.meta.env.VITE_GET_PENDING_VERIFICATION_USERS}?${queryParams}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+  useEffect(() => {
+    dispatch(fetchFlaggedUsers());
+  }, [dispatch]);
 
-        },
-      });
 
-      const data = await response.json();
-      console.log(data.data.content)
-
-      setUsers(data.data.content || []);
-      
-    } catch (error) {
-      const message = data.message || 'Unexpected error';
-      setErrorMessage(`Failed to load users: ${message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const personalUsers = users?.filter((u) => u.userType === "PERSONAL");
-  const businessUsers = users?.filter((u) => u.userType === "CORPORATE");
-
-const filteredData = (activeSection === "personalUsers" ? personalUsers : businessUsers)?.filter((user) => {
-  const firstNameMatch = user.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
-  const emailMatch = user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  return firstNameMatch || emailMatch
-})
-const totalUsers = users.length
+  const filteredData = flaggedUsers?.filter((su) => {
+    const firstNameMatch = su.userDetails?.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
+    const emailMatch = su.userDetails?.email?.toLowerCase().includes(searchQuery.toLowerCase());
+    return firstNameMatch || emailMatch;
+  });
+const totalUsers = flaggedUsers.length
 
 
 const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-useEffect(() => {
-    (GetPendingVerifications());
-  }, {});
 
   return (
     <div>
         {loading ? (
           <TableLoader/>
         ) : (
-    <div className="flex flex-col">    
+    <div className="flex flex-col">
       <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
-          <h1 className="text-xl font-semibold">Pending Accounts</h1>
-          <span className="text-sm text-muted-foreground">View and manage pending accounts</span>
+          <h1 className="text-xl font-semibold">Flagged Accounts</h1>
+          <span className="text-sm text-muted-foreground">View and manage flagged accounts</span>
           <div className="ml-auto flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -99,10 +77,6 @@ useEffect(() => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
             
           </div>
         </div>
@@ -114,22 +88,13 @@ useEffect(() => {
             <CardTitle>Accounts</CardTitle>
           </CardHeader>
           <div className="flex gap-10 px-6 py-4 border-b text-gray-600">
-        {["personalUsers", "businessUsers"].map((section) => (
-          <div
-            key={section}
-            className="cursor-pointer group"
-            onClick={() => setActiveSection(section)}>
-            <h1
-              className={`relative text-base font-semibold transition-colors duration-300 ${
-                activeSection === section ? "text-white bg-gray-600 px-2 rounded-md" : "text-white"
-              }`}
-            >
-              {section.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
-              
-            </h1>
-          </div>
-        ))}
-      </div>
+  <div className="cursor-pointer group">
+    <h1 className="relative text-base font-semibold transition-colors duration-300 text-white  px-2 rounded-md">
+     Flagged Users
+    </h1>
+  </div>
+</div>
+
           <CardContent>
             <Table>
               <TableHeader>
@@ -141,26 +106,28 @@ useEffect(() => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedData.map((user) => (
-                  <TableRow key={user.id}>
+                {paginatedData.map((item) => (
+                  <TableRow key={item.userDetails.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-3">
                         <Avatar>
                             <img
-                            src= { avatar}></img>
+                            src= {avatar}></img>
                           
 
                         </Avatar>
                         <div>
-                          <div>{user.firstName} {user.lastName}</div>
-                          <div className="text-xs text-muted-foreground">ID: {user.id}</div>
+                          <div>{item.userDetails.firstName} {item.userDetails.lastName}</div>
+                          <div className="text-xs text-muted-foreground">ID: {item.userDetails.id}</div>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{item.userDetails.email}</TableCell>
                     <TableCell>
-                     
-                        {user.accountNumber}
+                    {item.userDetails.userType
+    ?.toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase())}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -170,14 +137,29 @@ useEffect(() => {
                             <span className="sr-only">Open menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >            
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">View Profile</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-green-400">Verify Account</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">Reset Password</DropdownMenuItem>
-
-                        </DropdownMenuContent>
+                         <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >            
+                           <DropdownMenuItem className="hover:bg-[#3A859E]"
+                                             onClick={() => { dispatch(setSelectedDetails(item))
+                                              navigate("/view-flag-details"); }}>View Details</DropdownMenuItem>   
+                                               <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowSuspendModal(true)
+                                                                            dispatch(setSelectedDetails(item));
+                                              
+                                                                                                       }}>Suspend Account</DropdownMenuItem> 
+                                               <DropdownMenuItem className="hover:bg-[#3A859E]"
+                                             onClick={() => { dispatch(setSelectedDetails(item))
+                                              setShowUnflagModal(true); }}>Unflag Account</DropdownMenuItem>                  
+                                                  </DropdownMenuContent> 
                       </DropdownMenu>
                     </TableCell>
+                    <UnflagUserModal
+                    isOpen={ShowUnflagModal}
+                    onClose={() => setShowUnflagModal(false)}
+                    
+                  />
+                  <SuspendUserModal
+                  isOpen={showSuspendModal}
+                  onClose={() => setShowSuspendModal(false)}
+                />
                   </TableRow>
                 ))}
               </TableBody>
@@ -189,26 +171,17 @@ useEffect(() => {
      totalPages={totalPages}
      onPageChange={(page) => setCurrentPage(page)}
       itemsPerPage={itemsPerPage}
-      itemLabel="Pending Verifications"
-      totalItems={
-        activeSection === "personalUsers"
-          ? personalUsers.length
-          : activeSection === "businessUsers"
-          ? businessUsers.length
-          : totalUsers
-      }
-
-
-
+      itemLabel="Flagged Users"
+      totalItems={ totalUsers }
    />
          </div>
           </CardContent>
         </Card>
       </main>
       </div>
-    )}
+        )}
     </div>
   )
 }
 
-export default PendingVerification;
+export default FlaggedAccounts;

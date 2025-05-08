@@ -37,14 +37,9 @@ const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    // setSelectedUser: (state, action) => {
-    //   const { userId, data } = action.payload;
-    //   state.selectedUser =
-    //     state.users.find((u) => u.id === userId) ||
     setSelectedUser: (state, action) => {
       state.selectedUser = action.payload;
     },
-        // data || null; // Use 'data' if not found in lists
     
     logOut: (state) => {
       state.users = null;
