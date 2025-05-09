@@ -99,17 +99,37 @@ const accounts = [
   },
 ]
 const ITEMS_PER_PAGE = 5;
-const itemsPerPage =  ITEMS_PER_PAGE;
-
-const totalAccounts = accounts.length
+const totalAccounts = accounts.length;
+// const UNSUSPEND_ACCOUNT_URL = import.meta.env.VITE_UNSUSPENDED_USERS;
 
 function SuspendedAccounts() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(accounts.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedData = accounts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
+  const handleReactivateAccount = async () => {
+    try {
+      // const cleanId = accountId.replace("#", "");
+      // console.log(`${UNSUSPEND_ACCOUNT_URL}/${cleanId}`);
+      const response = await fetch(import.meta.env.VITE_UNSUSPENDED_USERS, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const text = await response.text();
+  
+      if (!response.ok) throw new Error(text.message);
+      
+      alert("Account reactivated successfully.");
+    } catch (error) {
+      console.error("Error reactivating account:", error.message);
+      alert("There was an error reactivating the account.");
+    }
+  };  
 
   return (
     <div className="flex flex-col">
@@ -132,10 +152,6 @@ function SuspendedAccounts() {
               <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
-            {/* <Button>
-              <UserPlus className="mr-2 h-4 w-4" />
-              Add New User
-            </Button> */}
           </div>
         </div>
       </header>
@@ -161,10 +177,7 @@ function SuspendedAccounts() {
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-3">
                         <Avatar>
-                            <img
-                            src= { avatar}></img>
-                          
-
+                          <AvatarFallback>{account.avatar}</AvatarFallback>
                         </Avatar>
                         <div>
                           <div>{account.name}</div>
@@ -173,10 +186,7 @@ function SuspendedAccounts() {
                       </div>
                     </TableCell>
                     <TableCell>{account.email}</TableCell>
-                    <TableCell>
-                     
-                        {account.account_no}
-                    </TableCell>
+                    <TableCell>{account.account_no}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -185,11 +195,19 @@ function SuspendedAccounts() {
                             <span className="sr-only">Open menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >            
+                        <DropdownMenuContent className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
                           <DropdownMenuItem className="hover:bg-[#3A859E]">View Profile</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-green-400">Reactivate Account</DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-green-400"
+                            onClick={() => {
+                              if (confirm(`Reactivate account for ${account.name}?`)) {
+                                handleReactivateAccount();
+                              }
+                            }}
+                          >
+                            Reactivate Account
+                          </DropdownMenuItem>
                           <DropdownMenuItem className="hover:bg-[#3A859E]">Reset Password</DropdownMenuItem>
-
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -198,21 +216,20 @@ function SuspendedAccounts() {
               </TableBody>
             </Table>
             <div className="flex items-center justify-between mt-4">
-            
-            <Pagination
-     currentPage={currentPage}
-     totalPages={totalPages}
-     onPageChange={(page) => setCurrentPage(page)}
-     totalItems={totalAccounts}
-     itemsPerPage={itemsPerPage}
-     itemLabel="accounts"
-   />
-         </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => setCurrentPage(page)}
+                totalItems={totalAccounts}
+                itemsPerPage={ITEMS_PER_PAGE}
+                itemLabel="accounts"
+              />
+            </div>
           </CardContent>
         </Card>
       </main>
     </div>
-  )
+  );
 }
 
 export default SuspendedAccounts;
