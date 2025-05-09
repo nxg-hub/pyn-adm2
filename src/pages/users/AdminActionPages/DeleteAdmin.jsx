@@ -3,58 +3,54 @@ import { FormModal } from "../../../components/ui/modal";
 import { Button } from "../../../components/ui/button";
 import { Textarea } from '../../../components/ui/textarea';
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUsers } from "../../../redux/UsersSlice";
 
 
-const SuspendUserModal = ({ isOpen, onClose, }) => {
-  const [reason, setReason] = useState("")
-  const user = useSelector((state) => state.users.selectedUser);
-  const selected = useSelector((state) => state.flaggedUsers.selectedDetails);
-  const flaggeduser = selected?.userDetails;  
+
+const DeleteAdminModal = ({ isOpen, onClose, }) => {
+  const admin = useSelector((state) => state.admins.selectedAdmin);
   const super_admin = useSelector((state) => state.admin.admin);
+
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('');
-  const dispatch = useDispatch();
-       
+  const dispatch = useDispatch
 
-  const handleSuspend = async () => {
+  const handleDelete = async () => {
     setLoading(true);
+    const id = super_admin?.id;
+    const adminId = admin?.id;
 
-  const id = super_admin?.id
+    console.log('id:',id)
 
-    const requestData = {
-      userId: user?.id || flaggeduser?.id,
-      email: user?.email || flaggeduser?.email,
-      phoneNumber: user?.phoneNumber || flaggeduser?.phoneNumber,
-      payinaUserName: user?.payinaUserName || flaggeduser?.payinaUserName,
-      accountNumber: user?.accountNumber || flaggeduser?.accountNumber,
-      reason: reason
-    }
-    try {
-      const response = await fetch(import.meta.env.VITE_SUSPEND_USER, {
-        method: "PUT",
+  try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/admin/management/${adminId}`, {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           'X-Admin-Id': id
 
         },
-        body: JSON.stringify(requestData),
+        // body: JSON.stringify({ email:  }),
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
-      if (!response.ok) throw new Error(data.message || "Failed to suspend user");
-
-      setSuccessMessage("User suspended successfully!");
-       setTimeout(() => {
-        setSuccessMessage('');
-        dispatch(fetchUsers()); 
-      onClose() 
-    }, 2000)
-    } catch (err) {
-      console.error("Error:", err.message);
-      setErrorMessage(`Error suspending user, ${err.message}`);
+      if (!response.ok) {
+        const message = result.message || 'Unknown error';
+        setErrorMessage(`Failed to delete: ${message}`);
+      } else {
+        setSuccessMessage('Admin deleted!');
+  
+        setTimeout(() => {
+          setSuccessMessage('');
+          dispatch(fetchAdmins());
+          onClose(); // Navigate or go back
+        }, 4000);
+  
+      }
+    } catch (error) {
+      const message = response.message || 'Unexpected error';
+      setErrorMessage(`Failed to delete: ${message}`);
     } finally {
       setLoading(false);
     }
@@ -64,8 +60,8 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Suspend ${user?.firstName || flaggeduser?.firstName} ${user?.lastName || flaggeduser?.lastName}`}
-      description="Please provide a reason for suspending this account. This action can impact user access."
+      title={`Delete ${admin.firstName} ${admin.lastName}`}
+      description="Please provide a reason for deleting this account."
 
       
       footer={
@@ -75,11 +71,11 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
           </Button>
           <Button
             variant="destructive"
-            onClick={handleSuspend}
+            onClick={handleDelete}
             disabled={loading}
             className="bg-red-600 hover:bg-red-700"
           >
-            {loading ? "Suspending..." : "Confirm Suspend"}
+            {loading ? "Deleting..." : "Confirm Delete"}
           </Button>
         </>
       }
@@ -87,9 +83,9 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
          <Textarea
                     id="reason"
                     name="reason"
-                    value={reason}
+                    // value={reason}
                     onChange={(e) => setReason(e.target.value)}
-                    placeholder="e.g. User violated terms of service..."
+                    placeholder="e.g. Admin violated terms of service..."
                     rows={5}
                     required
                   />
@@ -107,4 +103,4 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
   );
 };
 
-export default SuspendUserModal;
+export default DeleteAdminModal;

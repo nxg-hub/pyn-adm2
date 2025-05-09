@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Filter, MoreHorizontal, Search, UserPlus } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -15,123 +15,51 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Avatar, AvatarFallback } from "../../components/ui/avatar"
 import Pagination from "../../components/ui/pagination"
 import avatar from "../../assets/avatar.png"
+import { TableLoader } from "../../components/ui/loader"
+import { useSelector, useDispatch } from "react-redux"
+import { fetchSuspendedUsers, setSelectedDetails } from "../../redux/suspendedAccounts"
+import { useNavigate } from "react-router-dom";
+import UnsuspendUserModal from "./ActionPages/UnsuspendModal"
 
-const accounts = [
-  {
-    id: "#12345",
-    name: "John Doe",
-    email: "john@example.com",
-    account_no: "1234567891",
-    avatar: "JD",
-  },
-  {
-    id: "#12346",
-    name: "Sarah Miller",
-    email: "sarah@example.com",
-    account_no: "1234567891",
-    avatar: "SM",
-  },
-  {
-    id: "#12347",
-    name: "Robert Johnson",
-    email: "robert@example.com",
-    account_no: "1234567891",
-    avatar: "RJ",
-  },
-  {
-    id: "#12348",
-    name: "Maria Garcia",
-    email: "maria@example.com",
-    account_no: "1234567891",
-    avatar: "MG",
-  },
-  {
-    id: "#12349",
-    name: "David Wilson",
-    email: "david@example.com",
-    account_no: "1234567891",
-    avatar: "DW",
-  },
-  {
-    id: "#12349",
-    name: "David Wilson",
-    email: "david@example.com",
-    account_no: "1234567891",
-    avatar: "DW",
-  },
-  {
-    id: "#12349",
-    name: "David Wilson",
-    email: "david@example.com",
-    account_no: "1234567891",
-    avatar: "DW",
-  },
-  {
-    id: "#12349",
-    name: "David Wilson",
-    email: "david@example.com",
-    account_no: "1234567891",
-    avatar: "DW",
-  }, {
-    id: "#12349",
-    name: "David Wilson",
-    email: "david@example.com",
-    account_no: "1234567891",
-    avatar: "DW",
-  }, {
-    id: "#12349",
-    name: "David Wilson",
-    email: "david@example.com",
-    account_no: "1234567891",
-    avatar: "DW",
-  }, {
-    id: "#12349",
-    name: "David Wilson",
-    email: "david@example.com",
-    account_no: "1234567891",
-    avatar: "DW",
-  }, {
-    id: "#12349",
-    name: "David Wilson",
-    email: "david@example.com",
-    account_no: "1234567891",
-    avatar: "DW",
-  },
-]
+
 const ITEMS_PER_PAGE = 5;
-const totalAccounts = accounts.length;
-// const UNSUSPEND_ACCOUNT_URL = import.meta.env.VITE_UNSUSPENDED_USERS;
+const itemsPerPage =  ITEMS_PER_PAGE;
+
 
 function SuspendedAccounts() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(accounts.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedData = accounts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [ShowUnsuspendModal, setShowUnsuspendModal] = useState(false)
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const suspendedUsers = useSelector(state => state.suspendedUsers.all);
 
-  const handleReactivateAccount = async () => {
-    try {
-      // const cleanId = accountId.replace("#", "");
-      // console.log(`${UNSUSPEND_ACCOUNT_URL}/${cleanId}`);
-      const response = await fetch(import.meta.env.VITE_UNSUSPENDED_USERS, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
 
-      const text = await response.text();
-  
-      if (!response.ok) throw new Error(text.message);
-      
-      alert("Account reactivated successfully.");
-    } catch (error) {
-      console.error("Error reactivating account:", error.message);
-      alert("There was an error reactivating the account.");
-    }
-  };  
+  useEffect(() => {
+    dispatch(fetchSuspendedUsers());
+  }, [dispatch]);
+
+
+  const filteredData = suspendedUsers?.filter((su) => {
+    const firstNameMatch = su.userDetails?.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
+    const emailMatch = su.userDetails?.email?.toLowerCase().includes(searchQuery.toLowerCase());
+    return firstNameMatch || emailMatch;
+  });
+const totalUsers = suspendedUsers.length
+
+
+const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
 
   return (
+    <div>
+        {loading ? (
+          <TableLoader/>
+        ) : (
     <div className="flex flex-col">
       <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
@@ -148,10 +76,7 @@ function SuspendedAccounts() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
+            
           </div>
         </div>
       </header>
@@ -161,6 +86,14 @@ function SuspendedAccounts() {
           <CardHeader>
             <CardTitle>Accounts</CardTitle>
           </CardHeader>
+          <div className="flex gap-10 px-6 py-4 border-b text-gray-600">
+  <div className="cursor-pointer group">
+    <h1 className="relative text-base font-semibold transition-colors duration-300 text-white  px-2 rounded-md">
+     Suspended Users
+    </h1>
+  </div>
+</div>
+
           <CardContent>
             <Table>
               <TableHeader>
@@ -172,21 +105,29 @@ function SuspendedAccounts() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedData.map((account) => (
-                  <TableRow key={account.id}>
+                {paginatedData.map((item) => (
+                  <TableRow key={item.userDetails.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-3">
                         <Avatar>
-                          <AvatarFallback>{account.avatar}</AvatarFallback>
+                            <img
+                            src= {avatar}></img>
+                          
+
                         </Avatar>
                         <div>
-                          <div>{account.name}</div>
-                          <div className="text-xs text-muted-foreground">ID: {account.id}</div>
+                          <div>{item.userDetails.firstName} {item.userDetails.lastName}</div>
+                          <div className="text-xs text-muted-foreground">ID: {item.userDetails.id}</div>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>{account.email}</TableCell>
-                    <TableCell>{account.account_no}</TableCell>
+                    <TableCell>{item.userDetails.email}</TableCell>
+                    <TableCell>
+                    {item.userDetails.userType
+    ?.toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase())}
+                    </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -195,41 +136,43 @@ function SuspendedAccounts() {
                             <span className="sr-only">Open menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">View Profile</DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="hover:bg-green-400"
-                            onClick={() => {
-                              if (confirm(`Reactivate account for ${account.name}?`)) {
-                                handleReactivateAccount();
-                              }
-                            }}
-                          >
-                            Reactivate Account
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">Reset Password</DropdownMenuItem>
-                        </DropdownMenuContent>
+                         <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >            
+                           <DropdownMenuItem className="hover:bg-[#3A859E]"
+                                             onClick={() => { dispatch(setSelectedDetails(item))
+                                              navigate("/view-details"); }}>View Details</DropdownMenuItem>    
+                                               <DropdownMenuItem className="hover:bg-[#3A859E]"
+                                             onClick={() => { dispatch(setSelectedDetails(item))
+                                              setShowUnsuspendModal(true); }}>Unsuspend Account</DropdownMenuItem>                  
+                                                  </DropdownMenuContent> 
                       </DropdownMenu>
                     </TableCell>
+                    <UnsuspendUserModal
+                    isOpen={ShowUnsuspendModal}
+                    onClose={() => setShowUnsuspendModal(false)}
+                    
+                  />
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
             <div className="flex items-center justify-between mt-4">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={(page) => setCurrentPage(page)}
-                totalItems={totalAccounts}
-                itemsPerPage={ITEMS_PER_PAGE}
-                itemLabel="accounts"
-              />
-            </div>
+            
+            <Pagination
+     currentPage={currentPage}
+     totalPages={totalPages}
+     onPageChange={(page) => setCurrentPage(page)}
+      itemsPerPage={itemsPerPage}
+      itemLabel="Suspenede Users"
+      totalItems={ totalUsers }
+   />
+         </div>
           </CardContent>
         </Card>
       </main>
+      </div>
+        )}
     </div>
-  );
+  )
 }
 
 export default SuspendedAccounts;
