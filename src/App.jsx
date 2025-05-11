@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import UsersPage from "./pages/users/UsersPage";
 import AdminsPage from "./pages/users/AdminUsers";
 import SuspendedAccounts from "./pages/users/SuspendedAccounts";
+import UnsuspendedAccounts from "./pages/users/UnsuspendedAccounts.jsx";
 import RecentlyActive from "./pages/users/RecentlyActive";
 import PendingVerification from "./pages/users/PendingVerification";
 import UserProfile from "./pages/users/ActionPages/ViewProfile";
@@ -80,6 +81,7 @@ function App() {
           <Route path="dashboard/users" element={<UsersPage />} />
           <Route path="dashboard/users/admin-users" element={<AdminsPage />} />
           <Route path="dashboard/users/suspended" element={<SuspendedAccounts />} />
+          <Route path="dashboard/users/unsuspended" element={<UnsuspendedAccounts />} />
           <Route path="dashboard/users/active" element={<RecentlyActive />} />
           <Route path="dashboard/users/pending" element={<PendingVerification />} />
           <Route path="/user-profile" element={<UserProfile />} />

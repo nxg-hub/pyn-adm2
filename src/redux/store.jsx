@@ -9,6 +9,7 @@ import transactionsReducer from './fetchUserTransactionsSlice'
 import AdminActivitiesReducer from './AdminActivitySlice'
 import suspendedUsersReducer from './suspendedAccounts'
 import flaggedUsersReducer from './flaggedAccounts'
+import unsuspendedUsersReducer from "./unsuspendedAccounts";
 
 
 // Configuration for redux-persist
@@ -22,6 +23,7 @@ const persistConfig = {
     'transactions',
     'AdminActivities',
     'suspendedUsers',
+    'unsuspendedUsers',
     'flaggedUsers'
   ], 
 };
@@ -33,6 +35,7 @@ const rootReducer = combineReducers({
   transactions: transactionsReducer,
   AdminActivities: AdminActivitiesReducer,
   suspendedUsers: suspendedUsersReducer,
+  unsuspendedUsers: unsuspendedUsersReducer,
   flaggedUsers: flaggedUsersReducer
 });
 
