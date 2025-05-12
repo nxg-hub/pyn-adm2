@@ -17,6 +17,7 @@ import {
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
+import Pagination from "../../components/ui/pagination"
 
 const electricityTransactions = [
   {
@@ -43,19 +44,50 @@ const electricityTransactions = [
     date: "2024-04-20",
     status: "Failed",
   },
+  {
+    id: "ELEC-004",
+    user: "Emma Green",
+    provider: "EnergyPlus",
+    amount: 50,
+    date: "2024-04-15",
+    status: "Pending",
+  },
+  {
+    id: "ELEC-005",
+    user: "Olivia White",
+    provider: "BrightPower",
+    amount: 30,
+    date: "2024-04-20",
+    status: "Failed",
+  },
+  {
+    id: "ELEC-006",
+    user: "John Doe",
+    provider: "PowerCo",
+    amount: 100,
+    date: "2024-04-12",
+    status: "Successful",
+  },
+  {
+    id: "ELEC-007",
+    user: "Emma Green",
+    provider: "EnergyPlus",
+    amount: 50,
+    date: "2024-04-15",
+    status: "Pending",
+  },
 ]
 
 function ElectricityPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
   const [selectedTransaction, setSelectedTransaction] = useState(null)
-
   const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
   const [showFlagDialog, setShowFlagDialog] = useState(false)
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
-
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -87,6 +119,13 @@ function ElectricityPage() {
   const filteredTransactions = electricityTransactions.filter((transaction) =>
     transaction.user.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const ITEMS_PER_PAGE = 5;
+  
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="flex flex-col">
@@ -159,7 +198,7 @@ function ElectricityPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTransactions.map((transaction) => (
+                {paginatedTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.id}</TableCell>
                     <TableCell>{transaction.user}</TableCell>
@@ -242,6 +281,14 @@ function ElectricityPage() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex justify-end mt-4">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={filteredTransactions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
           </CardContent>
         </Card>
 

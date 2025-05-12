@@ -15,7 +15,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "../../components/ui/dropdown-menu"
-import { ConfirmModal, FormModal } from "../../components/ui/modal" 
+import { ConfirmModal, FormModal } from "../../components/ui/modal"
+import Pagination from "../../components/ui/pagination" 
 
 const sampleTransactions = [
   {id: "TXN-001", user: "John Doe", amount: 100, date: "2024-01-01", status: "Completed",},
@@ -43,8 +44,6 @@ function TransactionsPage() {
   const [transactionsData, setTransactionsData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  // const [alertMessage, setAlertMessage] = useState("")
-  // const [showSuccessAlert, setShowSuccessAlert] = useState(false)
 
 
   const handleViewDetails = (transaction) => {
@@ -78,19 +77,14 @@ function TransactionsPage() {
       t.id.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery, transactionsData]);
-  
-
-  
+    
 
   const ITEMS_PER_PAGE = 5;
   
   const paginatedTransactions = filteredTransactions.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
-  );
-  
-  const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
-  
+  ); 
   
 
   const fetchTransactions = async () => {
@@ -287,35 +281,13 @@ function TransactionsPage() {
                 ))}
               </TableBody>
             </Table>
-            <div className="flex justify-end items-center mt-4 space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              <div className="flex gap-1 flex-wrap">
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <Button
-                    key={i + 1}
-                    variant={currentPage === i + 1 ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(i + 1)}
-                  >
-                    {i + 1}
-                  </Button>
-                ))}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
+            <div className="flex justify-end mt-4">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={filteredTransactions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
             </div>
           </CardContent>
         </Card>

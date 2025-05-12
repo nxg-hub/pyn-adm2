@@ -17,6 +17,7 @@ import {
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
+import Pagination from "../../components/ui/pagination"
 
 const internationalAirtimeTransactions = [
   {
@@ -40,19 +41,46 @@ const internationalAirtimeTransactions = [
     date: "2024-04-18",
     status: "Failed",
   },
+  {
+    id: "IA-004",
+    country: "Nigeria",
+    amount: 50,
+    date: "2024-04-12",
+    status: "Successful",
+  },
+  {
+    id: "IA-005",
+    country: "Kenya",
+    amount: 30,
+    date: "2024-04-15",
+    status: "Pending",
+  },
+  {
+    id: "IA-006",
+    country: "Ghana",
+    amount: 70,
+    date: "2024-04-18",
+    status: "Failed",
+  },
+  {
+    id: "IA-007",
+    country: "Ghana",
+    amount: 70,
+    date: "2024-04-18",
+    status: "Failed",
+  },
 ]
 
 function InternationalAirtimePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
   const [selectedTransaction, setSelectedTransaction] = useState(null)
-
   const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
   const [showFlagDialog, setShowFlagDialog] = useState(false)
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
-
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -84,6 +112,13 @@ function InternationalAirtimePage() {
   const filteredTransactions = internationalAirtimeTransactions.filter((transaction) =>
     transaction.country.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const ITEMS_PER_PAGE = 5;
+  
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="flex flex-col">
@@ -155,7 +190,7 @@ function InternationalAirtimePage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTransactions.map((transaction) => (
+                {paginatedTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.id}</TableCell>
                     <TableCell>{transaction.country}</TableCell>
@@ -237,6 +272,14 @@ function InternationalAirtimePage() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex justify-end mt-4">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={filteredTransactions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
           </CardContent>
         </Card>
 

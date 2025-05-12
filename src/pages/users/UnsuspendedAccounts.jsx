@@ -30,10 +30,8 @@ function UnsuspendedAccounts() {
   const [selectedUser, setSelectedUser] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { all: unsuspendedUsers = [], loading = false } = useSelector(
-    (state) => state.unsuspendedAccounts || {}
-  );  
+  const [loading, setLoading] = useState(false);
+  const unsuspendedUsers = useSelector(state => state.unsuspendedUsers.all);
 
   
   useEffect(() => {
@@ -41,13 +39,10 @@ function UnsuspendedAccounts() {
     console.log("Loaded users:", unsuspendedUsers);
   }, [dispatch]);
 
-  // const filteredData = Array.isArray(unsuspendedUsers)
-  // ? unsuspendedUsers.filter((user) => {
-  //     const firstNameMatch = user.userDetails?.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
-  //     const emailMatch = user.userDetails?.email?.toLowerCase().includes(searchQuery.toLowerCase());
-  //     return firstNameMatch || emailMatch;
-  //   })
-  // : [];
+  useEffect(() => {
+    console.log("Loaded users:", unsuspendedUsers)
+  }, [unsuspendedUsers])
+
 
   const filteredData = unsuspendedUsers?.filter((su) => {
     const firstNameMatch = su.userDetails?.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -161,11 +156,6 @@ function UnsuspendedAccounts() {
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
-
-                          <SuspendUserModal
-                            isOpen={showSuspendModal}
-                            onClose={() => setShowSuspendModal(false)}
-                          />
                         </TableCell>
                         <SuspendUserModal
                           isOpen={showSuspendModal}

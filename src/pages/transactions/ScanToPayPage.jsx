@@ -17,6 +17,7 @@ import {
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
+import Pagination from "../../components/ui/pagination"
 
 const scanToPayTransactions = [
   {
@@ -40,19 +41,39 @@ const scanToPayTransactions = [
     date: "2024-04-10",
     status: "Failed",
   },
+   {
+    id: "STP-004",
+    payer: "John Doe",
+    amount: 150,
+    date: "2024-04-01",
+    status: "Completed",
+  },
+  {
+    id: "STP-005",
+    payer: "Jane Smith",
+    amount: 200,
+    date: "2024-04-05",
+    status: "Pending",
+  },
+  {
+    id: "STP-006",
+    payer: "Sam Brown",
+    amount: 300,
+    date: "2024-04-10",
+    status: "Failed",
+  },
 ]
 
 function ScanToPayPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
   const [selectedTransaction, setSelectedTransaction] = useState(null)
-
   const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
   const [showFlagDialog, setShowFlagDialog] = useState(false)
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
-
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -84,6 +105,13 @@ function ScanToPayPage() {
   const filteredTransactions = scanToPayTransactions.filter((transaction) =>
     transaction.payer.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const ITEMS_PER_PAGE = 5;
+  
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="flex flex-col">
@@ -155,7 +183,7 @@ function ScanToPayPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTransactions.map((transaction) => (
+                {paginatedTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.id}</TableCell>
                     <TableCell>{transaction.payer}</TableCell>
@@ -237,6 +265,14 @@ function ScanToPayPage() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex justify-end mt-4">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={filteredTransactions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
           </CardContent>
         </Card>
 

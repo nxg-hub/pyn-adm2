@@ -1,12 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Async thunk to fetch unsuspended users
 export const fetchUnsuspendedUsers = createAsyncThunk(
-  "unsuspendedAccounts/fetchUnsuspendedUsers",
+ 'unsuspendedUsers/fetch',
   async () => {
-    const response = await fetch(import.meta.env.VITE_GET_UNSUSPENDED_USERS);
-    if (!response.ok) throw new Error("Failed to fetch unsuspended users");
-    return await response.json();
+    const res = await fetch(import.meta.env.VITE_GET_UNSUSPENDED_USERS)
+    const data = await res.json();
+    return data.data.content; 
   }
 );
 
@@ -16,6 +15,7 @@ const unsuspendedUsersSlice = createSlice({
     all: [],
     loading: false,
     error: null,
+    selectedDetails: null
   },
   reducers: {
     setSelectedDetails: (state, action) => {
