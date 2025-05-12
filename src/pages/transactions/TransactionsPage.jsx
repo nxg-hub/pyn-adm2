@@ -87,38 +87,38 @@ function TransactionsPage() {
   ); 
   
 
-  const fetchTransactions = async () => {
-    setLoading(true); // Set loading state
-    try {
-      const response = await fetch(import.meta.env.VITE_GET_TRANSACTION_HISTORY, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Include any necessary authentication headers
-        },
-        body: JSON.stringify({
-          page: 1,
-          perPage: 50, // Adjust page size if needed
-        }),
-      });
+  // const fetchTransactions = async () => {
+  //   setLoading(true); // Set loading state
+  //   try {
+  //     const response = await fetch(import.meta.env.VITE_GET_TRANSACTION_HISTORY, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // Include any necessary authentication headers
+  //       },
+  //       body: JSON.stringify({
+  //         page: 1,
+  //         perPage: 50, // Adjust page size if needed
+  //       }),
+  //     });
   
-      if (!response.ok) {
-        throw new Error("Failed to fetch transactions");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch transactions");
+  //     }
   
-      const data = await response.json();
-      setTransactionsData(data.transactions || []); // Set the fetched transactions in state
-    } catch (error) {
-      console.error(error.message);
-      setError(error.message || "Unexpected error occurred");
-    } finally {
-      setLoading(false); // Disable loading state
-    }
-  };
-  useEffect(() => {
-    fetchTransactions();
-    console.log("i'm here")
-  }, []);
+  //     const data = await response.json();
+  //     setTransactionsData(data.transactions || []); // Set the fetched transactions in state
+  //   } catch (error) {
+  //     console.error(error.message);
+  //     setError(error.message || "Unexpected error occurred");
+  //   } finally {
+  //     setLoading(false); // Disable loading state
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchTransactions();
+  //   console.log("i'm here")
+  // }, []);
   
 
 
