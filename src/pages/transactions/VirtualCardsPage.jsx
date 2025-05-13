@@ -17,6 +17,7 @@ import {
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
+import Pagination from "../../components/ui/pagination"
 
 const virtualCardTransactions = [
   {
@@ -40,19 +41,60 @@ const virtualCardTransactions = [
     date: "2024-04-18",
     status: "Failed",
   },
+  {
+    id: "VC-004",
+    cardHolder: "John Doe",
+    amount: 100,
+    date: "2024-04-12",
+    status: "Successful",
+  },
+  {
+    id: "VC-005",
+    cardHolder: "Jane Smith",
+    amount: 50,
+    date: "2024-04-15",
+    status: "Pending",
+  },
+  {
+    id: "VC-006",
+    cardHolder: "Robert Brown",
+    amount: 200,
+    date: "2024-04-18",
+    status: "Failed",
+  },
+  {
+    id: "VC-007",
+    cardHolder: "John Doe",
+    amount: 100,
+    date: "2024-04-12",
+    status: "Successful",
+  },
+  {
+    id: "VC-008",
+    cardHolder: "Jane Smith",
+    amount: 50,
+    date: "2024-04-15",
+    status: "Pending",
+  },
+  {
+    id: "VC-009",
+    cardHolder: "Robert Brown",
+    amount: 200,
+    date: "2024-04-18",
+    status: "Failed",
+  },
 ]
 
 function VirtualCardsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
   const [selectedTransaction, setSelectedTransaction] = useState(null)
-
   const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
   const [showFlagDialog, setShowFlagDialog] = useState(false)
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
-
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -84,6 +126,13 @@ function VirtualCardsPage() {
   const filteredTransactions = virtualCardTransactions.filter((transaction) =>
     transaction.cardHolder.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const ITEMS_PER_PAGE = 5;
+  
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="flex flex-col">
@@ -155,7 +204,7 @@ function VirtualCardsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTransactions.map((transaction) => (
+                {paginatedTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.id}</TableCell>
                     <TableCell>{transaction.cardHolder}</TableCell>
@@ -237,6 +286,14 @@ function VirtualCardsPage() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex justify-end mt-4">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={filteredTransactions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
           </CardContent>
         </Card>
 

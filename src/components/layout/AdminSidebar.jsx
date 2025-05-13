@@ -148,6 +148,11 @@ export function AdminSidebar() {
               href="/dashboard/users/suspended"
               isActive={location.pathname === "/dashboard/users/suspended"}
             />
+            <SidebarSubItem
+              label="Reactivated Accounts"
+              href="/dashboard/users/unsuspended"
+              isActive={location.pathname === "/dashboard/users/unsuspended"}
+            />
                <SidebarSubItem
               label="Flagged Accounts"
               href="/dashboard/users/flagged"
