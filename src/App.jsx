@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminProvider } from "./contexts/AdminContext";
+import RouteWrapper from "./components/RouteWrapper";
 import AdminLayout from "./components/layout/AdminLayout";
 import Dashboard from "./pages/Dashboard";
 import UsersPage from "./pages/users/UsersPage";
@@ -45,10 +46,10 @@ import TransactionsPage from "./pages/transactions/TransactionsPage.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
-// // import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
-// // import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
-// // import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
-// // import SystemBalancePage from "./pages/wallets/system.jsx";
+import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
+import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
+import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
+import SystemBalancePage from "./pages/wallets/system.jsx";
 
 function App() {
   return (
@@ -59,122 +60,124 @@ function App() {
       <AdminProvider>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route element={<AdminLayout />}>
-            {/* <Route path="/login" element={<LoginForm />} /> */}
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="dashboard/users" element={<UsersPage />} />
-            <Route path="/user-profile" element={<UserProfile />} />
-            <Route path="/edit-user" element={<EditUser />} />
-            <Route path="/transactions" element={<ViewTransactions />} />
-            <Route path="/admin-profile" element={<AdminProfile/>} />
-                        <Route path="/edit-admin" element={<EditAdmin />} />
-            <Route
-              path="dashboard/users/admin-users"
-              element={<AdminsPage />}
-            />
-            <Route
-              path="dashboard/users/suspended"
-              element={<SuspendedAccounts />}
-            />
-            <Route path="dashboard/users/active" element={<RecentlyActive />} />
-            <Route
-              path="dashboard/users/pending"
-              element={<PendingVerification />}
-            />
-            <Route
-              path="dashboard/transactions"
-              element={<TransactionsPage />}
-            />
-            <Route
-              path="dashboard/transactions/money-transfers"
-              element={<MoneyTransfersPage />}
-            />
-            <Route path="dashboard/wallets" element={<WalletsPage />} />
-            <Route path="dashboard/analytics" element={<AnalyticsPage />} />
+          <Route element={<RouteWrapper />}>
+            <Route element={<AdminLayout />}>
+              {/* <Route path="/login" element={<LoginForm />} /> */}
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="dashboard/users" element={<UsersPage />} />
+              <Route path="/user-profile" element={<UserProfile />} />
+              <Route path="/edit-user" element={<EditUser />} />
+              <Route path="/transactions" element={<ViewTransactions />} />
+              <Route path="/admin-profile" element={<AdminProfile />} />
+              <Route path="/edit-admin" element={<EditAdmin />} />
+              <Route
+                path="dashboard/users/admin-users"
+                element={<AdminsPage />}
+              />
+              <Route
+                path="dashboard/users/suspended"
+                element={<SuspendedAccounts />}
+              />
+              <Route path="dashboard/users/active" element={<RecentlyActive />} />
+              <Route
+                path="dashboard/users/pending"
+                element={<PendingVerification />}
+              />
+              <Route
+                path="dashboard/transactions"
+                element={<TransactionsPage />}
+              />
+              <Route
+                path="dashboard/transactions/money-transfers"
+                element={<MoneyTransfersPage />}
+              />
+              <Route path="dashboard/wallets" element={<WalletsPage />} />
+              <Route path="dashboard/analytics" element={<AnalyticsPage />} />
 
-            <Route
-              path="dashboard/analytics/users"
-              element={<UserAnalytics />}
-            />
-            <Route
-              path="dashboard/analytics/performance"
-              element={<PerformanceReports />}
-            />
-            <Route
-              path="dashboard/analytics/funnels"
-              element={<FunnelCharts />}
-            />
-            <Route
-              path="dashboard/analytics/export"
-              element={<ExportReports />}
-            />
-            <Route
-              path="dashboard/analytics/transactions"
-              element={<TransactionAanlytics />}
-            />
-            <Route path="dashboard/support" element={<SupportPage />} />
-            <Route path="dashboard/compliance" element={<CompliancePage />} />
-            <Route
-              path="dashboard/compliance/kyc"
-              element={<KycVerifications />}
-            />
-            <Route
-              path="dashboard/compliance/suspicious-activities"
-              element={<SuspiciousActivities />}
-            />
-            <Route
-              path="dashboard/compliance/aml"
-              element={<AmlMonitoring />}
-            />
-            <Route path="dashboard/transactions/*" element={<TransactionsPage />} />
-            <Route path="dashboard/support/*" element={<Support />} />                        <Route path="dashboard/compliance/audit" element={<AuditLogs />} />
-            <Route
-              path="dashboard/notifications"
-              element={<NotificationsPage />}
-            />
-            <Route path="dashboard/notifications/sms" element={<SmsAlerts />} />
-            <Route
-              path="dashboard/notifications/email"
-              element={<EmailCampaigns />}
-            />
-            <Route
-              path="dashboard/notifications/scheduled"
-              element={<Scheduled />}
-            />
-            <Route
-              path="dashboard/notifications/logs"
-              element={<DeliveryLogs />}
-            />
-            <Route path="dashboard/settings" element={<SettingsPage />} />
-            <Route path="dashboard/settings/limits" element={<TransactionLimits />} />
-            <Route path="dashboard/settings/fees" element={<ServiceFees />} />
-            <Route path="dashboard/settings/security" element={<Security />} />
-            <Route path="dashboard/settings/api-keys" element={<ApiKeysSettings />} />
-            <Route path="dashboard/settings/admins" element={<SystemAdminSettings />} />
-            <Route path="dashboard/settings/2fa" element={<TwoFactorSettings />} />
+              <Route
+                path="dashboard/analytics/users"
+                element={<UserAnalytics />}
+              />
+              <Route
+                path="dashboard/analytics/performance"
+                element={<PerformanceReports />}
+              />
+              <Route
+                path="dashboard/analytics/funnels"
+                element={<FunnelCharts />}
+              />
+              <Route
+                path="dashboard/analytics/export"
+                element={<ExportReports />}
+              />
+              <Route
+                path="dashboard/analytics/transactions"
+                element={<TransactionAanlytics />}
+              />
+              <Route path="dashboard/support" element={<SupportPage />} />
+              <Route path="dashboard/compliance" element={<CompliancePage />} />
+              <Route
+                path="dashboard/compliance/kyc"
+                element={<KycVerifications />}
+              />
+              <Route
+                path="dashboard/compliance/suspicious-activities"
+                element={<SuspiciousActivities />}
+              />
+              <Route
+                path="dashboard/compliance/aml"
+                element={<AmlMonitoring />}
+              />
+              <Route path="dashboard/transactions/*" element={<TransactionsPage />} />
+              <Route path="dashboard/support/*" element={<Support />} />                        <Route path="dashboard/compliance/audit" element={<AuditLogs />} />
+              <Route
+                path="dashboard/notifications"
+                element={<NotificationsPage />}
+              />
+              <Route path="dashboard/notifications/sms" element={<SmsAlerts />} />
+              <Route
+                path="dashboard/notifications/email"
+                element={<EmailCampaigns />}
+              />
+              <Route
+                path="dashboard/notifications/scheduled"
+                element={<Scheduled />}
+              />
+              <Route
+                path="dashboard/notifications/logs"
+                element={<DeliveryLogs />}
+              />
+              <Route path="dashboard/settings" element={<SettingsPage />} />
+              <Route path="dashboard/settings/limits" element={<TransactionLimits />} />
+              <Route path="dashboard/settings/fees" element={<ServiceFees />} />
+              <Route path="dashboard/settings/security" element={<Security />} />
+              <Route path="dashboard/settings/api-keys" element={<ApiKeysSettings />} />
+              <Route path="dashboard/settings/admins" element={<SystemAdminSettings />} />
+              <Route path="dashboard/settings/2fa" element={<TwoFactorSettings />} />
 
 
-            <Route path="dashboard/reports" element={<ReportsPage />} />
-            <Route
-              path="dashboard/wallets/virtual-cards"
-              element={<VirtualCardsPage />}
-            />
-            {/* {/* <Route
-              path="dashboard/wallets/withdrawals"
-              element={<FundingWithdrawalsPage />}
-            /> */}
-            {/* <Route
-              path="dashboard/wallets/gateways"
-              element={<PaymentGatewaysPage />}
-            /> */}
-            {/* <Route
-              path="dashboard/wallets/corporate"
-              element={<CorporateAccountsPage />}
-            /> */}
-            {/* <Route
-              path="dashboard/wallets/system"
-              element={<SystemBalancePage />}
-            /> */} 
+              <Route path="dashboard/reports" element={<ReportsPage />} />
+              <Route
+                path="dashboard/wallets/virtual-cards"
+                element={<VirtualCardsPage />}
+              />
+              <Route
+                path="dashboard/wallets/withdrawals"
+                element={<FundingWithdrawalsPage />}
+              />
+              <Route
+                path="dashboard/wallets/gateways"
+                element={<PaymentGatewaysPage />}
+              />
+              <Route
+                path="dashboard/wallets/corporate"
+                element={<CorporateAccountsPage />}
+              />
+              <Route
+                path="dashboard/wallets/system"
+                element={<SystemBalancePage />}
+              />
+            </Route>
           </Route>
         </Routes>
       </AdminProvider>
