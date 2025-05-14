@@ -100,7 +100,7 @@ const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE
                 <TableRow>
                   <TableHead>NAME</TableHead>
                   <TableHead>EMAIL</TableHead>
-                  <TableHead>ACCOUNT_NO</TableHead>
+                  <TableHead>ACCOUNT TYPE</TableHead>
                   <TableHead>ACTIONS</TableHead>
                 </TableRow>
               </TableHeader>
@@ -111,7 +111,7 @@ const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE
                       <div className="flex items-center gap-3">
                         <Avatar>
                             <img
-                            src= {avatar}></img>
+                            src= {item.userDetails.passportUrl || avatar}></img>
                           
 
                         </Avatar>

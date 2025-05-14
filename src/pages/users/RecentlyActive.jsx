@@ -16,6 +16,9 @@ import { Avatar, AvatarFallback } from "../../components/ui/avatar"
 import Pagination from "../../components/ui/pagination"
 import avatar from "../../assets/avatar.png"
 import { TableLoader } from "../../components/ui/loader"
+import { useNavigate } from "react-router-dom"
+import InitiatePasswordReset from "./ActionPages/ChangePassword"
+import FlagUser from "./ActionPages/FlagUser"
 
 const ITEMS_PER_PAGE = 5;
 const itemsPerPage =  ITEMS_PER_PAGE;
@@ -25,9 +28,14 @@ function RecentlyActive() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  // const [activeSection, setActiveSection] = useState("personalUsers"); // if not already defined
+  const navigate = useNavigate();
+  const [showFlagModal, setShowFlagModal] = useState(false);
+  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [showInitiatePasswordModal, setInitiatePasswordModal] = useState(false);
+
 
   const GetRecentlyActive= async () => {
     setLoading(true);
@@ -35,7 +43,6 @@ function RecentlyActive() {
       page: 0,
       size: 100,
     }).toString();
-
 
   try {
       const response = await fetch(`${import.meta.env.VITE_GET_RECENTLY_ACTIVE_USERS}?${queryParams}`, {
@@ -59,8 +66,6 @@ function RecentlyActive() {
     }
   };
 
-  // const personalUsers = users?.filter((u) => u.userType === "PERSONAL");
-  // const businessUsers = users?.filter((u) => u.userType === "CORPORATE");
 
 const filteredData = (users)?.filter((user) => {
   const firstNameMatch = user.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -76,7 +81,26 @@ const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE
 
 useEffect(() => {
     (GetRecentlyActive());
-  }, {});
+  }, []);
+
+
+  const handleViewDetails = (user) => {
+    setSelectedUser(user); 
+navigate("/user-profile", { state: { selectedUser: user } });
+  }
+  const handleResetPassword = (user) => {
+    setSelectedUser(user); 
+    setInitiatePasswordModal(true)
+  }
+  const handleFlagUser = (user) => {
+    setSelectedUser(user); 
+    setShowFlagModal(true)
+  }
+  const handleViewTransactions = (user, walletId) => {
+    setSelectedUser({ user, walletId }); // Set both user and walletId in the selectedUser state as an object
+    navigate("/transactions", { state: { selectedUser: user, walletId: walletId } });
+  };
+  
 
   return (
     <div>
@@ -99,10 +123,7 @@ useEffect(() => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            {/* <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button> */}
+           
             
           </div>
         </div>
@@ -137,9 +158,11 @@ useEffect(() => {
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-3">
                         <Avatar>
-                            <img
-                            src= { avatar}></img>
-                          
+                           <img
+                            src={user.passportUrl || avatar}
+                            alt="image"
+                            className="w-10 h-10 rounded-full object-cover"
+                           />
 
                         </Avatar>
                         <div>
@@ -161,28 +184,24 @@ useEffect(() => {
                             <span className="sr-only">Open menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >            
+                        <DropdownMenuContent   className=" right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >            
                           <DropdownMenuItem className="hover:bg-[#3A859E]"
-                                                     onClick={() => {
+                                                     onClick={() => handleViewDetails(user)
+                                                      
+                                                       }>View Profile</DropdownMenuItem>
+                                                    {/* <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
                                                       dispatch(setSelectedUser(user));
-                                                      navigate("/user-profile"); }}>View Profile</DropdownMenuItem>
-                                                    <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
-                                                      dispatch(setSelectedUser(user));
-                                                      navigate("/edit-user"); }}>Edit User</DropdownMenuItem>
-                                                       <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
-                              dispatch(setSelectedWalletId(user.walletId));
-                              dispatch(setSelectedUser(user));
+                                                      navigate("/edit-user"); }}>Edit User</DropdownMenuItem> */}
+                                                       <DropdownMenuItem className="hover:bg-[#3A859E]" 
+                                                       onClick={() => 
+                              handleViewTransactions(user, user.walletId)
+                              }>View Transactions</DropdownMenuItem>
+                                                    <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() =>  handleResetPassword(user)
+                                                        
                           
-                              navigate("/transactions"); }}>View Transactions</DropdownMenuItem>
-                                                    <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => { setInitiatePasswordModal(true)
-                                                        dispatch(setSelectedUser(user));
-                          
-                                                       }}>initiate Reset Password</DropdownMenuItem>
+                                                       }>initiate Reset Password</DropdownMenuItem>
                                                     {user.enabled === true && (
-                                                      <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowSuspendModal(true)
-                                                        dispatch(setSelectedUser(user));
-                          
-                                                                                   }}>Suspend Account</DropdownMenuItem>
+                                                      <DropdownMenuItem className="hover:bg-red-500"onClick={() => handleFlagUser(user)}>Flag User</DropdownMenuItem>
                                                     )}
                                                     {user.enabled === false && (
                                                       <DropdownMenuItem className="hover:bg-green-400">
@@ -201,6 +220,16 @@ useEffect(() => {
                 ))}
               </TableBody>
             </Table>
+            <FlagUser
+                  isOpen={showFlagModal}
+                  onClose={() => setShowFlagModal(false)}
+                  selectedUser={selectedUser}
+                />
+            <InitiatePasswordReset
+                  isOpen={showInitiatePasswordModal}
+                  onClose={() => setInitiatePasswordModal(false)}
+                  selectedUser={selectedUser}
+                />
             <div className="flex items-center justify-between mt-4">
             
             <Pagination

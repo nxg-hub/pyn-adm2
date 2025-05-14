@@ -50,6 +50,7 @@ import ActivityLogs from "./pages/users/AdminActionPages/ViewActivities.jsx";
 import ViewSuspension from "./pages/users/ActionPages/ViewSuspensionDetails.jsx";
 import FlaggedAccounts from "./pages/users/FlaggedUsers.jsx";
 import ViewFlagDetails from "./pages/users/ActionPages/ViewFlaggedDetails.jsx";
+import { AnalyticsDashboard } from "./components/analytics-dashboard.jsx";
 // // import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
 // // import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
 // // import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
@@ -61,6 +62,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginForm />} />
         <Route path="/complete-reg" element={<CompleteRegForm />} />
+        <Route path="/analytics" element={<AnalyticsDashboard/>} />
 
         
       </Routes>

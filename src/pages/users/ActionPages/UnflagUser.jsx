@@ -4,12 +4,13 @@ import { Button } from "../../../components/ui/button";
 import { Textarea } from '../../../components/ui/textarea';
 import { useSelector, useDispatch } from "react-redux";
 import { fetchFlaggedUsers } from "../../../redux/flaggedAccounts";
-
+import { fetchUsers } from "../../../redux/UsersSlice";
 
 const UnflagUserModal = ({ isOpen, onClose, }) => {
   const [reason, setReason] = useState("")
   const selected = useSelector((state) => state.flaggedUsers.selectedDetails);
-  const user = selected?.userDetails;
+  const flaggedUser = selected?.userDetails;
+  const user = useSelector((state) => state.users.selectedUser);
   const super_admin = useSelector((state) => state.admin.admin);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
@@ -23,11 +24,11 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
   const id = super_admin?.id
 
     const requestData = {
-      userId: user?.id,
-      email: user?.email,
-      phoneNumber: user?.phoneNumber,
-      payinaUserName: user?.payinaUserName,
-      accountNumber: user?.accountNumber,
+      userId: user?.id || flaggedUser.id,
+      email: user?.email || flaggedUser.email,
+      phoneNumber: user?.phoneNumber || flaggedUser.phoneNumber,
+      payinaUserName: user?.payinaUserName || flaggedUser.payinaUserName,
+      accountNumber: user?.accountNumber || flaggedUser.accountNumber,
       reason: reason
     }
     try {
@@ -49,6 +50,7 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
        setTimeout(() => {
         setSuccessMessage('');
         dispatch(fetchFlaggedUsers()); 
+        dispatch(fetchUsers());
       onClose() 
     }, 2000)
     } catch (err) {
@@ -63,7 +65,7 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Unflag ${user?.firstName} ${user?.lastName}`}
+      title={`Unflag ${user?.firstName || flaggedUser.firstName} ${  user?.lastName || flaggedUser.lastName}`}
       description="Please provide a reason for this action."
 
       

@@ -16,6 +16,9 @@ import { Avatar, AvatarFallback } from "../../components/ui/avatar"
 import Pagination from "../../components/ui/pagination"
 import avatar from "../../assets/avatar.png"
 import { TableLoader } from "../../components/ui/loader"
+import ViewPendingUser from "./ActionPages/viewPendingUsersDetails"
+
+
 
 const ITEMS_PER_PAGE = 5;
 const itemsPerPage =  ITEMS_PER_PAGE;
@@ -25,6 +28,8 @@ function PendingVerification() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [activeSection, setActiveSection] = useState("personalUsers"); // if not already defined
@@ -76,8 +81,12 @@ const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE
 
 useEffect(() => {
     (GetPendingVerifications());
-  }, {});
+  }, []);
 
+
+  const handleViewDetails = (user) => {
+    setSelectedUser(user); 
+  setShowDetailsModal(true)};
   return (
     <div>
         {loading ? (
@@ -147,7 +156,7 @@ useEffect(() => {
                       <div className="flex items-center gap-3">
                         <Avatar>
                             <img
-                            src= { avatar}></img>
+                            src= {user.passportUrl ||  avatar}></img>
                           
 
                         </Avatar>
@@ -171,10 +180,9 @@ useEffect(() => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >            
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">View Profile</DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]"
+                          onClick={() => handleViewDetails(user)}>View Profile</DropdownMenuItem>
                           <DropdownMenuItem className="hover:bg-green-400">Verify Account</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">Reset Password</DropdownMenuItem>
-
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -182,6 +190,13 @@ useEffect(() => {
                 ))}
               </TableBody>
             </Table>
+            <ViewPendingUser
+            isOpen={showDetailsModal}
+            onClose={()  =>  setShowDetailsModal(false)}    
+            selectedUser={selectedUser}
+     
+            />
+
             <div className="flex items-center justify-between mt-4">
             
             <Pagination

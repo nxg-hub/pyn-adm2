@@ -32,13 +32,8 @@ const EditUser = () => {
     navigate (-1);
   }
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-gray-800 rounded-xl shadow">
-       <button
-              onClick={handleBack}
-              className="mb-9 text-white text-xl font-medium flex items-center gap-5 hover:underline hover:text-[#006181] group-hover:decoration-[#006181]">
-              <ChevronLeft className="h-8 w-8" />
-              Back
-            </button>
+    <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.4)] backdrop-blur-sm z-50">
+<div className="max-w-md w-full p-6 bg-[rgba(0,0,0,0.1)] rounded-xl shadow-lg mx-auto">
       <h2 className="text-xl font-bold mb-4">Edit User</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -92,27 +87,18 @@ const EditUser = () => {
             <option value="business">Business</option>
           </select>
         </div>
-        <div>
-          <label className="block text-sm font-medium">Status</label>
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full border bg-black px-3 py-2 rounded"
-          >
-            <option value="Active">Active</option>
-            <option value="Suspended">Suspended</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
+       
 
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline">
+          <Button type="button"
+          onClick={handleBack} 
+          variant="outline">
             Cancel
           </Button>
           <Button type="submit">Save Changes</Button>
         </div>
       </form>
+    </div>
     </div>
   );
 };
