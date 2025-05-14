@@ -7,7 +7,7 @@ import { fetchUsers } from "../../../redux/UsersSlice";
 
 
 
-const FlagUser = ({ isOpen, onClose, }) => {
+const FlagUser = ({ isOpen, onClose, selectedUser }) => {
   const [reason, setReason] = useState("")
   const user = useSelector((state) => state.users.selectedUser);
   const super_admin = useSelector((state) => state.admin.admin);
@@ -23,11 +23,11 @@ const FlagUser = ({ isOpen, onClose, }) => {
   const id = super_admin?.id
 
     const requestData = {
-      id: user?.id,
-      email: user?.email,
-      phoneNumber: user?.phoneNumber,
-      payinaUserName: user?.payinaUserName,
-      accountNumber: user?.accountNumber,
+      id: user?.id || selectedUser.id,
+      email: user?.email || selectedUser.email,
+      phoneNumber: user?.phoneNumber || selectedUser.phoneNumber,
+      payinaUserName: user?.payinaUserName || selectedUser.payinaUserName,
+      accountNumber: user?.accountNumber || selectedUser.accountNumber,
       reason: reason
     }
     try {
@@ -63,7 +63,7 @@ const FlagUser = ({ isOpen, onClose, }) => {
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Flag ${user?.firstName} ${user?.lastName}`}
+      title={`Flag ${selectedUser?.firstName || user?.firstName } ${selectedUser?.lastName || user?.lastName}`}
       description="Please provide a reason for this action. "
 
       

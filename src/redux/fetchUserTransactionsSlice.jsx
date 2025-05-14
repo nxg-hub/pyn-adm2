@@ -14,7 +14,7 @@ export const fetchTransactions = createAsyncThunk(
         walletId: walletId,
       }).toString();
 
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/transactions/customer-history?${queryParams}`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/transactions/transaction-history?${queryParams}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
