@@ -24,11 +24,11 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
   const id = super_admin?.id
 
     const requestData = {
-      userId: user?.id || flaggedUser.id,
-      email: user?.email || flaggedUser.email,
-      phoneNumber: user?.phoneNumber || flaggedUser.phoneNumber,
-      payinaUserName: user?.payinaUserName || flaggedUser.payinaUserName,
-      accountNumber: user?.accountNumber || flaggedUser.accountNumber,
+      userId:  flaggedUser.id,
+      email:  flaggedUser.email,
+      phoneNumber:  flaggedUser.phoneNumber,
+      payinaUserName:  flaggedUser.payinaUserName,
+      accountNumber:  flaggedUser.accountNumber,
       reason: reason
     }
     try {
@@ -65,7 +65,7 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Unflag ${user?.firstName || flaggedUser.firstName} ${  user?.lastName || flaggedUser.lastName}`}
+      title={`Unflag ${flaggedUser?.firstName} ${ flaggedUser?.lastName}`}
       description="Please provide a reason for this action."
 
       

@@ -39,6 +39,7 @@ function SuspendedAccounts() {
 
   useEffect(() => {
     dispatch(fetchSuspendedUsers());
+    console.log("Loaded users:", suspendedUsers);
   }, [dispatch]);
 
 
@@ -46,7 +47,7 @@ function SuspendedAccounts() {
     const firstNameMatch = su.userDetails?.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
     const emailMatch = su.userDetails?.email?.toLowerCase().includes(searchQuery.toLowerCase());
     return firstNameMatch || emailMatch;
-  });
+  }); 
 const totalUsers = suspendedUsers.length
 
 

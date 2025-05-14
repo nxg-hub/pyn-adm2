@@ -200,13 +200,13 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                                                          }}>Flag User</DropdownMenuItem>
                                                         )}
                         
-                          {user.enabled === false && (
+                          {/* {user.enabled === false && (
                             <DropdownMenuItem className="hover:bg-green-400" onClick={() => { setShowUnflagModal(true)
                               dispatch(setSelectedUser(user))
                             }}>
                               Reactivate Account
                             </DropdownMenuItem>
-                          )}
+                          )} */}
                           {user.status === "Pending" && (
                             <DropdownMenuItem className="text-blue-600">
                               Approve Account
