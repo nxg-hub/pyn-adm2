@@ -20,54 +20,12 @@ import { Textarea } from "../../components/ui/textarea"
 import Pagination from "../../components/ui/pagination"
 
 const collectionsTransactions = [
-  {
-    id: "COL-001",
-    user: "John Doe",
-    service: "Church Donation",
-    amount: 100,
-    date: "2024-04-12",
-    status: "Successful",
-  },
-  {
-    id: "COL-002",
-    user: "Emma Green",
-    service: "Charity Donation",
-    amount: 50,
-    date: "2024-04-14",
-    status: "Pending",
-  },
-  {
-    id: "COL-003",
-    user: "Olivia White",
-    service: "Church Donation",
-    amount: 200,
-    date: "2024-04-18",
-    status: "Failed",
-  },
-  {
-    id: "COL-004",
-    user: "John Doe",
-    service: "Church Donation",
-    amount: 100,
-    date: "2024-04-12",
-    status: "Successful",
-  },
-  {
-    id: "COL-005",
-    user: "Emma Green",
-    service: "Charity Donation",
-    amount: 50,
-    date: "2024-04-14",
-    status: "Pending",
-  },
-  {
-    id: "COL-006",
-    user: "Olivia White",
-    service: "Church Donation",
-    amount: 200,
-    date: "2024-04-18",
-    status: "Failed",
-  },
+  { id: "COL-001", user: "John Doe", service: "Church Donation", amount: 100, date: "2024-04-12", time: "2:56pm", status: "Successful",},
+  { id: "COL-002", user: "Emma Green", service: "Charity Donation", amount: 50, date: "2024-04-14", time: "2:56pm", status: "Pending",},
+  { id: "COL-003", user: "Olivia White", service: "Church Donation", amount: 200, date: "2024-04-18", time: "2:56pm", status: "Failed",},
+  { id: "COL-004", user: "John Doe", service: "Church Donation", amount: 100, date: "2024-04-12", time: "2:56pm", status: "Successful",},
+  { id: "COL-005", user: "Emma Green", service: "Charity Donation", amount: 50, date: "2024-04-14", time: "2:56pm", status: "Pending",},
+  { id: "COL-006", user: "Olivia White", service: "Church Donation", amount: 200, date: "2024-04-18", time: "2:56pm", status: "Failed",},
 ]
 
 function CollectionsPage() {
@@ -285,21 +243,110 @@ function CollectionsPage() {
         </Card>
 
         <Card className="md:col-span-3">
-          <CardHeader>
-            <CardTitle>Transaction Details</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {selectedTransaction ? (
-              <div className="space-y-4">
-                <div><strong>Service:</strong> {selectedTransaction.service}</div>
-                <div><strong>Amount:</strong> ${selectedTransaction.amount}</div>
-                <div><strong>Status:</strong> {selectedTransaction.status}</div>
-                <div><strong>Date:</strong> {selectedTransaction.date}</div>
-              </div>
-            ) : (
-              <p className="text-muted-foreground text-sm">Select a transaction to view details.</p>
-            )}
-          </CardContent>
+                      <CardHeader>
+                        <CardTitle>Transaction Details</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {selectedTransaction ? (
+                          <div className="space-y-4">
+                            <div>
+                              <h3 className="text-sm font-medium text-muted-foreground">TRANSACTION TYPE</h3>
+                              <p>Money Transfer</p>
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-medium text-muted-foreground">TRANSACTION ID</h3>
+                              <p>{selectedTransaction.id}</p>
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-medium text-muted-foreground">SENDER</h3>
+                              <p>{selectedTransaction.user}</p>
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-medium text-muted-foreground">SERVICE</h3>
+                              <p>{selectedTransaction.service}</p>
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-medium text-muted-foreground">AMOUNT</h3>
+                              <p className="text-xl font-bold">${selectedTransaction.amount.toFixed(2)}</p>
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-medium text-muted-foreground">STATUS</h3>
+                              <p>
+                                <span
+                                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                    selectedTransaction.status === "Success"
+                                      ? "bg-green-100 text-green-800"
+                                      : selectedTransaction.status === "Pending"
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : "bg-red-100 text-red-800"
+                                  }`}
+                                >
+                                  {selectedTransaction.status}
+                                </span>
+                              </p>
+                            </div>
+                            {hasPermission("monitorHighRiskTransactions") && selectedTransaction.riskLevel && (
+                              <div>
+                                <h3 className="text-sm font-medium text-muted-foreground">RISK LEVEL</h3>
+                                <p>
+                                  <span
+                                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                      selectedTransaction.riskLevel === "Low"
+                                        ? "bg-green-100 text-green-800"
+                                        : selectedTransaction.riskLevel === "Medium"
+                                          ? "bg-yellow-100 text-yellow-800"
+                                          : "bg-red-100 text-red-800"
+                                    }`}
+                                  >
+                                    {selectedTransaction.riskLevel}
+                                  </span>
+                                </p>
+                              </div>
+                            )}
+                            {selectedTransaction.status === "Failed" && (
+                              <div>
+                                <h3 className="text-sm font-medium text-muted-foreground">FAILURE REASON</h3>
+                                <p className="text-red-500">Insufficient funds in sender's wallet</p>
+                              </div>
+                            )}
+                            <div>
+                              <h3 className="text-sm font-medium text-muted-foreground">DATE & TIME</h3>
+                              <p>{selectedTransaction.date} {selectedTransaction.time}</p>
+                            </div>
+                            <div className="flex gap-2">
+                              {hasPermission("approveRejectTransactions") && selectedTransaction.status === "Pending" && (
+                                <>
+                                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                                    Approve
+                                  </Button>
+                                  <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50">
+                                    Decline
+                                  </Button>
+                                </>
+                              )}
+                              {hasPermission("approveRejectTransactions") && selectedTransaction.status === "Success" && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-amber-600 border-amber-200 hover:bg-amber-50"
+                                  onClick={() => setShowReverseDialog(true)}
+                                >
+                                  Reverse Transaction
+                                </Button>
+                              )}
+                              <Button variant="outline" size="sm">
+                                Contact User
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex h-[300px] items-center justify-center text-center">
+                            <div>
+                              <p className="text-muted-foreground">Select a transaction to view details</p>
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
         </Card>
       </main>
 
