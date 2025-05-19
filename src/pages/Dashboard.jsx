@@ -2,13 +2,13 @@ import { BarChart3, ChevronRight, Clock, DollarSign, Users } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
 import { Button } from "../components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,  PieChart, Pie, Cell,} from "recharts"
 import { useAdmin } from "../contexts/AdminContext"
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from "../redux/UsersSlice";
 import { fetchAdmins } from "../redux/adminsSlice"
 import { useState, useEffect } from "react"
-
+import UserSegmentPieChart from "../components/ui/pie-chart"
 
 
 const transactionData = [
@@ -38,28 +38,13 @@ function Dashboard() {
   , [dispatch]);
 
   const personalUsers = users.filter((user) => user.userType === "PERSONAL");
-const businessUsers = users.filter((user) => user.userType === "CORPORATE");
+  const businessUsers = users.filter((user) => user.userType === "CORPORATE");
 
   const totalUsers = users?.length;
 
-const personalPercent = Math.round((personalUsers.length / totalUsers) * 100);
-const businessPercent = Math.round((businessUsers.length / totalUsers) * 100);
+  const personalPercent = Math.round((personalUsers.length / totalUsers) * 100);
+  const businessPercent = Math.round((businessUsers.length / totalUsers) * 100);
 
-const userSegments = [
-  {
-    name: "Personal",
-    value: personalPercent,
-    color: "#3b82f6", 
-  },
-  {
-    name: "Business",
-    value: businessPercent,
-    color: "#f59e0b", 
-  },
-];
-
-const personalAngle = (personalPercent / 100) * 360;
-const businessAngle = (businessPercent / 100) * 360;
 
   return (
     <div className="flex flex-col">
@@ -127,40 +112,18 @@ const businessAngle = (businessPercent / 100) * 360;
               </div>
             </CardContent>
           </Card>
-          <Card className="md:col-span-3">
-            <CardHeader>
-              <CardTitle>Active Users</CardTitle>
-              <CardDescription>User segments by account type</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px] flex items-center justify-center">
-                <div
-                  className="w-[200px] h-[200px] relative rounded-full"
-                  style={{
-                    background: `conic-gradient(
-                      #3b82f6 0deg ${personalAngle}deg,
-                      #f59e0b ${personalAngle}deg ${personalAngle + businessAngle}deg
-                    )`,
-                  }}
-                >
-                  <div className="absolute inset-[15%] bg-white rounded-full flex items-center justify-center">
-                    <span className="font-bold text-black">{totalUsers}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-center gap-4 mt-4">
-                {userSegments.map((segment) => (
-                  <div key={segment.name} className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: segment.color }}></div>
-                    <span className="text-xs">
-                      {segment.name} ({segment.value}%)
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        
+          <UserSegmentPieChart
+            className="md:col-span-3"
+            title="Active Users"
+            description="User segments by account type"
+            data={[
+              { name: "Personal", value: personalPercent, color: "#3b82f6" },
+              { name: "Business", value: businessPercent, color: "#10b981" },
+            ]}
+          />
         </div>
+        
 
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
