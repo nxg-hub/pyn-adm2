@@ -158,11 +158,6 @@ export function AdminSidebar() {
               href="/dashboard/users/flagged"
               isActive={location.pathname === "/dashboard/users/flagged"}
             />
-            {/* <SidebarSubItem
-              label="Sign Up"
-              href="/dashboard/users/signup"
-              isActive={location.pathname === "/dashboard/users/signup"}
-            /> */}
             { !hiddenFor.includes(adminRole) && (
   <SidebarSubItem
     label="Admin Users"
