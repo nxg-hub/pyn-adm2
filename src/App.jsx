@@ -4,7 +4,6 @@ import AdminLayout from "./components/layout/AdminLayout";
 
 // Auth
 import LoginForm from "./pages/Login/login";
-import SignUpForm from "./pages/Signup/signup.jsx";
 
 // Dashboard
 import Dashboard from "./pages/Dashboard";
@@ -21,6 +20,10 @@ import EditUser from "./pages/users/ActionPages/EditUser";
 import ViewTransactions from "./pages/users/ActionPages/ViewTransactions";
 import AdminProfile from "./pages/users/AdminActionPages/ViewProfile";
 import EditAdmin from "./pages/users/AdminActionPages/EditAdmin";
+import ActivityLogs from "./pages/users/AdminActionPages/ViewActivities.jsx";
+import ViewSuspension from "./pages/users/ActionPages/ViewSuspensionDetails.jsx";
+import FlaggedAccounts from "./pages/users/FlaggedUsers.jsx";
+import ViewFlagDetails from "./pages/users/ActionPages/ViewFlaggedDetails.jsx";
 
 // Transactions
 import Transactions from "./pages/transactions/page";
@@ -59,10 +62,17 @@ import Security from "./pages/settings/Security.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
+import SystemStatusPage from "./pages/system/SystemStatusPage.jsx";
+import CompleteRegForm from "./pages/users/InviteAdmin/complete-reg.jsx";
 
+import { AnalyticsDashboard } from "./components/analytics-dashboard.jsx";
 // Support & Reports
 import Support from "./pages/support/page";
 import Report from "./pages/reports/page";
+// // import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
+// // import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
+// // import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
+// // import SystemBalancePage from "./pages/wallets/system.jsx";
 
 function App() {
   return (
@@ -85,13 +95,13 @@ function App() {
           <Route path="dashboard/users/suspended" element={<SuspendedAccounts />} />
           <Route path="dashboard/users/unsuspended" element={<UnsuspendedAccounts />} />
           <Route path="dashboard/users/active" element={<RecentlyActive />} />
+          <Route path="dashboard/users/flagged" element={<FlaggedAccounts />} />
           <Route path="dashboard/users/pending" element={<PendingVerification />} />
           <Route path="/user-profile" element={<UserProfile />} />
           <Route path="/edit-user" element={<EditUser />} />
           <Route path="/transactions" element={<ViewTransactions />} />
           <Route path="/admin-profile" element={<AdminProfile />} />
           <Route path="/edit-admin" element={<EditAdmin />} />
-          <Route path="dashboard/users/signup" element={<SignUpForm />} />
 
           {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />

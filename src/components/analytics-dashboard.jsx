@@ -1,12 +1,12 @@
 import { BarChart, LineChart, PieChart } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
-import StatCard from "../../src/components/common/StatCard"
-import ChartCard from "../../src/components/common/ChartCard"
-import { useAdmin } from "./admin-context"
+import StatCard from "./common/StatCard"
+import ChartCard from "./common/ChartCard"
+// import { useAdmin } from "./admin-context"
 
 export function AnalyticsDashboard() {
-  const { hasPermission } = useAdmin()
+  // const { hasPermission } = useAdmin()
 
   // Sample data for charts
   const revenueData = [
@@ -58,7 +58,7 @@ export function AnalyticsDashboard() {
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard
+            {/* <StatCard
               title="Total Revenue"
               value="$1,234,567"
               description="+12.5% from last month"
@@ -85,7 +85,7 @@ export function AnalyticsDashboard() {
               description="-2.1% from last month"
               icon={<LineChart className="h-4 w-4" />}
               trend="down"
-            />
+            /> */}
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -107,34 +107,34 @@ export function AnalyticsDashboard() {
 
         <TabsContent value="revenue" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard
+            {/* <StatCard
               title="Total Revenue"
               value="$1,234,567"
               description="+12.5% from last month"
               icon={<LineChart className="h-4 w-4" />}
               trend="up"
-            />
-            <StatCard
+            /> */}
+            {/* <StatCard
               title="Transaction Fees"
               value="$234,567"
               description="+10.2% from last month"
               icon={<BarChart className="h-4 w-4" />}
               trend="up"
-            />
-            <StatCard
+            /> */}
+            {/* <StatCard
               title="Subscription Revenue"
               value="$34,567"
               description="+15.3% from last month"
               icon={<PieChart className="h-4 w-4" />}
               trend="up"
-            />
-            <StatCard
+            /> */}
+            {/* <StatCard
               title="Other Revenue"
               value="$4,567"
               description="-5.1% from last month"
               icon={<LineChart className="h-4 w-4" />}
               trend="down"
-            />
+            /> */}
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">

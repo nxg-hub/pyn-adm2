@@ -6,16 +6,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchUsers } from "../../../redux/UsersSlice";
 
 
-const SuspendUserModal = ({ isOpen, onClose, }) => {
+const SuspendUserModal = ({ isOpen, onClose, selectedUser }) => {
   const [reason, setReason] = useState("")
-  const user = useSelector((state) => state.users.selectedUser);
   const selected = useSelector((state) => state.flaggedUsers.selectedDetails);
-  const flaggeduser = selected?.userDetails;  
+  const user = selected?.userDetails;
   const super_admin = useSelector((state) => state.admin.admin);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
+ 
        
 
   const handleSuspend = async () => {
@@ -24,11 +24,11 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
   const id = super_admin?.id
 
     const requestData = {
-      userId: user?.id || flaggeduser?.id,
-      email: user?.email || flaggeduser?.email,
-      phoneNumber: user?.phoneNumber || flaggeduser?.phoneNumber,
-      payinaUserName: user?.payinaUserName || flaggeduser?.payinaUserName,
-      accountNumber: user?.accountNumber || flaggeduser?.accountNumber,
+      userId: user?.id || selectedUser?.id,
+      email: user?.email || selectedUser?.email,
+      phoneNumber: user?.phoneNumber || selectedUser?.phoneNumber,
+      payinaUserName: user?.payinaUserName || selectedUser?.payinaUserName,
+      accountNumber: user?.accountNumber || selectedUser?.accountNumber,
       reason: reason
     }
     try {
@@ -64,7 +64,7 @@ const SuspendUserModal = ({ isOpen, onClose, }) => {
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Suspend ${user?.firstName || flaggeduser?.firstName} ${user?.lastName || flaggeduser?.lastName}`}
+      title={`Suspend ${selectedUser?.firstName || user?.firstName } ${selectedUser?.lastName || user?.lastName }`}
       description="Please provide a reason for suspending this account. This action can impact user access."
 
       

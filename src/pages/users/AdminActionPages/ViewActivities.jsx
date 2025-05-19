@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchActivities } from "../../../redux/AdminActivitySlice"
 import Pagination from "../../../components/ui/pagination";
 import { useNavigate } from "react-router-dom";
+import { TableLoader } from "../../../components/ui/loader"
  
 
 const ITEMS_PER_PAGE = 10;
@@ -34,7 +35,6 @@ const ActivityLogs = () => {
       }
     }, [adminId, superAdmin?.id, dispatch]);
 
-  if (loading) return <p>Loading activities...</p>
   // if (!admin?.adminId) return <p>This user has no Id</p>;
 console.log (admin?.id)
 
@@ -71,6 +71,10 @@ const handleBack = () => {
   
 
   return (
+    <div>
+    {loading ? (
+      <TableLoader/>
+    ) : (
     <div className="flex flex-col">
       <button
               onClick={handleBack}
@@ -153,6 +157,8 @@ const handleBack = () => {
            </CardContent>
           </Card>
         
+    </div>
+    )}
     </div>
   )
 };
