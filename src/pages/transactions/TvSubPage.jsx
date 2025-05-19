@@ -17,6 +17,7 @@ import {
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
+import Pagination from "../../components/ui/pagination"
 
 const tvSubscriptions = [
   {
@@ -46,19 +47,54 @@ const tvSubscriptions = [
     date: "2024-04-20",
     status: "Failed",
   },
+  {
+    id: "TV-004",
+    user: "Jane Doe",
+    provider: "DSTV",
+    package: "Premium",
+    amount: 200,
+    date: "2024-04-15",
+    status: "Failed",
+  },
+  {
+    id: "TV-005",
+    user: "Alex Green",
+    provider: "GoTV",
+    package: "Family",
+    amount: 50,
+    date: "2024-04-18",
+    status: "Pending",
+  },
+  {
+    id: "TV-006",
+    user: "Sara White",
+    provider: "Startimes",
+    package: "Basic",
+    amount: 30,
+    date: "2024-04-20",
+    status: "Failed",
+  },
+  {
+    id: "TV-007",
+    user: "Sara White",
+    provider: "Startimes",
+    package: "Basic",
+    amount: 30,
+    date: "2024-04-20",
+    status: "Failed",
+  },
 ]
 
 function TVSubscriptionPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
   const [selectedSubscription, setSelectedSubscription] = useState(null)
-
   const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
   const [showFlagDialog, setShowFlagDialog] = useState(false)
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
-
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
 
   const handleViewDetails = (subscription) => {
     setSelectedSubscription(subscription)
@@ -87,9 +123,16 @@ function TVSubscriptionPage() {
     // You can replace the console log with actual logic like fetching a PDF or image.
   }
 
-  const filteredSubscriptions = tvSubscriptions.filter((subscription) =>
+  const filteredTransactions = tvSubscriptions.filter((subscription) =>
     subscription.user.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const ITEMS_PER_PAGE = 5;
+  
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="flex flex-col">
@@ -163,7 +206,7 @@ function TVSubscriptionPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredSubscriptions.map((subscription) => (
+                {paginatedTransactions.map((subscription) => (
                   <TableRow key={subscription.id}>
                     <TableCell>{subscription.id}</TableCell>
                     <TableCell>{subscription.user}</TableCell>
@@ -247,6 +290,14 @@ function TVSubscriptionPage() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex justify-end mt-4">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={filteredTransactions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
           </CardContent>
         </Card>
 

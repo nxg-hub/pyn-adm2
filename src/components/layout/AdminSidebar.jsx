@@ -148,6 +148,16 @@ export function AdminSidebar() {
               href="/dashboard/users/suspended"
               isActive={location.pathname === "/dashboard/users/suspended"}
             />
+            <SidebarSubItem
+              label="Reactivated Accounts"
+              href="/dashboard/users/unsuspended"
+              isActive={location.pathname === "/dashboard/users/unsuspended"}
+            />
+               <SidebarSubItem
+              label="Flagged Accounts"
+              href="/dashboard/users/flagged"
+              isActive={location.pathname === "/dashboard/users/flagged"}
+            />
             { !hiddenFor.includes(adminRole) && (
   <SidebarSubItem
     label="Admin Users"
@@ -540,6 +550,11 @@ export function AdminSidebar() {
                 location.pathname === "/dashboard/reports/reconciliation"
               }
               hasPermission={hasPermission("reconcileFinancialDiscrepancies")}
+            />
+            <SidebarSubItem
+              label="Admin Reports"
+              href="/dashboard/reports/admin"
+              isActive={location.pathname === "/dashboard/reports/admin"}
             />
           </SidebarItem>
 

@@ -16,12 +16,12 @@ import { Avatar, AvatarFallback } from "../../components/ui/avatar"
 import avatar from "../../assets/avatar.png"
 import Pagination from "../../components/ui/pagination"
 import { useDispatch, useSelector } from 'react-redux';
-import AdminInvite from "./AddAdminModal"
+import AdminInvite from "./InviteAdmin/AddAdminModal"
 import { useNavigate } from "react-router-dom";
-import SuspendAdminModal from "./AdminActionPages/SuspendAdmin"
+import DeleteAdminModal from "./AdminActionPages/DeleteAdmin"
 import AdminPasswordReset from "./AdminActionPages/ResetPassword"
 import { setSelectedAdmin } from "../../redux/adminsSlice"
-  
+import UpdatePermission from "./AdminActionPages/UpdatePermission"  
 
 const ITEMS_PER_PAGE = 5;
 const itemsPerPage =  ITEMS_PER_PAGE;
@@ -34,26 +34,26 @@ function AdminsPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("superAdmin");
-  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAdminPasswordModal, setAdminPasswordModal] = useState(false);
-
-
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [inviteModal, setInviteModal] = useState('')
+  const [showUpdateModal, setShowUpdateModal] = useState('')
+
 
   const superAdmin = admins?.filter((a) => a.adminUserType === "SUPER_ADMIN") ;
   const customerCareReps = admins?.filter((a) => a.adminUserType === "CUSTOMER_CARE_REP") ;
   const financeManagers = admins?.filter((a) => a.adminUserType === "FINANCE_MANAGER") ;
   const generalManagers = admins?.filter((a) => a.adminUserType === "GENERAL_MANAGER") ;
-  const operationsManager = admins?.filter((a) => a.adminUserType === "OPERATIONS_MANAGER") ;
+  const operationsManagers = admins?.filter((a) => a.adminUserType === "OPERATIONS_MANAGER") ;
 
   const adminSections = {
     superAdmin,
     customerCareReps,
     financeManagers,
     generalManagers,
-    operationsManager,
+    operationsManagers,
   };
   const selectedAdmins = adminSections[activeSection] || [];
 
@@ -111,10 +111,10 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
             <CardTitle>ADMINS</CardTitle>
           </CardHeader>
           <div className="flex gap-5 px-4 py-2 border-b text-gray-600">
-        {["superAdmin", "customerCareReps", "financeManagers", "generalManagers", "operationsMangers"].map((section) => (
+        {["superAdmin", "customerCareReps", "financeManagers", "generalManagers", "operationsManagers"].map((section) => (
           <div key={section} className="cursor-pointer group" onClick={() => setActiveSection(section)}>
             <h1
-              className={`relative text-lg transition-colors duration-300 ${
+              className={`relative text-base font-semibold transition-colors duration-300 ${
                 activeSection === section ? "text-white bg-gray-600 px-1 rounded-md" : "text-white"
               }`}
 
@@ -189,14 +189,22 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                           onClick={() => {
                                                       dispatch(setSelectedAdmin(admin));
                                                       navigate("/edit-admin"); }}>Edit Admin</DropdownMenuItem>
+                                                       <DropdownMenuItem className="hover:bg-[#3A859E]"
+                          onClick={() => { setShowUpdateModal(true)
+                            dispatch(setSelectedAdmin(admin));
+                             }}>Update Permission</DropdownMenuItem>
                           <DropdownMenuItem className="hover:bg-[#3A859E]"
                           onClick={() => { setAdminPasswordModal(true)
                             dispatch(setSelectedAdmin(admin));
                              }}>Reset Password</DropdownMenuItem>
-                          {admin.enabled === true && (
-                            <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowSuspendModal(true)
+                              <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => { 
                               dispatch(setSelectedAdmin(admin));
-                             }}>Suspend Admin</DropdownMenuItem>
+                                  navigate("/view-activities");
+                             }}>View Activity Logs</DropdownMenuItem>
+                          {admin.enabled === true && (
+                            <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowDeleteModal(true)
+                              dispatch(setSelectedAdmin(admin));                              
+                             }}>Delete Admin</DropdownMenuItem>
                           )}
                           {admin.enabled === false && (
                             <DropdownMenuItem className="hover:bg-green-400">Reactivate Account</DropdownMenuItem>
@@ -211,9 +219,13 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                 ))}
               </TableBody>
             </Table>
-            <SuspendAdminModal
-      isOpen={showSuspendModal}
-      onClose={() => setShowSuspendModal(false)}
+            <DeleteAdminModal
+      isOpen={showDeleteModal}
+      onClose={() => setShowDeleteModal(false)}
+    />
+     <UpdatePermission
+      isOpen={showUpdateModal}
+      onClose={() => setShowUpdateModal(false)}
     />
     <AdminPasswordReset
       isOpen={showAdminPasswordModal}

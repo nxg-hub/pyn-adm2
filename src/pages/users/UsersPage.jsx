@@ -25,7 +25,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedUser } from "../../redux/UsersSlice"
 import { setSelectedWalletId } from "../../redux/fetchUserTransactionsSlice"
 import { useNavigate } from "react-router-dom";
-import SuspendUserModal from "./ActionPages/SuspendAccount"
+import FlagUser from "./ActionPages/FlagUser";
+import UnflagUserModal from "./ActionPages/UnflagUser";
 import InitiatePasswordReset from "./ActionPages/ChangePassword"
   
 const ITEMS_PER_PAGE = 5;
@@ -39,7 +40,8 @@ function UsersPage() {
   const [activeSection, setActiveSection] = useState("personalUsers");
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [showUnflagModal, setShowUnflagModal] = useState(false);
+  const [showFlagModal, setShowFlagModal] = useState(false);
   const [showInitiatePasswordModal, setInitiatePasswordModal] = useState(false);
 
 
@@ -109,7 +111,7 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
             className="cursor-pointer group"
             onClick={() => setActiveSection(section)}>
             <h1
-              className={`relative text-lg transition-colors duration-300 ${
+              className={`relative text-base font-semibold transition-colors duration-300 ${
                 activeSection === section ? "text-white bg-gray-600 px-2 rounded-md" : "text-white"
               }`}
             >
@@ -191,17 +193,20 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                               dispatch(setSelectedUser(user));
 
                              }}>initiate Reset Password</DropdownMenuItem>
-                          {user.enabled === true && (
-                            <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowSuspendModal(true)
+                             {user.enabled === true && (
+                            <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowFlagModal(true)
                               dispatch(setSelectedUser(user));
 
-                                                         }}>Suspend Account</DropdownMenuItem>
-                          )}
-                          {user.enabled === false && (
-                            <DropdownMenuItem className="hover:bg-green-400">
+                                                         }}>Flag User</DropdownMenuItem>
+                                                        )}
+                        
+                          {/* {user.enabled === false && (
+                            <DropdownMenuItem className="hover:bg-green-400" onClick={() => { setShowUnflagModal(true)
+                              dispatch(setSelectedUser(user))
+                            }}>
                               Reactivate Account
                             </DropdownMenuItem>
-                          )}
+                          )} */}
                           {user.status === "Pending" && (
                             <DropdownMenuItem className="text-blue-600">
                               Approve Account
@@ -214,9 +219,13 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                 ))}
               </TableBody>
             </Table>
-            <SuspendUserModal
-                  isOpen={showSuspendModal}
-                  onClose={() => setShowSuspendModal(false)}
+            <UnflagUserModal
+                  isOpen={showUnflagModal}
+                  onClose={() => setShowUnflagModal(false)}
+                />
+                <FlagUser
+                  isOpen={showFlagModal}
+                  onClose={() => setShowFlagModal(false)}
                 />
                 <InitiatePasswordReset
                   isOpen={showInitiatePasswordModal}

@@ -17,6 +17,7 @@ import {
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
+import Pagination from "../../components/ui/pagination"
 
 const billsAndUtilitiesTransactions = [
   {
@@ -43,17 +44,64 @@ const billsAndUtilitiesTransactions = [
     date: "2024-04-20",
     status: "Failed",
   },
+  {
+    id: "BILL-004",
+    user: "John Doe",
+    provider: "ElectricityCorp",
+    amount: 200,
+    date: "2024-04-12",
+    status: "Successful",
+  },
+  {
+    id: "BILL-005",
+    user: "Emma Green",
+    provider: "WaterServices",
+    amount: 80,
+    date: "2024-04-15",
+    status: "Pending",
+  },
+  {
+    id: "BILL-006",
+    user: "Olivia White",
+    provider: "GasPlus",
+    amount: 50,
+    date: "2024-04-20",
+    status: "Failed",
+  },
+  {
+    id: "BILL-007",
+    user: "John Doe",
+    provider: "ElectricityCorp",
+    amount: 200,
+    date: "2024-04-12",
+    status: "Successful",
+  },
+  {
+    id: "BILL-008",
+    user: "Emma Green",
+    provider: "WaterServices",
+    amount: 80,
+    date: "2024-04-15",
+    status: "Pending",
+  },
+  {
+    id: "BILL-009",
+    user: "Olivia White",
+    provider: "GasPlus",
+    amount: 50,
+    date: "2024-04-20",
+    status: "Failed",
+  },
 ]
 
 function BillsAndUtilitiesPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
   const [selectedTransaction, setSelectedTransaction] = useState(null)
-
+  const [currentPage, setCurrentPage] = useState(1)
   const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
   const [showFlagDialog, setShowFlagDialog] = useState(false)
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
-
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
 
@@ -87,6 +135,14 @@ function BillsAndUtilitiesPage() {
   const filteredTransactions = billsAndUtilitiesTransactions.filter((transaction) =>
     transaction.user.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const ITEMS_PER_PAGE = 5;
+  
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+  
 
   return (
     <div className="flex flex-col">
@@ -159,7 +215,7 @@ function BillsAndUtilitiesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTransactions.map((transaction) => (
+                {paginatedTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.id}</TableCell>
                     <TableCell>{transaction.user}</TableCell>
@@ -242,6 +298,14 @@ function BillsAndUtilitiesPage() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex justify-end mt-4">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={filteredTransactions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
           </CardContent>
         </Card>
 

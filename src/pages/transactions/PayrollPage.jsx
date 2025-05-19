@@ -17,6 +17,7 @@ import {
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
+import Pagination from "../../components/ui/pagination"
 
 const payrollTransactions = [
   {
@@ -40,19 +41,39 @@ const payrollTransactions = [
     date: "2024-04-20",
     status: "Failed",
   },
+   {
+    id: "PAY-004",
+    employee: "Alice Johnson",
+    amount: 3500,
+    date: "2024-04-10",
+    status: "Completed",
+  },
+  {
+    id: "PAY-005",
+    employee: "Bob Williams",
+    amount: 4200,
+    date: "2024-04-15",
+    status: "Pending",
+  },
+  {
+    id: "PAY-006",
+    employee: "Charlie Davis",
+    amount: 2800,
+    date: "2024-04-20",
+    status: "Failed",
+  },
 ]
 
 function PayrollPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
   const [selectedTransaction, setSelectedTransaction] = useState(null)
-
   const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
   const [showFlagDialog, setShowFlagDialog] = useState(false)
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
-
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -84,6 +105,13 @@ function PayrollPage() {
   const filteredTransactions = payrollTransactions.filter((transaction) =>
     transaction.employee.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const ITEMS_PER_PAGE = 5;
+  
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="flex flex-col">
@@ -155,7 +183,7 @@ function PayrollPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTransactions.map((transaction) => (
+                {paginatedTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.id}</TableCell>
                     <TableCell>{transaction.employee}</TableCell>
@@ -237,6 +265,14 @@ function PayrollPage() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex justify-end mt-4">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={filteredTransactions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
           </CardContent>
         </Card>
 

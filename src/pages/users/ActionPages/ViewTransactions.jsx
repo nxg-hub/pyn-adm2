@@ -15,6 +15,9 @@ import {
 import Pagination from "../../../components/ui/pagination";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
+import { TableLoader } from "../../../components/ui/loader";
+import { useLocation } from "react-router-dom";
+
 
   const ITEMS_PER_PAGE = 10;
 
@@ -23,33 +26,63 @@ import { ChevronLeft } from "lucide-react";
   
 
 
-function ViewTransactions() {
-  const dispatch = useDispatch();
-  const [searchQuery, setSearchQuery] = useState("")
-  const [currentPage, setCurrentPage] = useState(1);
-  const [activeSection, setActiveSection] = useState("Credit");
-  const { walletId, transactions, loading, error } = useSelector((state) => state.transactions);
-  const user = useSelector((state) => state.users.selectedUser);
-  const navigate = useNavigate();
+// function ViewTransactions() {
+//   const dispatch = useDispatch();
+//   const [searchQuery, setSearchQuery] = useState("")
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [activeSection, setActiveSection] = useState("Credit");
+//   const { walletId, transactions, loading, error } = useSelector((state) => state.transactions);
+//   const user = useSelector((state) => state.users.selectedUser);
+//   const navigate = useNavigate();
+//   const location = useLocation();
+//   const selectedUser = location.state?.selectedUser;
+//   const selectedWalletId = location.state?.user.walletId;
 
+
+//   const handleBack = () => {
+//     navigate (-1);
+//   }
+
+
+//   useEffect(() => {
+//     if (walletId || selectedWalletId) {
+//       dispatch(fetchTransactions(walletId || selectedWalletId));
+//     }
+//   }, [walletId, selectedWalletId, dispatch]);
+
+  // if (loading) return <p>Loading transactions...</p>
+  // if (!walletId) return <p>This user has no wallet Id</p>;
+
+  function ViewTransactions() {
+    const dispatch = useDispatch();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [activeSection, setActiveSection] = useState("Credit");
+    
+    const { walletId: reduxWalletId, transactions, loading, error } = useSelector((state) => state.transactions);
+    const user = useSelector((state) => state.users.selectedUser);
+        const navigate = useNavigate();
+    const location = useLocation();
+    
+    // Extract selectedUser and selectedWalletId from location state
+    const selectedUser = location.state?.selectedUser;
+    const selectedWalletId = location.state?.walletId;
   
-
-
-  const handleBack = () => {
-    navigate (-1);
-  }
-
-
-  useEffect(() => {
-    if (walletId) {
-      dispatch(fetchTransactions(walletId));
-    }
-  }, [walletId, dispatch]);
-
-  if (loading) return <p>Loading transactions...</p>
-  if (!walletId) return <p>This user has no wallet Id</p>;
-
+    // Determine the walletId to use
+    const walletIdToUse = selectedWalletId || reduxWalletId;
   
+    const handleBack = () => {
+      navigate(-1);
+    };
+  
+    useEffect(() => {
+      // Only dispatch the action if we have a valid walletId
+      if (walletIdToUse) {
+        dispatch(fetchTransactions(walletIdToUse));
+      }
+    }, [walletIdToUse, dispatch]);
+  
+    
 const Credit = transactions?.filter((t) => t.type === "CREDIT") ;
 const Debit = transactions?.filter((t) => t.type === "DEBIT") ;
 
@@ -65,6 +98,10 @@ const filteredData = (activeSection === "Credit" ? Credit : Debit)?.filter((tran
 
 const totalTransactions = transactions.length
   return (
+    <div>
+    {loading ? (
+      <TableLoader/>
+    ) : (
     <div className="flex flex-col">
          <button
         onClick={handleBack}
@@ -96,7 +133,7 @@ const totalTransactions = transactions.length
       <main className="flex-1 p-4 md:p-6">
         <Card>
           <CardHeader>
-            <CardTitle>Transactions for {user.firstName} {user.lastName} </CardTitle>
+            <CardTitle>Transactions for { selectedUser?.firstName || user?.firstName} {selectedUser?.lastName || user?.lastName} </CardTitle>
           </CardHeader>
           <div className="flex gap-10 px-6 py-4 border-b text-gray-700">
         {["Credit", "Debit"].map((section) => (
@@ -199,6 +236,8 @@ const totalTransactions = transactions.length
           </CardContent>
         </Card>
       </main>
+      </div>
+    )}
     </div>
   )
 }
