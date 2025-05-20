@@ -94,7 +94,7 @@ export function FundingWithdrawalsPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>View Details</DropdownMenuItem>
                           <DropdownMenuItem>Transaction History</DropdownMenuItem>
-                          <DropdownMenuItem>Edit Withdrawal</DropdownMenuItem>
+                          {/* <DropdownMenuItem>Withdrawal</DropdownMenuItem> */}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
