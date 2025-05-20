@@ -21,6 +21,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import UserSegmentPieChart from "../../components/ui/pie-chart"
 
 const revenueData = [
   { name: "Transfers", value: 125000 },
@@ -127,46 +128,15 @@ function AnalyticsPage() {
         </Card>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue by User Segment</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px] flex items-center justify-center">
-                <div className="w-[200px] h-[200px] relative">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={userSegmentData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={5}
-                        dataKey="value">
-                        {userSegmentData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div className="flex justify-center gap-4 mt-4">
-                {userSegmentData.map((segment) => (
-                  <div key={segment.name} className="flex items-center gap-1">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: segment.color }}></div>
-                    <span className="text-xs">
-                      {segment.name} ({segment.value}%)
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <UserSegmentPieChart
+            title="Revenue by User Segment"
+            data={[
+              { name: "Regular", value: 60, color: "#3b82f6" },
+              { name: "Business", value: 25, color: "#10b981" },
+              { name: "Students", value: 10, color: "#f59e0b" },
+              { name: "Others", value: 5, color: "#6366f1" },
+            ]}
+          />
           <Card>
             <CardHeader>
               <CardTitle>Growth Metrics</CardTitle>

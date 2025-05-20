@@ -19,15 +19,15 @@ import { ConfirmModal, FormModal } from "../../components/ui/modal"
 import Pagination from "../../components/ui/pagination" 
 
 const sampleTransactions = [
-  {id: "TXN-001", user: "John Doe", amount: 100, date: "2024-01-01", status: "Completed",},
-  {id: "TXN-002", user: "Jane Smith", amount: 50, date: "2024-01-02", status: "Pending",},
-  {id: "TXN-003", user: "Peter Jones", amount: 75,date: "2024-01-03", status: "Failed",},
-  {id: "TXN-004", user: "John Doe", amount: 150, date: "2024-01-01", status: "Completed",},
-  {id: "TXN-005", user: "Jane Smith", amount: 50, date: "2024-01-02", status: "Pending",},
-  {id: "TXN-006", user: "Peter Jones", amount: 75, date: "2024-01-03", status: "Failed",},
-  {id: "TXN-007", user: "John Doe", amount: 10, date: "2024-01-04", status: "Failed",},
-  {id: "TXN-008", user: "Jane Smith", amount: 50, date: "2024-01-02", status: "Pending",},
-  {id: "TXN-009", user: "Peter Jones", amount: 75, date: "2024-01-03", status: "Failed",},
+  {id: "TXN-001", user: "John Doe", amount: 100, date: "2024-01-01", time: "9:01am", status: "Completed",},
+  {id: "TXN-002", user: "Jane Smith", amount: 50, date: "2024-01-02", time: "8:01pm", status: "Pending",},
+  {id: "TXN-003", user: "Peter Jones", amount: 75,date: "2024-01-03", time: "9:31am", status: "Failed",},
+  {id: "TXN-004", user: "John Doe", amount: 150, date: "2024-01-04", time: "3:42pm", status: "Completed",},
+  {id: "TXN-005", user: "Jane Smith", amount: 50, date: "2024-01-05",time: "12:57am", status: "Pending",},
+  {id: "TXN-006", user: "Peter Jones", amount: 75, date: "2024-01-06", time: "9:49am", status: "Failed",},
+  {id: "TXN-007", user: "John Doe", amount: 10, date: "2024-01-07", time: "6:21am", status: "Failed",},
+  {id: "TXN-008", user: "Jane Smith", amount: 50, date: "2024-01-08", time: "4:36pm", status: "Pending",},
+  {id: "TXN-009", user: "Peter Jones", amount: 75, date: "2024-01-09", time: "11:01am", status: "Failed",},
 ]
 
 
@@ -362,7 +362,7 @@ function TransactionsPage() {
                     )}
                     <div>
                       <h3 className="text-sm font-medium text-muted-foreground">DATE & TIME</h3>
-                      <p>{selectedTransaction.date}</p>
+                      <p>{selectedTransaction.date} {selectedTransaction.time}</p>
                     </div>
                     <div className="flex gap-2">
                       {hasPermission("approveRejectTransactions") && selectedTransaction.status === "Pending" && (
@@ -398,7 +398,7 @@ function TransactionsPage() {
                   </div>
                 )}
               </CardContent>
-            </Card>
+        </Card>
 
             {/* Dialogs would be implemented here */}
             <ConfirmModal
