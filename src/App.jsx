@@ -1,6 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminProvider } from "./contexts/AdminContext";
 import AdminLayout from "./components/layout/AdminLayout";
+import ProtectedRoute from "./utilities/ProtectedRoutes.jsx";
+import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 
 // Auth
 import LoginForm from "./pages/Login/login";
@@ -62,30 +64,26 @@ import Security from "./pages/settings/Security.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
-import SystemStatusPage from "./pages/system/SystemStatusPage.jsx";
 import CompleteRegForm from "./pages/users/InviteAdmin/complete-reg.jsx";
 
 import { AnalyticsDashboard } from "./components/analytics-dashboard.jsx";
 // Support & Reports
 import Support from "./pages/support/page";
 import Report from "./pages/reports/page";
-// // import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
-// // import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
-// // import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
-// // import SystemBalancePage from "./pages/wallets/system.jsx";
+
 
 function App() {
   return (
     <BrowserRouter>
+     
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<LoginForm />} />
-        {/* <Route path="/signup" element={<SignUpForm />} /> */}
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/complete-reg" element={<CompleteRegForm />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         {/* Protected Admin Routes */}
-        <Route element={<AdminProvider><AdminLayout /></AdminProvider>}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
+<Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
           {/* Dashboard */}
           <Route path="dashboard" element={<Dashboard />} />
 
@@ -102,6 +100,11 @@ function App() {
           <Route path="/transactions" element={<ViewTransactions />} />
           <Route path="/admin-profile" element={<AdminProfile />} />
           <Route path="/edit-admin" element={<EditAdmin />} />
+          <Route path="/view-activities" element={<ActivityLogs />} />
+          <Route path="/view-details" element={<ViewSuspension />} />
+          <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
+
+
 
           {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />
@@ -112,6 +115,7 @@ function App() {
 
           {/* Analytics */}
           <Route path="dashboard/analytics" element={<AnalyticsPage />} />
+          <Route path="/analytics" element={<AnalyticsDashboard/>} />
           <Route path="dashboard/analytics/users" element={<UserAnalytics />} />
           <Route path="dashboard/analytics/performance" element={<PerformanceReports />} />
           <Route path="dashboard/analytics/funnels" element={<FunnelCharts />} />
