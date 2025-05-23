@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { MoreHorizontal, Wallet } from "lucide-react";
+// import { MoreHorizontal, Wallet } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
@@ -12,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 
-// Sample data for withdrawals
-const withdrawals = [
+// Sample data for Employees
+const employees = [
   {
     id: "WDRAW-001",
     user: "John Doe",
@@ -37,12 +37,12 @@ const withdrawals = [
   },
 ];
 
-export function FundingWithdrawalsPage() {
+export function EmployeesPage() {
   return (
     <div className="flex flex-col">
       <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
-          <h1 className="text-xl font-semibold">Funding Withdrawals</h1>
+          <h1 className="text-xl font-semibold">Funding employees</h1>
           <span className="text-sm text-muted-foreground">Manage user withdrawal requests</span>
         </div>
       </header>
@@ -50,14 +50,13 @@ export function FundingWithdrawalsPage() {
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Withdrawal History</CardTitle>
+            <CardTitle>Transaction History</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>WITHDRAWAL ID</TableHead>
-                  <TableHead>USER</TableHead>
+                  <TableHead>Employees ID</TableHead>
                   <TableHead>AMOUNT</TableHead>
                   <TableHead>STATUS</TableHead>
                   <TableHead>DATE</TableHead>
@@ -65,25 +64,25 @@ export function FundingWithdrawalsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {withdrawals.map((withdrawal) => (
-                  <TableRow key={withdrawal.id}>
-                    <TableCell>{withdrawal.id}</TableCell>
-                    <TableCell>{withdrawal.user}</TableCell>
-                    <TableCell>${withdrawal.amount.toFixed(2)}</TableCell>
+                {employees.map((employees) => (
+                  <TableRow key={employees.id}>
+                    <TableCell>{employees.id}</TableCell>
+                    <TableCell>{employees.user}</TableCell>
+                    <TableCell>${employees.amount.toFixed(2)}</TableCell>
                     <TableCell>
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          withdrawal.status === "Completed"
+                            employees.status === "Completed"
                             ? "bg-green-100 text-green-800"
-                            : withdrawal.status === "Pending"
+                            : employees.status === "Pending"
                             ? "bg-yellow-100 text-yellow-800"
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {withdrawal.status}
+                        {employees.status}
                       </span>
                     </TableCell>
-                    <TableCell>{withdrawal.date}</TableCell>
+                    <TableCell>{employees.date}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -109,4 +108,4 @@ export function FundingWithdrawalsPage() {
   );
 }
 
-export default FundingWithdrawalsPage;
+export default EmployeesPage ;
