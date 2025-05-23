@@ -2,6 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminProvider } from "./contexts/AdminContext";
 import RouteWrapper from "./components/RouteWrapper";
 import AdminLayout from "./components/layout/AdminLayout";
+import ProtectedRoute from "./utilities/ProtectedRoutes.jsx";
+import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 
 // Auth
 import LoginForm from "./pages/Login/login";
@@ -67,7 +69,6 @@ import Security from "./pages/settings/Security.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
-import SystemStatusPage from "./pages/system/SystemStatusPage.jsx";
 import CompleteRegForm from "./pages/users/InviteAdmin/complete-reg.jsx";
 import { AnalyticsDashboard } from "./components/analytics-dashboard.jsx";
 // Support & Reports
@@ -77,35 +78,38 @@ import Report from "./pages/reports/page";
 function App() {
   return (
     <BrowserRouter>
+     
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<LoginForm />} />
-        {/* <Route path="/signup" element={<SignUpForm />} /> */}
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/complete-reg" element={<CompleteRegForm />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         {/* Protected Admin Routes */}
-        <Route element={<AdminProvider><AdminLayout /></AdminProvider>}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          {/* Wrap Admin Routes with RouteWrapper */}
-          <Route element={<RouteWrapper />}>
-            {/* Dashboard */}
-            <Route path="dashboard" element={<Dashboard />} />
+<Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
+          {/* Dashboard */}
+          <Route path="dashboard" element={<Dashboard />} />
 
-            {/* Users */}
-            <Route path="dashboard/users" element={<UsersPage />} />
-            <Route path="dashboard/users/admin-users" element={<AdminsPage />} />
-            <Route path="dashboard/users/suspended" element={<SuspendedAccounts />} />
-            <Route path="dashboard/users/unsuspended" element={<UnsuspendedAccounts />} />
-            <Route path="dashboard/users/active" element={<RecentlyActive />} />
-            <Route path="dashboard/users/flagged" element={<FlaggedAccounts />} />
-            <Route path="dashboard/users/pending" element={<PendingVerification />} />
-            <Route path="/user-profile" element={<UserProfile />} />
-            <Route path="/edit-user" element={<EditUser />} />
-            <Route path="/transactions" element={<ViewTransactions />} />
-            <Route path="/admin-profile" element={<AdminProfile />} />
-            <Route path="/edit-admin" element={<EditAdmin />} />
+          {/* Users */}
+          <Route path="dashboard/users" element={<UsersPage />} />
+          <Route path="dashboard/users/admin-users" element={<AdminsPage />} />
+          <Route path="dashboard/users/suspended" element={<SuspendedAccounts />} />
+          <Route path="dashboard/users/unsuspended" element={<UnsuspendedAccounts />} />
+          <Route path="dashboard/users/active" element={<RecentlyActive />} />
+          <Route path="dashboard/users/flagged" element={<FlaggedAccounts />} />
+          <Route path="dashboard/users/pending" element={<PendingVerification />} />
+          <Route path="/user-profile" element={<UserProfile />} />
+          <Route path="/edit-user" element={<EditUser />} />
+          <Route path="/transactions" element={<ViewTransactions />} />
+          <Route path="/admin-profile" element={<AdminProfile />} />
+          <Route path="/edit-admin" element={<EditAdmin />} />
+          <Route path="/view-activities" element={<ActivityLogs />} />
+          <Route path="/view-details" element={<ViewSuspension />} />
+          <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
 
-            {/* Transactions */}
-            <Route path="dashboard/transactions/*" element={<Transactions />} />
+{/* Transactions */}
+          <Route path="dashboard/transactions/*" element={<Transactions />} />
+
 
             {/* Wallets */}
             <Route path="dashboard/wallets" element={<WalletsPage />} />
@@ -116,13 +120,14 @@ function App() {
             <Route path="dashboard/wallets/system" element={<SystemBalancePage />} />
 
 
-            {/* Analytics */}
-            <Route path="dashboard/analytics" element={<AnalyticsPage />} />
-            <Route path="dashboard/analytics/users" element={<UserAnalytics />} />
-            <Route path="dashboard/analytics/performance" element={<PerformanceReports />} />
-            <Route path="dashboard/analytics/funnels" element={<FunnelCharts />} />
-            <Route path="dashboard/analytics/export" element={<ExportReports />} />
-            <Route path="dashboard/analytics/transactions" element={<TransactionAanlytics />} />
+          {/* Analytics */}
+          <Route path="dashboard/analytics" element={<AnalyticsPage />} />
+          <Route path="/analytics" element={<AnalyticsDashboard/>} />
+          <Route path="dashboard/analytics/users" element={<UserAnalytics />} />
+          <Route path="dashboard/analytics/performance" element={<PerformanceReports />} />
+          <Route path="dashboard/analytics/funnels" element={<FunnelCharts />} />
+          <Route path="dashboard/analytics/export" element={<ExportReports />} />
+          <Route path="dashboard/analytics/transactions" element={<TransactionAanlytics />} />
 
             {/* Compliance */}
             <Route path="dashboard/compliance" element={<CompliancePage />} />
@@ -151,7 +156,6 @@ function App() {
             <Route path="dashboard/support/*" element={<Support />} />
             <Route path="dashboard/reports/*" element={<Report />} />
           </Route>
-        </Route>
       </Routes>
     </BrowserRouter>
   );
