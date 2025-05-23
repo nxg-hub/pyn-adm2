@@ -107,6 +107,8 @@ function App() {
           <Route path="/view-details" element={<ViewSuspension />} />
           <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
 
+{/* Transactions */}
+          <Route path="dashboard/transactions/*" element={<Transactions />} />
 
 
             {/* Wallets */}
