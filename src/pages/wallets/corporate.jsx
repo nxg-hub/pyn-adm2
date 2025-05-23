@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Wallet, MoreHorizontal } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import { CardLoader } from "../../components/ui/loader";
 import { Card } from "../../components/ui/card";
 import {
   DropdownMenu,
@@ -56,6 +57,17 @@ const corporateAccounts = [
 ];
 
 export function CorporateAccountsPage() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate a network request
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // 2 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="flex flex-col">
       <header className="border-b">
@@ -66,48 +78,52 @@ export function CorporateAccountsPage() {
       </header>
 
       <main className="p-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {corporateAccounts.map((account) => (
-          <Card key={account.id} className="p-6 shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">{account.companyName}</h2>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <MoreHorizontal className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>View Details</DropdownMenuItem>
-                  <DropdownMenuItem>Transaction History</DropdownMenuItem>
-                  <DropdownMenuItem>Edit Account</DropdownMenuItem>
-                  {account.status === "Active" && (
-                    <DropdownMenuItem className="text-red-600">Suspend Account</DropdownMenuItem>
-                  )}
-                  {account.status === "Suspended" && (
-                    <DropdownMenuItem className="text-green-600">Reactivate Account</DropdownMenuItem>
-                  )}
-                  {account.status === "Inactive" && (
-                    <DropdownMenuItem className="text-blue-600">Activate Account</DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            <p className="text-sm text-muted-foreground mb-2">Account Manager: {account.accountManager}</p>
-            <p className="text-sm text-muted-foreground mb-2">Balance: ${account.balance.toFixed(2)}</p>
-            <p className="text-sm text-muted-foreground mb-2">Last Transaction: {account.lastTransaction}</p>
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                account.status === "Active"
-                  ? "bg-green-100 text-green-800"
-                  : account.status === "Inactive"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : "bg-red-100 text-red-800"
-              }`}
-            >
-              Status: {account.status}
-            </span>
-          </Card>
-        ))}
+        {loading
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <CardLoader key={index} /> // Make sure CardLoader returns skeleton-style cards
+            ))
+          : corporateAccounts.map((account) => (
+              <Card key={account.id} className="p-6 shadow-md">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold">{account.companyName}</h2>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>View Details</DropdownMenuItem>
+                      <DropdownMenuItem>Transaction History</DropdownMenuItem>
+                      <DropdownMenuItem>Employees Account</DropdownMenuItem>
+                      {account.status === "Active" && (
+                        <DropdownMenuItem className="text-red-600">Suspend Account</DropdownMenuItem>
+                      )}
+                      {account.status === "Suspended" && (
+                        <DropdownMenuItem className="text-green-600">Reactivate Account</DropdownMenuItem>
+                      )}
+                      {account.status === "Inactive" && (
+                        <DropdownMenuItem className="text-blue-600">Activate Account</DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <p className="text-sm text-muted-foreground mb-2">Account Manager: {account.accountManager}</p>
+                <p className="text-sm text-muted-foreground mb-2">Balance: ${account.balance.toFixed(2)}</p>
+                <p className="text-sm text-muted-foreground mb-2">Last Transaction: {account.lastTransaction}</p>
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    account.status === "Active"
+                      ? "bg-green-100 text-green-800"
+                      : account.status === "Inactive"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  Status: {account.status}
+                </span>
+              </Card>
+            ))}
       </main>
     </div>
   );
