@@ -122,7 +122,7 @@ const InitiatePasswordReset = ({ isOpen, onClose, selectedUser }) => {
     setSuccessMessage('');
     try {
       console.log('Initiating password reset for:', email);
-      const response = await fetch(import.meta.env.VITE_REQUEST_PASSWORD_RESET, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_REQUEST_PASSWORD_RESET}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
