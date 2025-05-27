@@ -2,22 +2,23 @@ import  { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useSelector } from 'react-redux';
 import { FormModal } from "../../components/ui/modal";
-import { Button } from "/../../components/ui/button";
-import { Input } from "/../../components/ui/input";
-import { Label } from "/../../components/ui/label"; 
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
 
 const CreateSuspiciousReport = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 const token = localStorage.getItem('token')
-  const handleInvite = async (values, { resetForm }) => {
+  const handleCreate = async (values) => {
     setIsLoading(true);
     setErrorMessage('');
 
     const requestData = {
       customerId: values.customerId,
-      adminUserType: values.adminUserType
+      description: values.description
     };
 
     try {
@@ -56,28 +57,22 @@ const token = localStorage.getItem('token')
       title="Invite An Admin"
     >
       <Formik
-        initialValues={{ email: '', adminUserType: '' }}
-        onSubmit={handleInvite}
+        initialValues={{ customerId: '', description: '' }}
+        onSubmit={handleCreate}
       >
         {() => (
           <Form className="space-y-4">
             <div>
-              <Label htmlFor="email">Email</Label>
-              <Field as={Input} name="email" type="email" required />
-              <ErrorMessage name="email" component="div" className="text-red-500" />
+              <Label htmlFor="customerId">Customer I.D</Label>
+              <Field as={Input} name="customerId" type="text" required />
+              <ErrorMessage name="cudtomerId" component="div" className="text-red-500" />
             </div>
-
-            <div>
-              <Label htmlFor="adminUserType">Role</Label>
-              <Field as="select" name="adminUserType" className="w-full bg-black border p-2 rounded" required>
-                <option value="" disabled>Choose Admin Type</option>
-                <option value="GENERAL_MANAGER">General Manager</option>
-                <option value="CUSTOMER_CARE_REP">Customer Care Rep</option>
-                <option value="OPERATIONS_MANAGER">Operations Manager</option>
-                <option value="FINANCE_MANAGER">Finance Manager</option>
-              </Field>
-              <ErrorMessage name="adminUserType" component="div" className="text-red-500" />
+ <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea as={Input} name="description" type="description" required />
+              <ErrorMessage name="description" component="div" className="text-red-500" />
             </div>
+            
 
             {successMessage && (
               <div className="border border-black bg-black rounded-lg p-4 mt-4 text-white">
