@@ -11,6 +11,9 @@ const CreateSuspiciousReport = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [reportType, setReportType] = useState("")
+  const [severity, setSeverity] = useState("")
+
 const token = localStorage.getItem('token')
   const handleCreate = async (values) => {
     setIsLoading(true);
@@ -18,11 +21,13 @@ const token = localStorage.getItem('token')
 
     const requestData = {
       customerId: values.customerId,
-      description: values.description
+      description: "string",
+      reportType: reportType,
+      severity: severity,
     };
 
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}/api/compliance/suspicious`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/compliance/suspicious`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,18 +38,18 @@ const token = localStorage.getItem('token')
 
       const result = await response.json();
 
-      if (response.ok && result.message === 'Admin invitation has been sent successfully') {
-        setSuccessMessage('Admin invite sent.');
+      if (response.ok) {
+        setSuccessMessage('Suspicious activity reported.');
         setTimeout(() => {
           setSuccessMessage('');
+          onClose()
         }, 3000);
-        resetForm();
       } else {
-        setErrorMessage(result.debugMessage || 'An error occurred while sending the invite.');
+        setErrorMessage(result.debugMessage || 'An error occurred.');
       }
     } catch (error) {
-      console.error('Error sending invite:', error);
-      setErrorMessage(`Error sending invite: ${error.message}`);
+      console.error('Error:', error);
+      setErrorMessage(`Error reporting activity: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +59,7 @@ const token = localStorage.getItem('token')
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Invite An Admin"
+      title="Report suspicious activity"
     >
       <Formik
         initialValues={{ customerId: '', description: '' }}
@@ -65,12 +70,30 @@ const token = localStorage.getItem('token')
             <div>
               <Label htmlFor="customerId">Customer I.D</Label>
               <Field as={Input} name="customerId" type="text" required />
-              <ErrorMessage name="cudtomerId" component="div" className="text-red-500" />
+              <ErrorMessage name="customerId" component="div" className="text-red-500" />
             </div>
+            <div>
+                          <Label htmlFor="severity">Severity</Label>
+                          <Field as="select" name="severity" className="w-full bg-black border p-2 rounded" required
+                          value={severity}
+                    onChange={(e) => setSeverity(e.target.value)}>
+                            <option value="" disabled>Choose risk level</option>
+                            <option value="High risk">High Risk</option>
+                            <option value="Low risk">Low Risk</option>
+                          
+                          </Field>
+                          <ErrorMessage name="severity" component="div" className="text-red-500" />
+                        </div>
  <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea as={Input} name="description" type="description" required />
-              <ErrorMessage name="description" component="div" className="text-red-500" />
+              <Textarea
+                    id="reportType"
+                    name="reportType"
+                    value={reportType}
+                    onChange={(e) => setReportType(e.target.value)}
+                    placeholder="e.g. User violated terms of service..."
+                    rows={2}
+                    required
+                  />
             </div>
             
 
@@ -91,7 +114,7 @@ const token = localStorage.getItem('token')
                 Cancel
               </Button>
               <Button type="submit" disabled={isLoading} className="bg-[#3A859E]">
-                {isLoading ? 'Sending...' : 'Send Invite'}
+                {isLoading ? 'Please wait...' : 'Report'}
               </Button>
             </div>
           </Form>

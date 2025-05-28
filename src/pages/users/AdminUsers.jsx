@@ -94,7 +94,7 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
               <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
-            {admin.adminUserType === "SUPER_ADMIN" && (
+            {admin?.adminUserType === "SUPER_ADMIN" && (
   <Button onClick={handleAddAdminClick}>
     <UserPlus className="mr-2 h-4 w-4" />
     Add New Admin
