@@ -7,14 +7,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { useAdmin } from "../../contexts/AdminContext"
 import { Badge } from "../../components/ui/badge"
 import DataTable from "../../components/common/DataTable"
+import CreateSuspiciousReport from "./CreateSuspicious"
 import StatCard from "../../components/common/StatCard"
 
 
 const SuspiciousActivities = () => {
     const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
+  const [suspiciousModal, setSuspiciousModal] = useState('')
 
-
+ const handleAddSusClick = () => {
+    setSuspiciousModal(true);
+  };
 const suspiciousActivities = [
     {
       id: "AML-001",
@@ -102,6 +106,16 @@ const suspiciousActivities = [
               />
             </div>
             
+  <Button onClick={handleAddSusClick} >
+    <Shield className="mr-2 h-4 w-4" />
+    Create suspicious activity report
+  </Button>
+ <CreateSuspiciousReport
+          isOpen={suspiciousModal}
+           onClose={() => setSuspiciousModal(false)}
+
+          />
+            
           </div>
         </div>
       </header>
@@ -118,6 +132,9 @@ const suspiciousActivities = [
             </CardContent>
           </Card>
         )}
+
+         
+        
     </div>
   )
 };
