@@ -17,7 +17,7 @@ export const fetchActivities = createAsyncThunk(
         sortDirection: "desc"
     }).toString();
 
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/admin/management/${adminId}/activity-logs?${queryParams}`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/activity-logs?${queryParams}`, {
         method: "GET",
         headers: {
           'X-Admin-Id': superAdminId,

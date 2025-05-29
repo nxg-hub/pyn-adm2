@@ -10,6 +10,7 @@ import AdminActivitiesReducer from './AdminActivitySlice'
 import suspendedUsersReducer from './suspendedAccounts'
 import flaggedUsersReducer from './flaggedAccounts'
 import unsuspendedUsersReducer from "./unsuspendedAccounts";
+import supportTicketsReducer from "./supportTicketsSlice"
 
 
 // Configuration for redux-persist
@@ -24,7 +25,8 @@ const persistConfig = {
     'AdminActivities',
     'suspendedUsers',
     'unsuspendedUsers',
-    'flaggedUsers'
+    'flaggedUsers',
+    'supportTickets'
   ], 
 };
 
@@ -36,7 +38,9 @@ const rootReducer = combineReducers({
   AdminActivities: AdminActivitiesReducer,
   suspendedUsers: suspendedUsersReducer,
   unsuspendedUsers: unsuspendedUsersReducer,
-  flaggedUsers: flaggedUsersReducer
+  flaggedUsers: flaggedUsersReducer,
+  supportTickets: supportTicketsReducer,
+
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
