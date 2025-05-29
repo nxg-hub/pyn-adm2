@@ -18,7 +18,6 @@ import apiService from "../../services/apiService";
 const SuspiciousActivities = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1);
-
   const { hasPermission } = useAdmin()
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -71,6 +70,10 @@ useEffect(() => {
 
 
   return (
+    <div>
+      {isLoading ? (
+        <TableLoader/>
+      ) : (
     <div className="flex flex-col">
  <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
@@ -179,11 +182,10 @@ useEffect(() => {
 
             </CardContent>
           </Card>
-        )}
-
-         
-        
+        )}     
     </div>
+      )}
+      </div>
   )
 };
 
