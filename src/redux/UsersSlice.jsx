@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchUsers = createAsyncThunk('user/fetchUsers',   async (_, { rejectWithValue }) => {
 
   try {
-    const response = await fetch(import.meta.env.VITE_GET_ALL_USERS, {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_ALL_USERS}`, {
         method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -1,10 +1,12 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminProvider } from "./contexts/AdminContext";
+import RouteWrapper from "./components/RouteWrapper";
 import AdminLayout from "./components/layout/AdminLayout";
+import ProtectedRoute from "./utilities/ProtectedRoutes.jsx";
+import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 
 // Auth
 import LoginForm from "./pages/Login/login";
-import SignUpForm from "./pages/Signup/signup.jsx";
 
 // Dashboard
 import Dashboard from "./pages/Dashboard";
@@ -32,6 +34,10 @@ import Transactions from "./pages/transactions/page";
 // Wallets
 import WalletsPage from "./pages/wallets/WalletsPage";
 import VirtualCardsPage from "./pages/wallets/virtual-cards.jsx";
+import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
+import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
+import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
+import SystemBalancePage from "./pages/wallets/system.jsx";
 
 // Analytics
 import AnalyticsPage from "./pages/analytics/AnalyticsPage";
@@ -63,30 +69,24 @@ import Security from "./pages/settings/Security.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
-import SystemStatusPage from "./pages/system/SystemStatusPage.jsx";
 import CompleteRegForm from "./pages/users/InviteAdmin/complete-reg.jsx";
-
 import { AnalyticsDashboard } from "./components/analytics-dashboard.jsx";
 // Support & Reports
 import Support from "./pages/support/page";
 import Report from "./pages/reports/page";
-// // import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
-// // import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
-// // import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
-// // import SystemBalancePage from "./pages/wallets/system.jsx";
 
 function App() {
   return (
     <BrowserRouter>
+     
       <Routes>
         {/* Public Routes */}
-        {/* <Route path="/login" element={<LoginForm />} /> */}
-        <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/complete-reg" element={<CompleteRegForm />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         {/* Protected Admin Routes */}
-        <Route element={<AdminProvider><AdminLayout /></AdminProvider>}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
+          <Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
           {/* Dashboard */}
           <Route path="dashboard" element={<Dashboard />} />
 
@@ -103,51 +103,59 @@ function App() {
           <Route path="/transactions" element={<ViewTransactions />} />
           <Route path="/admin-profile" element={<AdminProfile />} />
           <Route path="/edit-admin" element={<EditAdmin />} />
-          <Route path="/dashboard/users/login" element={<LoginForm />} />
+          <Route path="/view-activities" element={<ActivityLogs />} />
+          <Route path="/view-details" element={<ViewSuspension />} />
+          <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
 
-
-          {/* Transactions */}
+{/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />
 
-          {/* Wallets */}
-          <Route path="dashboard/wallets" element={<WalletsPage />} />
-          <Route path="dashboard/wallets/virtual-cards" element={<VirtualCardsPage />} />
+
+            {/* Wallets */}
+            <Route path="dashboard/wallets" element={<WalletsPage />} />
+            <Route path="dashboard/wallets/virtual-cards" element={<VirtualCardsPage />} />
+            <Route path="dashboard/wallets/withdrawals" element={<FundingWithdrawalsPage />} />
+            <Route path="dashboard/wallets/gateways" element={<PaymentGatewaysPage />} />
+            <Route path="dashboard/wallets/corporate" element={<CorporateAccountsPage />} />
+            <Route path="dashboard/wallets/system" element={<SystemBalancePage />} />
+
 
           {/* Analytics */}
           <Route path="dashboard/analytics" element={<AnalyticsPage />} />
+          <Route path="/analytics" element={<AnalyticsDashboard/>} />
           <Route path="dashboard/analytics/users" element={<UserAnalytics />} />
           <Route path="dashboard/analytics/performance" element={<PerformanceReports />} />
           <Route path="dashboard/analytics/funnels" element={<FunnelCharts />} />
           <Route path="dashboard/analytics/export" element={<ExportReports />} />
           <Route path="dashboard/analytics/transactions" element={<TransactionAanlytics />} />
 
-          {/* Compliance */}
-          <Route path="dashboard/compliance" element={<CompliancePage />} />
-          <Route path="dashboard/compliance/kyc" element={<KycVerifications />} />
-          <Route path="dashboard/compliance/suspicious-activities" element={<SuspiciousActivities />} />
-          <Route path="dashboard/compliance/aml" element={<AmlMonitoring />} />
-          <Route path="dashboard/compliance/audit" element={<AuditLogs />} />
+            {/* Compliance */}
+            <Route path="dashboard/compliance" element={<CompliancePage />} />
+            <Route path="dashboard/compliance/kyc" element={<KycVerifications />} />
+            <Route path="dashboard/compliance/suspicious-activities" element={<SuspiciousActivities />} />
+            <Route path="dashboard/compliance/aml" element={<AmlMonitoring />} />
+            <Route path="dashboard/compliance/audit" element={<AuditLogs />} />
 
-          {/* Notifications */}
-          <Route path="dashboard/notifications" element={<NotificationsPage />} />
-          <Route path="dashboard/notifications/sms" element={<SmsAlerts />} />
-          <Route path="dashboard/notifications/email" element={<EmailCampaigns />} />
-          <Route path="dashboard/notifications/scheduled" element={<Scheduled />} />
-          <Route path="dashboard/notifications/logs" element={<DeliveryLogs />} />
+            {/* Notifications */}
+            <Route path="dashboard/notifications" element={<NotificationsPage />} />
+            <Route path="dashboard/notifications/sms" element={<SmsAlerts />} />
+            <Route path="dashboard/notifications/email" element={<EmailCampaigns />} />
+            <Route path="dashboard/notifications/scheduled" element={<Scheduled />} />
+            <Route path="dashboard/notifications/logs" element={<DeliveryLogs />} />
 
-          {/* Settings */}
-          <Route path="dashboard/settings" element={<SettingsPage />} />
-          <Route path="dashboard/settings/limits" element={<TransactionLimits />} />
-          <Route path="dashboard/settings/fees" element={<ServiceFees />} />
-          <Route path="dashboard/settings/security" element={<Security />} />
-          <Route path="dashboard/settings/api-keys" element={<ApiKeysSettings />} />
-          <Route path="dashboard/settings/admins" element={<SystemAdminSettings />} />
-          <Route path="dashboard/settings/2fa" element={<TwoFactorSettings />} />
+            {/* Settings */}
+            <Route path="dashboard/settings" element={<SettingsPage />} />
+            <Route path="dashboard/settings/limits" element={<TransactionLimits />} />
+            <Route path="dashboard/settings/fees" element={<ServiceFees />} />
+            <Route path="dashboard/settings/security" element={<Security />} />
+            <Route path="dashboard/settings/api-keys" element={<ApiKeysSettings />} />
+            <Route path="dashboard/settings/admins" element={<SystemAdminSettings />} />
+            <Route path="dashboard/settings/2fa" element={<TwoFactorSettings />} />
 
-          {/* Support & Reports */}
-          <Route path="dashboard/support/*" element={<Support />} />
-          <Route path="dashboard/reports/*" element={<Report />} />
-        </Route>
+            {/* Support & Reports */}
+            <Route path="dashboard/support/*" element={<Support />} />
+            <Route path="dashboard/reports/*" element={<Report />} />
+          </Route>
       </Routes>
     </BrowserRouter>
   );

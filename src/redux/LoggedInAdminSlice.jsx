@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // Async thunk to fetch logged in admin data
 export const fetchAdmin = createAsyncThunk('admin/fetchAdmin', async (email, { rejectWithValue }) => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_GET_ADMIN_DETAILS}?email=${email}`, {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_ADMIN_DETAILS}?email=${email}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

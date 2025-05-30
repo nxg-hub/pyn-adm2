@@ -60,7 +60,7 @@ const DeleteAdminModal = ({ isOpen, onClose, }) => {
     <FormModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Delete ${admin?.firstName ?? ''} ${admin?.lastName ?? ''}`}
+      title={`Delete ${admin?.firstName} ${admin?.lastName}`}
       description="Please provide a reason for deleting this account."
 
       

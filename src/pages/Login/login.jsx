@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-// import logo from '../../../assets/images/logo.png';
+import apiService from '../../services/apiService';
 import { LoginSchema } from './schema';
 import { useState, useEffect } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
@@ -20,28 +20,16 @@ const LoginForm = () => {
 
   const handleSubmit = async (values) => {
     setIsLoading(true);
-    const requestData = {
-      email: values.email,
-      password: values.password,
-    };
-
-    localStorage.setItem('email', values.email);
     setErrorMessage('');
 
+    
+    localStorage.setItem('email', values.email);
+
     try {
-      const response = await fetch(import.meta.env.VITE_LOGIN_ADMIN_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      });
+      const result = await apiService.login(values.email, values.password);
 
-      const result = await response.json();
-
-      if (response.ok) {
-        const token = result?.data.token;
-        const role = result?.data.role;
+    const token = result?.data.token;
+    const role = result?.data.role;
 
         if (token) {
           localStorage.setItem('token', token);
@@ -49,7 +37,7 @@ const LoginForm = () => {
 
           dispatch(fetchAdmin(values.email));
           navigate("/dashboard");
-        }
+        
       } else {
         const message = result.message;
         setErrorMessage(`Failed to log in: ${message}`);
@@ -60,11 +48,8 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
-useEffect(() => { 
-          
+useEffect(() => {       
           localStorage.getItem("adminRole")
-
-
         }
   ,);
 

@@ -102,9 +102,9 @@ export function AdminSidebar() {
       location.pathname === path || location.pathname.startsWith(`${path}/`)
     );
   };
-  const adminRole = localStorage.getItem("adminRole"); // fetch the role properly
+  // const adminRole = localStorage.getItem("adminRole"); 
 
-  const hiddenFor = ["CUSTOMER_CARE_REP", "FINANCE_MANAGER"]; 
+  // const hiddenFor = ["CUSTOMER_CARE_REP", "FINANCE_MANAGER"]; 
 
   return (
     <div className="w-64 border-r bg-card h-screen overflow-y-auto">
@@ -163,14 +163,13 @@ export function AdminSidebar() {
               href="/dashboard/users/flagged"
               isActive={location.pathname === "/dashboard/users/flagged"}
             />
-            { !hiddenFor.includes(adminRole) && (
   <SidebarSubItem
     label="Admin Users"
     href="/dashboard/users/admin-users"
     isActive={location.pathname === "/dashboard/users/admin-users"}
     hasPermission={hasPermission("manageAdmins")}
   />
-)}
+
 </SidebarItem>
 
           <SidebarItem

@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchAdmins = createAsyncThunk('admin/fetchAdmins',   async (_, { rejectWithValue }) => {
 
   try {
-      const response = await fetch(import.meta.env.VITE_GET_ALL_ADMINS, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_ALL_ADMINS}`, {
 
         method: 'GET',
       headers: {
