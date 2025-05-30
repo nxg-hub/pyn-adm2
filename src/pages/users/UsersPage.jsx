@@ -199,14 +199,6 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                           }}>
                             initiate Reset Password
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]" onClick={() => {
-                            setShowPasswordManagerResetModal(true);
-                            dispatch(setSelectedUser(user));
-                          }}>
-                            Reset via Password Manager
-                          </DropdownMenuItem>
-
-
                           {/* <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => { setInitiatePasswordModal(true)
                               dispatch(setSelectedUser(user));
 
