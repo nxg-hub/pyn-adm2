@@ -19,7 +19,6 @@ import { useSelector } from "react-redux"
 export function AdminHeader({ title, subtitle }) {
   const [searchQuery, setSearchQuery] = useState("")
   const admin = useSelector((state) => state.admin.admin);
-  
   const { currentRole, setCurrentRole, allRoles } = useAdmin()
 
   return (

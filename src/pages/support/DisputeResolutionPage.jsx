@@ -45,8 +45,6 @@ const disputes = [
 const DisputeResolutionPage = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const { hasPermission } = useAdmin()
-
-  // State for dialog visibility and content
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [dialogAction, setDialogAction] = useState("")  // 'respond', 'resolve', 'escalate'
   const [dialogMessage, setDialogMessage] = useState("")
@@ -192,7 +190,27 @@ const DisputeResolutionPage = () => {
 
   return (
     <div className="flex flex-col">
-      <AdminHeader title="Dispute Resolution" subtitle="Manage and resolve customer disputes" />
+      {/* <AdminHeader title="Dispute Resolution" subtitle="Manage and resolve customer disputes" /> */}
+
+      <header className="border-b">
+              <div className="flex h-16 items-center px-4 gap-4">
+                <h1 className="text-xl font-semibold">Dispute Resolution</h1>
+                <span className="text-sm text-muted-foreground">Manage and resolve customer disputes</span>
+                <div className="ml-auto flex items-center gap-4">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder="Search support..."
+                      className="w-[250px] pl-8"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <Button>Export</Button>
+                </div>
+              </div>
+      </header>
 
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-4">

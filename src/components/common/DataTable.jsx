@@ -1,13 +1,24 @@
 "use client"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 
-const DataTable = ({ columns, data, onRowClick, emptyMessage = "No data available", className }) => {
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "../ui/table"
+
+const DataTable = ({
+  columns,
+  data,
+  onRowClick,
+  emptyMessage = "No data available",
+  className,
+}) => {
   if (!data || data.length === 0) {
-    return <div className="flex justify-center items-center p-8 text-muted-foreground">{emptyMessage}</div>
+    return (
+      <div className="flex justify-center items-center p-8 text-muted-foreground">
+        {emptyMessage}
+      </div>
+    )
   }
 
   return (
-    <div className="rounded-md border">
+    <div className={`rounded-md border ${className ?? ""}`}>
       <Table>
         <TableHeader>
           <TableRow>
@@ -26,8 +37,13 @@ const DataTable = ({ columns, data, onRowClick, emptyMessage = "No data availabl
               onClick={() => onRowClick && onRowClick(row)}
             >
               {columns.map((column) => (
-                <TableCell key={`${row.id || rowIndex}-${column.key}`} className={column.cellClassName}>
-                  {column.render ? column.render(row) : row[column.key]}
+                <TableCell
+                  key={`${row.id || rowIndex}-${column.key}`}
+                  className={`relative ${column.cellClassName ?? ""}`}
+                >
+                  <div className="z-50 relative">
+                    {column.render ? column.render(row) : row[column.key]}
+                  </div>
                 </TableCell>
               ))}
             </TableRow>
