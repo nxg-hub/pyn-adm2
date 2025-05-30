@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download } from "lucide-react"
+import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download, QrCode, Camera, Upload } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { Input } from "../../components/ui/input"
@@ -35,9 +35,12 @@ function ScanToPayPage() {
   const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
   const [showFlagDialog, setShowFlagDialog] = useState(false)
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
+  const [showQRScanDialog, setShowQRScanDialog] = useState(false)
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [isScanning, setIsScanning] = useState(false)
+  const [scannedCode, setScannedCode] = useState("")
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -45,25 +48,45 @@ function ScanToPayPage() {
 
   const handleMarkSuccess = () => {
     setShowMarkSuccessDialog(false)
-    // logic to mark as success
   }
 
   const handleFlagTransaction = () => {
     setShowFlagDialog(false)
     setFlagReason("")
-    // logic to flag transaction
   }
 
   const handleAdjustAmount = () => {
     setShowAdjustDialog(false)
     setAdjustAmount("")
-    // logic to adjust amount
   }
 
   const handleDownloadReceipt = (id) => {
-    // This is where the actual download logic would go. For now, let's log the ID.
     console.log(`Download receipt for transaction: ${id}`)
-    // You can replace the console log with actual logic like fetching a PDF or image.
+  }
+
+  const handleStartScanning = () => {
+    setIsScanning(true)
+    setShowQRScanDialog(true)
+    console.log("Starting QR code scanning...")
+  }
+
+  const handleStopScanning = () => {
+    setIsScanning(false)
+    setShowQRScanDialog(false)
+    setScannedCode("")
+  }
+
+  const handleQRCodeDetected = (code) => {
+    setScannedCode(code)
+    setIsScanning(false)
+    console.log("QR Code detected:", code)
+  }
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      console.log("Processing uploaded QR code image:", file.name)
+    }
   }
 
   const filteredTransactions = scanToPayTransactions.filter((transaction) =>
@@ -94,10 +117,69 @@ function ScanToPayPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button>Export</Button>
+            <Button onClick={handleStartScanning}  variant="outline" className="bg-black text-white hover:bg-gray-800">
+              <QrCode className="mr-2 h-4 w-4" />
+              Scan QR Code
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Export as CSV</DropdownMenuItem>
+                <DropdownMenuItem>Export as PDF</DropdownMenuItem>
+                <DropdownMenuItem>Export as Excel</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
+
+      {/* QR Code Scanning Section */}
+      <div className="p-6 border-b bg-gradient-to-r from-black to-black">
+        <Card className="border-2 border-dashed border-gray-400 bg-black">
+          <CardContent className="p-8">
+            <div className="text-center space-y-4">
+              <div className="mx-auto w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
+                <QrCode className="h-8 w-8 text-black" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-white">Scan QR Code to Process Payment</h2>
+                <p className="text-white mt-2">Use your camera to scan a QR code or upload an image containing a QR code</p>
+              </div>
+              <div className="flex justify-center gap-4">
+                <Button onClick={handleStartScanning} size="lg" variant="outline" className="bg-black hover:bg-gray-800 text-white">
+                  <Camera className="mr-2 h-5 w-5" />
+                  Start Camera Scan
+                </Button>
+                <Button variant="outline" className="text-white bg-black hover:bg-gray-800" size="lg" onClick={() => document.getElementById('qr-upload').click()}>
+                  <Upload className="mr-2 h-5 w-5" />
+                  Upload QR Image
+                </Button>
+                <input
+                  id="qr-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                />
+              </div>
+              {scannedCode && (
+                <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg">
+                  <p className= "text-black font-medium">QR Code Detected!</p>
+                  <p className="text-gray-700 text-sm mt-1">Code: {scannedCode}</p>
+                  <Button size="sm" className="mt-2 bg-black hover:bg-gray-800 text-white">
+                    Process Payment
+                  </Button>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-3 p-6">
         <Card>
@@ -129,7 +211,7 @@ function ScanToPayPage() {
         </Card>
       </div>
 
-      <main className="grid gap-6 md:grid-cols-7">
+      <main className="grid gap-6 md:grid-cols-7 px-6 pb-6">
         <Card className="md:col-span-4">
           <CardHeader>
             <CardTitle>Recent Scan to Pay Transactions</CardTitle>
@@ -259,10 +341,6 @@ function ScanToPayPage() {
                               <h3 className="text-sm font-medium text-muted-foreground">PAYER</h3>
                               <p>{selectedTransaction.payer}</p>
                             </div>
-                            {/* <div>
-                              <h3 className="text-sm font-medium text-muted-foreground">RECEIVER</h3>
-                              <p>{selectedTransaction.service}</p>
-                            </div> */}
                             <div>
                               <h3 className="text-sm font-medium text-muted-foreground">AMOUNT</h3>
                               <p className="text-xl font-bold">${selectedTransaction.amount.toFixed(2)}</p>
@@ -347,6 +425,49 @@ function ScanToPayPage() {
                       </CardContent>
         </Card>
       </main>
+
+      {/* QR Scanner Modal */}
+      <Dialog open={showQRScanDialog} onOpenChange={setShowQRScanDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Scan QR Code</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed">
+              {isScanning ? (
+                <div className="text-center space-y-2">
+                  <Camera className="h-12 w-12 mx-auto text-blue-600 animate-pulse" />
+                  <p className="text-sm text-gray-600">Camera is active</p>
+                  <p className="text-xs text-gray-500">Position QR code within the frame</p>
+                </div>
+              ) : (
+                <div className="text-center space-y-2">
+                  <QrCode className="h-12 w-12 mx-auto text-gray-400" />
+                  <p className="text-sm text-gray-600">Camera preview will appear here</p>
+                </div>
+              )}
+            </div>
+            <div className="text-center space-y-2">
+              <p className="text-sm text-white">Make sure the QR code is clearly visible and well-lit</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={handleStopScanning}>
+              Cancel
+            </Button>
+            {!isScanning ? (
+              <Button onClick={handleStartScanning}>
+                <Camera className="mr-2 h-4 w-4" />
+                Start Scanning
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={handleStopScanning}>
+                Stop Scanning
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Mark Completed Modal */}
       <Dialog open={showMarkSuccessDialog} onOpenChange={setShowMarkSuccessDialog}>

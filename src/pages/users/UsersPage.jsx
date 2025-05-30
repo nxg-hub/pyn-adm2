@@ -28,6 +28,8 @@ import { useNavigate } from "react-router-dom";
 import FlagUser from "./ActionPages/FlagUser";
 import UnflagUserModal from "./ActionPages/UnflagUser";
 import InitiatePasswordReset from "./ActionPages/ChangePassword"
+import PasswordManagerResetModal from "./ActionPages/ChangePassword";
+
   
 const ITEMS_PER_PAGE = 5;
 
@@ -43,6 +45,8 @@ function UsersPage() {
   const [showUnflagModal, setShowUnflagModal] = useState(false);
   const [showFlagModal, setShowFlagModal] = useState(false);
   const [showInitiatePasswordModal, setInitiatePasswordModal] = useState(false);
+  const [showPasswordManagerResetModal, setShowPasswordManagerResetModal] = useState(false);
+
 
 
   useEffect(() => {
@@ -189,10 +193,24 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
     dispatch(setSelectedUser(user));
 
     navigate("/transactions"); }}>View Transactions</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => { setInitiatePasswordModal(true)
+                          <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
+                            setInitiatePasswordModal(true);
+                            dispatch(setSelectedUser(user));
+                          }}>
+                            initiate Reset Password
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]" onClick={() => {
+                            setShowPasswordManagerResetModal(true);
+                            dispatch(setSelectedUser(user));
+                          }}>
+                            Reset via Password Manager
+                          </DropdownMenuItem>
+
+
+                          {/* <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => { setInitiatePasswordModal(true)
                               dispatch(setSelectedUser(user));
 
-                             }}>initiate Reset Password</DropdownMenuItem>
+                             }}>initiate Reset Password</DropdownMenuItem> */}
                              {user.enabled === true && (
                             <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowFlagModal(true)
                               dispatch(setSelectedUser(user));
@@ -231,6 +249,10 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                   isOpen={showInitiatePasswordModal}
                   onClose={() => setInitiatePasswordModal(false)}
                 />
+                {/* <PasswordManagerResetModal
+                  isOpen={showPasswordManagerResetModal}
+                  onClose={() => setShowPasswordManagerResetModal(false)}
+                /> */}
             <div className="flex items-center justify-between mt-4">
               <Pagination
                 currentPage={currentPage}

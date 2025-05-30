@@ -77,7 +77,7 @@ useEffect(() => {
           <div className="max-w-md w-full mx-auto">
             <div className="text-center mb-8 md:mb-10">
               <h1 className="text-[#006181] font-bold text-2xl md:text-3xl xl:text-4xl">
-                Login to Admin
+                Payina Back Office
               </h1>
             </div>
 
@@ -90,7 +90,7 @@ useEffect(() => {
                 {() => (
                     <Form className="w-full space-y-4 md:space-y-6 p-4 md:p-6">
                       <div className="text-[#006181] text-start font-bold text-xl md:text-2xl">
-                        Login
+                        Hi Admin, Please login to your Dashboard
                       </div>
 
                       <div className="flex flex-col space-y-2">
@@ -126,12 +126,6 @@ useEffect(() => {
                         <ErrorMessage name="password" component="span" className="text-red-500 text-sm" />
                       </div>
 
-                      <div className="pt-1 md:pt-2">
-                        <Link to="/forgot-password" className="text-[#006181] underline font-semibold text-sm">
-                          Forgot password?
-                        </Link>
-                      </div>
-
                       {errorMessage && <div className="text-red-500">{errorMessage}</div>}
 
                       <button
@@ -141,6 +135,12 @@ useEffect(() => {
                       >
                         {isLoading ? 'Logging in...' : 'Log in'}
                       </button>
+
+                      <div className="pt-1 md:pt- text-right">
+                        <Link to="/forgot-password" className="text-[#006181] underline font-semibold text-sm">
+                          Forgot password?
+                        </Link>
+                      </div>
                     </Form>
                 )}
               </Formik>

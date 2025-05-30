@@ -4,6 +4,7 @@ import AdminLayout from "./components/layout/AdminLayout";
 
 // Auth
 import LoginForm from "./pages/Login/login";
+import SignUpForm from "./pages/Signup/signup.jsx";
 
 // Dashboard
 import Dashboard from "./pages/Dashboard";
@@ -79,8 +80,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<LoginForm />} />
-        {/* <Route path="/signup" element={<SignUpForm />} /> */}
+        {/* <Route path="/login" element={<LoginForm />} /> */}
+        <Route path="/signup" element={<SignUpForm />} />
 
         {/* Protected Admin Routes */}
         <Route element={<AdminProvider><AdminLayout /></AdminProvider>}>
@@ -102,6 +103,8 @@ function App() {
           <Route path="/transactions" element={<ViewTransactions />} />
           <Route path="/admin-profile" element={<AdminProfile />} />
           <Route path="/edit-admin" element={<EditAdmin />} />
+          <Route path="/dashboard/users/login" element={<LoginForm />} />
+
 
           {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />

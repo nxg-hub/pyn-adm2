@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect} from "react"
 import { Download, FileText, Printer, Search } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -8,9 +8,16 @@ import { Input } from "../../components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { Label } from "../../components/ui/label"
-import {AdminHeader} from "../../components/layout/AdminHeader"
+import { AdminHeader } from "../../components/layout/AdminHeader"
 import { useAdmin } from "../../contexts/AdminContext"
-import {Breadcrumb} from "../../components/common/Breadcrumb"
+import { Breadcrumb } from "../../components/common/Breadcrumb"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "../../components/ui/dropdown-menu"
+import Pagination from "../../components/ui/pagination"
 
 const reports = [
   {
@@ -55,12 +62,19 @@ const reports = [
   },
 ]
 
-const ReportsPage = () => {
+function ReportsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [dateRange, setDateRange] = useState("last30days")
+  const [customStartDate, setCustomStartDate] = useState("")
+  const [customEndDate, setCustomEndDate] = useState("")
   const { hasPermission } = useAdmin()
-
   const breadcrumbItems = [{ label: "Reports", href: "/reports" }]
+  const [currentTab, setCurrentTab] = useState("all")
+  const [currentPage, setCurrentPage] = useState(1)
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [currentTab, searchQuery])
 
   if (!hasPermission("viewFinancialReports")) {
     return (
@@ -72,6 +86,146 @@ const ReportsPage = () => {
             You don't have permission to access this page. Please contact a Super Admin for assistance.
           </div>
         </main>
+      </div>
+    )
+  }
+
+  const filterReports = (type) => {
+    return reports.filter((report) => {
+      const matchesStatus = type === "all" || report.type === type
+      const matchesSearch =
+        searchQuery.trim() === "" ||
+        Object.values(report)
+          .join(" ")
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
+
+      const matchesDateRange = true
+
+      return matchesStatus && matchesSearch && matchesDateRange
+    })
+  }
+
+  const getDateRangeText = () => {
+    if (dateRange === "custom" && customStartDate && customEndDate) {
+      const startDate = new Date(customStartDate).toLocaleDateString()
+      const endDate = new Date(customEndDate).toLocaleDateString()
+      return `Custom: ${startDate} - ${endDate}`
+    }
+    return null
+  }
+
+  const isCustomDateRangeValid = () => {
+    if (dateRange !== "custom") return true
+    if (!customStartDate || !customEndDate) return false
+    return new Date(customStartDate) <= new Date(customEndDate)
+  }
+
+  function handleExport(type) {
+    const dataToExport = type === "all" ? reports : filterReports(currentTab)
+    const csv = convertToCSV(dataToExport)
+    downloadCSV(csv, `reports-${type}-${new Date().toISOString()}.csv`)
+  }
+
+  function convertToCSV(data) {
+    if (!data.length) return ""
+
+    const headers = Object.keys(data[0]).join(",")
+    const rows = data.map(row =>
+      Object.values(row).map(val => `"${val}"`).join(",")
+    )
+    return [headers, ...rows].join("\n")
+  }
+
+  function downloadCSV(csv, filename) {
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const link = document.createElement("a")
+    link.href = URL.createObjectURL(blob)
+    link.setAttribute("download", filename)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const ITEMS_PER_PAGE = 5;
+
+  const renderTable = (type, title) => {
+    const filtered = filterReports(type)
+    
+    const paginatedReports = filtered.slice(
+      (currentPage - 1) * ITEMS_PER_PAGE,
+      currentPage * ITEMS_PER_PAGE
+    )
+
+    return (
+      <div className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Report Name</th>
+                    {type === "all" && (
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Type</th>
+                    )}
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Last Generated</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Format</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedReports.map((report) => (
+                    <tr key={report.id} className="border-b">
+                      <td className="px-4 py-3 text-sm">
+                        <div>
+                          <div className="font-medium">{report.name}</div>
+                          <div className="text-xs text-gray-500">{report.description}</div>
+                        </div>
+                      </td>
+                      {type === "all" && <td className="px-4 py-3 text-sm">{report.type}</td>}
+                      <td className="px-4 py-3 text-sm">{report.lastGenerated}</td>
+                      <td className="px-4 py-3 text-sm">{report.format}</td>
+                      <td className="px-4 py-3 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Button variant="ghost" size="sm">
+                            <Download className="mr-2 h-4 w-4" />
+                            Download
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Printer className="mr-2 h-4 w-4" />
+                            Print
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filtered.length === 0 && (
+                    <tr>
+                      <td colSpan={type === "all" ? 5 : 4} className="text-center py-6 text-sm text-muted-foreground">
+                        No reports found.
+                    </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {filtered.length > 0 && (
+          <div className="flex justify-end">
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filtered.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </div>
+        )}
       </div>
     )
   }
@@ -103,6 +257,32 @@ const ReportsPage = () => {
               </Select>
             </div>
 
+            {dateRange === "custom" && (
+              <div className="flex flex-col md:flex-row gap-2">
+                <div>
+                  <Label htmlFor="startDate">Start Date</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="w-full md:w-auto"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="endDate">End Date</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    min={customStartDate}
+                    className="w-full md:w-auto"
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="relative">
               <Label htmlFor="search">Search</Label>
               <div className="relative">
@@ -119,335 +299,58 @@ const ReportsPage = () => {
             </div>
           </div>
 
-          <Button>
-            <FileText className="mr-2 h-4 w-4" />
-            Generate New Report
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Download className="mr-2 h-4 w-4" />
+                  Export
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => handleExport("all")}>
+                Export All Reports
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport("filtered")}>
+                Export Filtered Reports
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        <Tabs defaultValue="all">
-          <TabsList>
-            <TabsTrigger value="all">All Reports</TabsTrigger>
-            <TabsTrigger value="financial">Financial</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="compliance">Compliance</TabsTrigger>
-            <TabsTrigger value="system">System</TabsTrigger>
-          </TabsList>
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <TabsList>
+              <TabsTrigger value="all">All Reports</TabsTrigger>
+              <TabsTrigger value="Financial">Financial</TabsTrigger>
+              <TabsTrigger value="Analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="Compliance">Compliance</TabsTrigger>
+              <TabsTrigger value="System">System</TabsTrigger>
+            </TabsList>
+            
+            {getDateRangeText() && (
+              <div className="text-sm text-muted-foreground bg-muted px-3 py-1 rounded-md">
+                {getDateRangeText()}
+              </div>
+            )}
+          </div>
 
-          <TabsContent value="all" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>All Reports</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Report Name</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Type</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Last Generated</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Format</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {reports.map((report) => (
-                        <tr key={report.id} className="border-b">
-                          <td className="px-4 py-3 text-sm">
-                            <div>
-                              <div className="font-medium">{report.name}</div>
-                              <div className="text-xs text-gray-500">{report.description}</div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-sm">{report.type}</td>
-                          <td className="px-4 py-3 text-sm">{report.lastGenerated}</td>
-                          <td className="px-4 py-3 text-sm">{report.format}</td>
-                          <td className="px-4 py-3 text-sm">
-                            <div className="flex items-center gap-2">
-                              <Button variant="ghost" size="sm">
-                                <Download className="mr-2 h-4 w-4" />
-                                Download
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                <Printer className="mr-2 h-4 w-4" />
-                                Print
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="financial" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Financial Reports</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Report Name</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Last Generated</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Format</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {reports
-                        .filter((report) => report.type === "Financial")
-                        .map((report) => (
-                          <tr key={report.id} className="border-b">
-                            <td className="px-4 py-3 text-sm">
-                              <div>
-                                <div className="font-medium">{report.name}</div>
-                                <div className="text-xs text-gray-500">{report.description}</div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-sm">{report.lastGenerated}</td>
-                            <td className="px-4 py-3 text-sm">{report.format}</td>
-                            <td className="px-4 py-3 text-sm">
-                              <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm">
-                                  <Download className="mr-2 h-4 w-4" />
-                                  Download
-                                </Button>
-                                <Button variant="ghost" size="sm">
-                                  <Printer className="mr-2 h-4 w-4" />
-                                  Print
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="analytics" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Analytics Reports</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Report Name</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Last Generated</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Format</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {reports
-                        .filter((report) => report.type === "Analytics")
-                        .map((report) => (
-                          <tr key={report.id} className="border-b">
-                            <td className="px-4 py-3 text-sm">
-                              <div>
-                                <div className="font-medium">{report.name}</div>
-                                <div className="text-xs text-gray-500">{report.description}</div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-sm">{report.lastGenerated}</td>
-                            <td className="px-4 py-3 text-sm">{report.format}</td>
-                            <td className="px-4 py-3 text-sm">
-                              <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm">
-                                  <Download className="mr-2 h-4 w-4" />
-                                  Download
-                                </Button>
-                                <Button variant="ghost" size="sm">
-                                  <Printer className="mr-2 h-4 w-4" />
-                                  Print
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="compliance" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Compliance Reports</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Report Name</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Last Generated</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Format</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {reports
-                        .filter((report) => report.type === "Compliance")
-                        .map((report) => (
-                          <tr key={report.id} className="border-b">
-                            <td className="px-4 py-3 text-sm">
-                              <div>
-                                <div className="font-medium">{report.name}</div>
-                                <div className="text-xs text-gray-500">{report.description}</div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-sm">{report.lastGenerated}</td>
-                            <td className="px-4 py-3 text-sm">{report.format}</td>
-                            <td className="px-4 py-3 text-sm">
-                              <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm">
-                                  <Download className="mr-2 h-4 w-4" />
-                                  Download
-                                </Button>
-                                <Button variant="ghost" size="sm">
-                                  <Printer className="mr-2 h-4 w-4" />
-                                  Print
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="system" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>System Reports</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Report Name</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Last Generated</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Format</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {reports
-                        .filter((report) => report.type === "System")
-                        .map((report) => (
-                          <tr key={report.id} className="border-b">
-                            <td className="px-4 py-3 text-sm">
-                              <div>
-                                <div className="font-medium">{report.name}</div>
-                                <div className="text-xs text-gray-500">{report.description}</div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-sm">{report.lastGenerated}</td>
-                            <td className="px-4 py-3 text-sm">{report.format}</td>
-                            <td className="px-4 py-3 text-sm">
-                              <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm">
-                                  <Download className="mr-2 h-4 w-4" />
-                                  Download
-                                </Button>
-                                <Button variant="ghost" size="sm">
-                                  <Printer className="mr-2 h-4 w-4" />
-                                  Print
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Scheduled Reports</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Report Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Frequency</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Next Run</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Recipients</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b">
-                    <td className="px-4 py-3 text-sm">
-                      <div className="font-medium">Monthly Transaction Summary</div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">Monthly</td>
-                    <td className="px-4 py-3 text-sm">2024-05-01 00:00 AM</td>
-                    <td className="px-4 py-3 text-sm">finance@payina.com</td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm">
-                          Edit
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-red-600">
-                          Delete
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="px-4 py-3 text-sm">
-                      <div className="font-medium">Weekly User Growth Report</div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">Weekly</td>
-                    <td className="px-4 py-3 text-sm">2024-04-29 08:00 AM</td>
-                    <td className="px-4 py-3 text-sm">marketing@payina.com</td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm">
-                          Edit
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-red-600">
-                          Delete
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+          {dateRange === "custom" && !isCustomDateRangeValid() && (
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-md">
+              {!customStartDate || !customEndDate 
+                ? "Please select both start and end dates for custom range" 
+                : "End date must be after start date"}
             </div>
-          </CardContent>
-        </Card>
+          )}
+
+          <TabsContent value="all">{renderTable("all", "All Reports")}</TabsContent>
+          <TabsContent value="Financial">{renderTable("Financial", "Financial Reports")}</TabsContent>
+          <TabsContent value="Analytics">{renderTable("Analytics", "Analytics Reports")}</TabsContent>
+          <TabsContent value="Compliance">{renderTable("Compliance", "Compliance Reports")}</TabsContent>
+          <TabsContent value="System">{renderTable("System", "System Reports")}</TabsContent>
+        </Tabs>
       </main>
     </div>
   )
 }
 
 export default ReportsPage
-
-

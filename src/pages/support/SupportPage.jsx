@@ -1,18 +1,24 @@
 "use client"
 
 import { useState } from "react"
-import { AlertCircle, CheckCircle, Clock, MessageSquare, Search, User } from "lucide-react"
+import { AlertCircle, CheckCircle, Clock, MessageSquare, Search, User, Download } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { Input } from "../../components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
-import { AdminHeader } from "../../components/layout/AdminHeader"
 import { useAdmin } from "../../contexts/AdminContext"
 import { Badge } from "../../components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog"
 import { Textarea } from "../../components/ui/textarea"
 import DataTable from "../../components/common/DataTable"
 import StatCard from "../../components/common/StatCard"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu"
 
 const tickets = [
   {
@@ -68,6 +74,10 @@ const SupportPage = () => {
   const [activeTicket, setActiveTicket] = useState(null)
   const [replyMessage, setReplyMessage] = useState("")
 
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [newSubject, setNewSubject] = useState("")
+  const [newMessage, setNewMessage] = useState("")
+
   const getPriorityBadge = (priority) => {
     const classes = {
       Low: "border-green-200 bg-green-50 text-green-700",
@@ -76,27 +86,43 @@ const SupportPage = () => {
       Critical: "border-red-200 bg-red-50 text-red-700",
     }
 
-    return (
-      <Badge variant="outline" className={classes[priority]}>
-        {priority}
-      </Badge>
-    )
+    return <Badge variant="outline" className={classes[priority]}>{priority}</Badge>
   }
 
   const getStatusBadge = (status) => {
-    const classes = {
-      Open: "border-blue-200 bg-blue-50 text-blue-700",
-      "In Progress": "border-yellow-200 bg-yellow-50 text-yellow-700",
-      Resolved: "border-green-200 bg-green-50 text-green-700",
-      Closed: "border-gray-200 bg-gray-50 text-gray-700",
-    }
-
-    return (
-      <Badge variant="outline" className={classes[status]}>
-        {status}
-      </Badge>
-    )
+  const classes = {
+    Open: "border-blue-200 bg-blue-50 text-blue-700",
+    "In Progress": "border-yellow-200 bg-yellow-50 text-yellow-700",
+    Resolved: "border-green-200 bg-green-50 text-green-700",
+    Closed: "border-gray-200 bg-gray-50 text-gray-700",
   }
+
+  return (
+    <Badge
+      variant="outline"
+      className={`whitespace-nowrap px-3 py-1 text-sm font-medium ${classes[status]}`}
+    >
+      {status}
+    </Badge>
+  )
+}
+
+
+  const handleResolve = (ticket) => {
+    console.log(`Resolved ticket ${ticket.id}`)
+    // Here you would trigger mutation / API call
+  }
+
+  const handleEscalate = (ticket) => {
+    console.log(`Escalated ticket ${ticket.id}`)
+    // Here you would trigger mutation / escalation logic
+  }
+
+  const filteredTickets = tickets.filter((ticket) =>
+    [ticket.id, ticket.user, ticket.subject].some((field) =>
+      field.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  )
 
   const columns = [
     {
@@ -114,10 +140,7 @@ const SupportPage = () => {
         </div>
       ),
     },
-    {
-      key: "subject",
-      header: "SUBJECT",
-    },
+    { key: "subject", header: "SUBJECT" },
     {
       key: "status",
       header: "STATUS",
@@ -129,18 +152,13 @@ const SupportPage = () => {
       render: (row) => getPriorityBadge(row.priority),
     },
     ...(hasPermission("assignSupportTickets")
-      ? [
-          {
-            key: "assignedTo",
-            header: "ASSIGNED TO",
-            render: (row) =>
-              row.assignedTo || (
-                <Button variant="outline" size="sm">
-                  Assign
-                </Button>
-              ),
-          },
-        ]
+      ? [{
+          key: "assignedTo",
+          header: "ASSIGNED TO",
+          render: (row) => row.assignedTo || (
+            <Button variant="outline" size="sm">Assign</Button>
+          ),
+        }]
       : []),
     {
       key: "createdAt",
@@ -169,13 +187,13 @@ const SupportPage = () => {
             Reply
           </Button>
           {row.status !== "Resolved" && row.status !== "Closed" && (
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => handleResolve(row)}>
               <CheckCircle className="mr-2 h-4 w-4" />
               Resolve
             </Button>
           )}
           {hasPermission("viewFullTransactionHistory") && (
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => handleEscalate(row)}>
               <AlertCircle className="mr-2 h-4 w-4" />
               Escalate
             </Button>
@@ -185,9 +203,44 @@ const SupportPage = () => {
     },
   ]
 
+  const filteredByStatus = (status) =>
+    filteredTickets.filter((t) => t.status.toLowerCase() === status)
+
   return (
     <div className="flex flex-col">
-      <AdminHeader title="Support Dashboard" subtitle="Manage customer support tickets and inquiries" />
+      <header className="border-b">
+        <div className="flex h-16 items-center px-4 gap-4">
+          <h1 className="text-xl font-semibold">Support Dashboard</h1>
+          <span className="text-sm text-muted-foreground">
+            Manage customer support tickets and inquiries
+          </span>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search support..."
+                className="w-[250px] pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Export as CSV</DropdownMenuItem>
+                <DropdownMenuItem>Export as PDF</DropdownMenuItem>
+                <DropdownMenuItem>Export as Excel</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
 
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-4">
@@ -197,19 +250,11 @@ const SupportPage = () => {
           <StatCard title="Avg. Response Time" value="2.5h" subtitle="-15min from last week" trend="down" />
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search tickets..."
-              className="w-[300px] pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        {hasPermission("assignSupportTickets") && (
+          <div className="flex justify-end">
+            <Button onClick={() => setIsCreateDialogOpen(true)}>Create New Ticket</Button>
           </div>
-          {hasPermission("assignSupportTickets") && <Button>Create New Ticket</Button>}
-        </div>
+        )}
 
         <Card>
           <CardHeader>
@@ -224,16 +269,16 @@ const SupportPage = () => {
                 <TabsTrigger value="resolved">Resolved</TabsTrigger>
               </TabsList>
               <TabsContent value="all" className="mt-4">
-                <DataTable columns={columns} data={tickets} />
+                <DataTable columns={columns} data={filteredTickets} />
               </TabsContent>
               <TabsContent value="open" className="mt-4">
-                <DataTable columns={columns} data={tickets.filter((ticket) => ticket.status === "Open")} />
+                <DataTable columns={columns} data={filteredByStatus("open")} />
               </TabsContent>
               <TabsContent value="in-progress" className="mt-4">
-                <DataTable columns={columns} data={tickets.filter((ticket) => ticket.status === "In Progress")} />
+                <DataTable columns={columns} data={filteredByStatus("in progress")} />
               </TabsContent>
               <TabsContent value="resolved" className="mt-4">
-                <DataTable columns={columns} data={tickets.filter((ticket) => ticket.status === "Resolved")} />
+                <DataTable columns={columns} data={filteredByStatus("resolved")} />
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -258,12 +303,52 @@ const SupportPage = () => {
             <DialogFooter className="mt-4">
               <Button
                 onClick={() => {
+                  if (!replyMessage.trim()) return
                   console.log(`Reply to ${activeTicket?.id}:`, replyMessage)
                   setReplyMessage("")
                   setIsReplyDialogOpen(false)
                 }}
+                disabled={!replyMessage.trim()}
               >
                 Send Reply
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Create Ticket Dialog */}
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New Support Ticket</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Input
+                placeholder="Subject"
+                value={newSubject}
+                onChange={(e) => setNewSubject(e.target.value)}
+              />
+              <Textarea
+                placeholder="Message or issue details..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+              />
+            </div>
+            <DialogFooter className="mt-4">
+              <Button
+                onClick={() => {
+                  if (!newSubject.trim() || !newMessage.trim()) return
+                  console.log("Creating new ticket:", {
+                    subject: newSubject,
+                    message: newMessage,
+                  })
+                  setNewSubject("")
+                  setNewMessage("")
+                  setIsCreateDialogOpen(false)
+                }}
+                disabled={!newSubject.trim() || !newMessage.trim()}
+              >
+                Submit Ticket
               </Button>
             </DialogFooter>
           </DialogContent>
