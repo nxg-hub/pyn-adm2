@@ -81,7 +81,7 @@ function App() {
      
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<LoginForm />} />
+        <Route path="/login" element={<LoginForm />} />
         <Route path="/complete-reg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
@@ -104,8 +104,7 @@ function App() {
           <Route path="/admin-profile" element={<AdminProfile />} />
           <Route path="/edit-admin" element={<EditAdmin />} />
           <Route path="/view-activities" element={<ActivityLogs />} />
-          <Route path="/view-details" element={<ViewSuspension />} />
-          <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
+  
 
 {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />

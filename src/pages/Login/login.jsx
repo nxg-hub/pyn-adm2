@@ -1,138 +1,127 @@
-import { ErrorMessage, Field, Form, Formik } from 'formik';
-import apiService from '../../services/apiService';
-import { LoginSchema } from './schema';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { fetchAdmin } from '../../redux/LoggedInAdminSlice';
+import backgroundImage from "../../assets/vector.png";
+import dashboardImage from "../../assets/dashboard.png";
+import payinaLogo from "../../assets/payina.png"
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (values) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
 
-    
-    localStorage.setItem('email', values.email);
-
-    try {
-      const result = await apiService.login(values.email, values.password);
-
-    const token = result?.data.token;
-    const role = result?.data.role;
-
-        if (token) {
-          localStorage.setItem('token', token);
-          localStorage.setItem('adminRole', role);
-
-          dispatch(fetchAdmin(values.email));
-          navigate("/dashboard");
-        
+    // Simulate API call
+    setTimeout(() => {
+      if (formData.email && formData.password) {
+        console.log('Login successful');
+        // Handle successful login
       } else {
-        const message = result.message;
-        setErrorMessage(`Failed to log in: ${message}`);
+        setErrorMessage('Please fill in all fields');
       }
-    } catch (error) {
-      setErrorMessage(`Error logging in: ${error.message}`);
-    } finally {
       setIsLoading(false);
-    }
+    }, 1000);
   };
-useEffect(() => {       
-          localStorage.getItem("adminRole")
-        }
-  ,);
 
   return (
-      <div className="min-h-screen flex flex-col md:flex-row bg-black">
-       
-       
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <div className="flex w-full max-w-6xl">
+        {/* Left Border Box */}
+        <div className="w-1/2 h-[600px] border border-black flex items-center justify-center relative overflow-hidden">
+          <div className="absolute top-6 left-6 z-10">
+            <img src={payinaLogo} alt="logo" className="h-10 w-auto" />
+          </div>
+          <div className="absolute inset-0">
+            <img src={backgroundImage} alt="Background" className="w-full h-full object-cover" />
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img src={dashboardImage} alt="Dashboard" className="max-w-full max-h-full object-contain" />
+          </div>
+        </div>
 
-        <div className="w-full  flex flex-col justify-center p-6 md:p-8">
-          <div className="max-w-md w-full mx-auto">
-            <div className="text-center mb-8 md:mb-10">
-              <h1 className="text-[#006181] font-bold text-2xl md:text-3xl xl:text-4xl">
-                Payina Back Office
-              </h1>
+        {/* Right Border Box */}
+        <div className="w-1/2 h-[600px] bg-[#161616] border border-black border-l-0 flex items-center justify-center p-6">
+          <div className="w-full max-w-md">
+            <h1 className="text-[#006181] text-center mb-8 font-semibold text-2xl md:text-3xl xl:text-4xl">
+              Payina Back Office
+            </h1>
+            <div className="text-white text-center font-semibold text-lg md:text-xl mb-6">
+              Hi Admin, Please login to your Dashboard
             </div>
 
-            <div className="bg-black rounded-lg shadow-sm">
-              <Formik
-                  initialValues={{ email: '', password: '' }}
-                  validationSchema={LoginSchema}
-                  onSubmit={handleSubmit}
+            <div className="space-y-4">
+              <div className="flex flex-col space-y-2">
+                <label htmlFor="email" className="text-sm font-normal text-[#006181] text-left">
+                  Email Address
+                </label>
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="Enter Email Address"
+                  className="w-full h-10 border border-gray-300 outline-none font-light text-base rounded px-3 text-black"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="flex flex-col space-y-2 relative">
+                <label htmlFor="password" className="text-sm font-normal text-[#006181] text-left">
+                  Password
+                </label>
+                <input
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter Password"
+                  className="w-full h-10 border border-gray-300 outline-none font-light text-base rounded px-3 pr-10 text-black"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <div className="absolute right-3 top-8 cursor-pointer">
+                  {showPassword ? (
+                    <BsEye onClick={handleShowPassword} className="text-gray-500" />
+                  ) : (
+                    <BsEyeSlash onClick={handleShowPassword} className="text-gray-500" />
+                  )}
+                </div>
+              </div>
+
+              {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>}
+
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                className="w-full text-base flex  justify-center items-center rounded-md bg-[#006181] px-6 py-2 font-semibold text-white hover:bg-opacity-80 transition disabled:opacity-50"
+                disabled={isLoading}
               >
-                {() => (
-                    <Form className="w-full space-y-4 md:space-y-6 p-4 md:p-6">
-                      <div className="text-[#006181] text-start font-bold text-xl md:text-2xl">
-                        Hi Admin, Please login to your Dashboard
-                      </div>
+                {isLoading ? 'Logging in...' : 'Login'}
+              </button>
 
-                      <div className="flex flex-col space-y-2">
-                        <label htmlFor="email" className="text-sm font-normal text-[#006181]">
-                          Email Address
-                        </label>
-                        <Field
-                            name="email"
-                            type="email"
-                            placeholder="Enter Email Address"
-                            className="w-full h-12 border border-gray-300 outline-none font-light text-base rounded px-3"
-                        />
-                        <ErrorMessage name="email" component="span" className="text-red-500 text-sm" />
-                      </div>
-
-                      <div className="flex flex-col space-y-2 relative">
-                        <label htmlFor="password" className="text-sm font-normal text-[#006181]">
-                          Password
-                        </label>
-                        <Field
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="Enter Password"
-                            className="w-full h-12 border border-gray-300 outline-none font-light text-base rounded px-3"
-                        />
-                        <div className="absolute right-3 top-10 cursor-pointer">
-                          {showPassword ? (
-                              <BsEye onClick={handleShowPassword} className="text-gray-500" />
-                          ) : (
-                              <BsEyeSlash onClick={handleShowPassword} className="text-gray-500" />
-                          )}
-                        </div>
-                        <ErrorMessage name="password" component="span" className="text-red-500 text-sm" />
-                      </div>
-
-                      {errorMessage && <div className="text-red-500">{errorMessage}</div>}
-
-                      <button
-                          type="submit"
-                          className="w-full mt-4 md:mt-6 text-base md:text-lg flex justify-center items-center rounded-md bg-[#006181] px-6 py-3 font-bold text-black hover:bg- transition disabled:opacity-50"
-                          disabled={isLoading}
-                      >
-                        {isLoading ? 'Logging in...' : 'Log in'}
-                      </button>
-
-                      <div className="pt-1 md:pt- text-right">
-                        <Link to="/forgot-password" className="text-[#006181] underline font-semibold text-sm">
-                          Forgot password?
-                        </Link>
-                      </div>
-                    </Form>
-                )}
-              </Formik>
+              <div className="pt-2  text-right">
+                <button className="text-white font-semibold text-md hover:text-[#006181] transition">
+                  Forgot password
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 };
 

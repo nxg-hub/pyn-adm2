@@ -153,11 +153,6 @@ export function AdminSidebar() {
               href="/dashboard/users/unsuspended"
               isActive={location.pathname === "/dashboard/users/unsuspended"}
             />
-            <SidebarSubItem
-              label="Login Form"
-              href="/dashboard/users/login"
-              isActive={location.pathname === "/dashboard/users/login"}
-            />
                <SidebarSubItem
               label="Flagged Accounts"
               href="/dashboard/users/flagged"
