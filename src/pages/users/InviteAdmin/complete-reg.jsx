@@ -29,14 +29,14 @@ const CompleteRegForm = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token'); // Gets the token from url
   
-    if (!token) {
-      setErrorMessage('Invalid or missing token.');
-      setIsLoading(false);
-      return;
-    }
+    // if (!token) {
+    //   setErrorMessage('Invalid or missing token.');
+    //   setIsLoading(false);
+    //   return;
+    // }
   
     // Append token to the API URL
-    const url = `${import.meta.env.VITE_COMPLETE_REG}?token=${token}`;
+    const url = `${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_COMPLETE_REG}?token=${token}`;
   
     try {
       const response = await fetch(url, {
@@ -51,7 +51,7 @@ const CompleteRegForm = () => {
     const result = await response.json();
 
     if (response.ok) {
-      navigate("/login")
+      navigate("/")
     } else {
       setErrorMessage(result.debugMessage || 'An error occurred during registration.');
     }

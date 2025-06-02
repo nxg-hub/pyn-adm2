@@ -24,7 +24,7 @@ const AdminInvite = ({ isOpen, onClose }) => {
     };
 
     try {
-      const response = await fetch(import.meta.env.VITE_ADMIN_INVITE, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_ADMIN_INVITE}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

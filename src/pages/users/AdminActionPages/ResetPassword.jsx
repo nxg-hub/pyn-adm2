@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FormModal } from "../../../components/ui/modal";
-
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input"
 import { Label } from "../../../components/ui/label";
@@ -12,15 +11,21 @@ const AdminPasswordReset = ({ isOpen, onClose, }) => {
       const navigate = useNavigate()
       const [loading, setLoading] = useState(false);
       const [successMessage, setSuccessMessage] = useState('')
-
       const admin = useSelector((state) => state.admins.selectedAdmin);
 
       const handleBack = () => {
         navigate (-1);
       }
+      const token = localStorage.getItem('token')
+
  
       const handleResetPassword = async (e) => {
         e.preventDefault(); // prevent the form from submitting
+
+        const requestData = {
+          email: admin?.email,
+          userType: "ADMIN"
+        }
 
         if (!admin?.email) {
           console.error('No user email found.');
@@ -29,11 +34,15 @@ const AdminPasswordReset = ({ isOpen, onClose, }) => {
     
         setLoading(true);
         try {
-          const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/auth/initiate-password-reset?email=${admin.email}`, {
+          const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/password-reset/request`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+               Authorization: `Bearer ${token}`,
+
             },
+          body: JSON.stringify(requestData),
+
           });
     
           const data = await response.json();
@@ -46,7 +55,7 @@ const AdminPasswordReset = ({ isOpen, onClose, }) => {
             setSuccessMessage('');
              onClose();
           }, 4000);
-          console.log('Password reset initiated successfully:', data);
+          console.log('Password reset token sent successfully:', data);
         } catch (error) {
           console.error('Password reset failed:', error.message);
         } finally {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AlertCircle, CheckCircle, Clock, FileText, Search, Shield, User, XCircle } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -10,6 +10,9 @@ import { useAdmin } from "../../contexts/AdminContext"
 import { Badge } from "../../components/ui/badge"
 import DataTable from "../../components/common/DataTable"
 import StatCard from "../../components/common/StatCard"
+import apiService from "../../services/apiService";
+import Pagination from "../../components/ui/pagination"
+
 
 const kycVerifications = [
   {
@@ -52,8 +55,14 @@ const kycVerifications = [
 ]
 
 const CompliancePage = () => {
-  const [searchQuery, setSearchQuery] = useState("")
-  const { hasPermission } = useAdmin()
+const [searchQuery, setSearchQuery] = useState("")
+const { hasPermission } = useAdmin()
+const [currentPage, setCurrentPage] = useState(1);
+const [errorMessage, setErrorMessage] = useState('');
+
+const [activities, setActivities] = useState([]);
+const [isLoading, setIsLoading] = useState(false);
+
 
   const getStatusBadge = (status) => {
     const classes = {
@@ -151,73 +160,95 @@ const CompliancePage = () => {
     },
   ]
 
-  const suspiciousActivities = [
-    {
-      id: "AML-001",
-      user: "John Doe",
-      activityType: "Multiple large transactions",
-      riskLevel: "High",
-      detectedAt: "2024-04-23 10:45 AM",
-    },
-    {
-      id: "AML-002",
-      user: "Sarah Miller",
-      activityType: "Unusual login pattern",
-      riskLevel: "Medium",
-      detectedAt: "2024-04-22 09:30 AM",
-    },
-  ]
+const ITEMS_PER_PAGE = 3;
+
+const itemsPerPage = ITEMS_PER_PAGE;
+
+const handleFetchActivities = async () => {
+  setIsLoading(true);
+  setErrorMessage('');
+
+  try {
+    const content = await apiService.SuspiciousActivities(); 
+
+    console.log('Activities content:', content);
+
+    setActivities(content || []);
+  } catch (error) {
+    const message = error.message || 'Unexpected error';
+    setErrorMessage(`Failed to load activities: ${message}`);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+useEffect(() => {
+    (handleFetchActivities());
+  }, []);
+
+const filteredData = (activities)?.filter((activity) => {
+  const NameMatch = activity.customerName?.toLowerCase().includes(searchQuery.toLowerCase())
+  // const emailMatch = user.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  return NameMatch 
+})
+
+const totalActivities= activities.length
+
+const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
 
   const suspiciousColumns = [
     {
-      key: "id",
-      header: "ALERT ID",
-      render: (row) => <span className="font-medium">{row.id}</span>,
-    },
+  key: "id",
+  header: "REPORT ID",
+},
     {
-      key: "user",
+      key: "customerName",
       header: "USER",
     },
     {
-      key: "activityType",
+      key: "reportType",
       header: "ACTIVITY TYPE",
     },
     {
-      key: "riskLevel",
+      key: "severity",
       header: "RISK LEVEL",
       render: (row) => (
         <Badge
           variant="outline"
           className={
-            row.riskLevel === "High"
+            row.severity === "High risk"
               ? "border-red-200 bg-red-50 text-red-700"
               : "border-yellow-200 bg-yellow-50 text-yellow-700"
           }
         >
-          {row.riskLevel}
+          {row.severity}
         </Badge>
       ),
     },
-    {
-      key: "detectedAt",
-      header: "DETECTED",
-    },
-    {
-      key: "actions",
-      header: "ACTIONS",
-      render: () => (
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm">
-            <Shield className="mr-2 h-4 w-4" />
-            Investigate
-          </Button>
-          <Button variant="ghost" size="sm" className="text-red-600">
-            <AlertCircle className="mr-2 h-4 w-4" />
-            Escalate
-          </Button>
-        </div>
-      ),
-    },
+   {
+  key: "createdAt",
+  header: "DETECTED",
+  render: (row) => new Date(row.createdAt).toLocaleString(),
+},
+    // {
+    //   key: "actions",
+    //   header: "ACTIONS",
+    //   render: () => (
+    //     <div className="flex items-center gap-2">
+    //       <Button variant="ghost" size="sm">
+    //         <Shield className="mr-2 h-4 w-4" />
+    //         Investigate
+    //       </Button>
+    //       <Button variant="ghost" size="sm" className="text-red-600">
+    //         <AlertCircle className="mr-2 h-4 w-4" />
+    //         Escalate
+    //       </Button>
+    //     </div>
+    //   ),
+    // },
   ]
 
   return (
@@ -245,7 +276,7 @@ const CompliancePage = () => {
         <div className="grid gap-4 md:grid-cols-4">
           <StatCard title="Pending KYC" value="32" subtitle="+8 new today" />
           <StatCard title="Approved KYC" value="1,245" subtitle="+15 today" />
-          <StatCard title="Suspicious Activities" value="7" subtitle="Require attention" trend="neutral" />
+          <StatCard title="Suspicious Activities" value={totalActivities} subtitle="Require attention" trend="neutral" />
           <StatCard title="Avg. Verification Time" value="4.2h" subtitle="-30min from last week" trend="down" />
         </div>
 
@@ -297,10 +328,19 @@ const CompliancePage = () => {
               <CardTitle>Suspicious Activities</CardTitle>
             </CardHeader>
             <CardContent>
-              <DataTable columns={suspiciousColumns} data={suspiciousActivities} />
+              <DataTable columns={suspiciousColumns} data={paginatedData} />
             </CardContent>
           </Card>
         )}
+
+         <Pagination
+     currentPage={currentPage}
+     totalPages={totalPages}
+     onPageChange={(page) => setCurrentPage(page)}
+      itemsPerPage={itemsPerPage}
+      itemLabel="Suspicious Activities"
+      totalItems={ totalActivities }
+   />
       </main>
     </div>
   )
