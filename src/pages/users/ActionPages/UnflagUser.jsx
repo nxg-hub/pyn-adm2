@@ -1,10 +1,14 @@
 import { useState } from "react";
+import apiService from "../../../services/apiService";
 import { FormModal } from "../../../components/ui/modal";
 import { Button } from "../../../components/ui/button";
 import { Textarea } from '../../../components/ui/textarea';
 import { useSelector, useDispatch } from "react-redux";
 import { fetchFlaggedUsers } from "../../../redux/flaggedAccounts";
 import { fetchUsers } from "../../../redux/UsersSlice";
+
+
+const token = localStorage.getItem('token')
 
 const UnflagUserModal = ({ isOpen, onClose, }) => {
   const [reason, setReason] = useState("")
@@ -21,6 +25,7 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
   const handleUnflag = async () => {
     setLoading(true);
 
+
   const id = super_admin?.id
 
     const requestData = {
@@ -32,30 +37,17 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
       reason: reason
     }
     try {
-      const response = await fetch(import.meta.env.VITE_UNFLAG_USER, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          'X-Admin-Id': id
-
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message || "Failed to unflag user");
-
-      setSuccessMessage("Successful!");
-       setTimeout(() => {
-        setSuccessMessage('');
-        dispatch(fetchFlaggedUsers()); 
-        dispatch(fetchUsers());
-      onClose() 
-    }, 2000)
-    } catch (err) {
-      console.error("Error:", err.message);
-      setErrorMessage(`Error unflagging user, ${err.message}`);
+       await apiService.unflagUser(token, requestData);
+       
+        setSuccessMessage('New unflag user created.'); 
+        setTimeout(() => {
+          setSuccessMessage('');
+          onClose()
+        }, 3000);
+      } 
+     catch (error) {
+      console.error('Error:', error);
+      setErrorMessage(`Error creating unflag user: ${error.message}`);
     } finally {
       setLoading(false);
     }
