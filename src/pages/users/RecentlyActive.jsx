@@ -19,9 +19,12 @@ import { TableLoader } from "../../components/ui/loader"
 import { useNavigate } from "react-router-dom"
 import InitiatePasswordReset from "./ActionPages/ChangePassword"
 import FlagUser from "./ActionPages/FlagUser"
+import apiService from "../../services/apiService"
+
+const token = localStorage.getItem('token')
 
 const ITEMS_PER_PAGE = 5;
-const itemsPerPage =  ITEMS_PER_PAGE;
+const itemsPerPage = ITEMS_PER_PAGE;
 
 
 function RecentlyActive() {
@@ -31,221 +34,226 @@ function RecentlyActive() {
   const [selectedUser, setSelectedUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState('')
   const navigate = useNavigate();
   const [showFlagModal, setShowFlagModal] = useState(false);
   const [showSuspendModal, setShowSuspendModal] = useState(false);
   const [showInitiatePasswordModal, setInitiatePasswordModal] = useState(false);
 
 
-  const GetRecentlyActive= async () => {
+  const GetRecentlyActive = async () => {
     setLoading(true);
-    const queryParams = new URLSearchParams({
-      page: 0,
-      size: 100,
-    }).toString();
 
-  try {
-      const response = await fetch(`${import.meta.env.VITE_GET_RECENTLY_ACTIVE_USERS}?${queryParams}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+    const id = super_admin?.id
 
-        },
-      });
+    const requestData = {
+      userId: selectedUser?.id,
+      email: selectedUser?.email,
+      phoneNumber: selectedUser?.phoneNumber,
+      payinaUserName: selectedUser?.payinaUserName,
+      accountNumber: selectedUser?.accountNumber,
+      //reason: reason
+    };
 
-      const data = await response.json();
-      console.log(data.data.content)
 
-      setUsers(data.data.content || []);
-      
-    } catch (error) {
-      const message = data.message || 'Unexpected error';
-      setErrorMessage(`Failed to load users: ${message}`);
+
+    try {
+      await apiService.getRecentlyActiveUsers(token, requestData);
+
+      setSuccessMessage('New recent active user created.');
+      setTimeout(() => {
+        setSuccessMessage('');
+        onClose()
+      }, 3000);
+    }
+    catch (error) {
+      console.error('Error:', error);
+      setErrorMessage(`Error creating recent active user: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
 
-const filteredData = (users)?.filter((user) => {
-  const firstNameMatch = user.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
-  const emailMatch = user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  return firstNameMatch || emailMatch
-})
-const totalUsers = users.length
+  const filteredData = (users)?.filter((user) => {
+    const firstNameMatch = user.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
+    const emailMatch = user.email?.toLowerCase().includes(searchQuery.toLowerCase())
+    return firstNameMatch || emailMatch
+  })
+  const totalUsers = users.length
 
 
-const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
-const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-useEffect(() => {
+  useEffect(() => {
     (GetRecentlyActive());
   }, []);
 
 
   const handleViewDetails = (user) => {
-    setSelectedUser(user); 
-navigate("/user-profile", { state: { selectedUser: user } });
+    setSelectedUser(user);
+    navigate("/user-profile", { state: { selectedUser: user } });
   }
   const handleResetPassword = (user) => {
-    setSelectedUser(user); 
+    setSelectedUser(user);
     setInitiatePasswordModal(true)
   }
   const handleFlagUser = (user) => {
-    setSelectedUser(user); 
+    setSelectedUser(user);
     setShowFlagModal(true)
   }
   const handleViewTransactions = (user, walletId) => {
     setSelectedUser({ user, walletId }); // Set both user and walletId in the selectedUser state as an object
     navigate("/transactions", { state: { selectedUser: user, walletId: walletId } });
   };
-  
+
 
   return (
     <div>
-        {loading ? (
-          <TableLoader/>
-        ) : (
-    <div className="flex flex-col">
-      <header className="border-b">
-        <div className="flex h-16 items-center px-4 gap-4">
-          <h1 className="text-xl font-semibold">Recently Active Accounts</h1>
-          <span className="text-sm text-muted-foreground">View and manage recently active accounts</span>
-          <div className="ml-auto flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search accounts..."
-                className="w-[250px] pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+      {loading ? (
+        <TableLoader />
+      ) : (
+        <div className="flex flex-col">
+          <header className="border-b">
+            <div className="flex h-16 items-center px-4 gap-4">
+              <h1 className="text-xl font-semibold">Recently Active Accounts</h1>
+              <span className="text-sm text-muted-foreground">View and manage recently active accounts</span>
+              <div className="ml-auto flex items-center gap-4">
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder="Search accounts..."
+                    className="w-[250px] pl-8"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+
+
+              </div>
             </div>
-           
-            
-          </div>
-        </div>
-      </header>
+          </header>
 
-      <main className="flex-1 p-4 md:p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Accounts</CardTitle>
-          </CardHeader>
-          <div className="flex gap-10 px-6 py-4 border-b text-gray-600">
-  <div className="cursor-pointer group">
-    <h1 className="relative text-base font-semibold transition-colors duration-300 text-white  px-2 rounded-md">
-     Recently Active Users
-    </h1>
-  </div>
-</div>
+          <main className="flex-1 p-4 md:p-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Accounts</CardTitle>
+              </CardHeader>
+              <div className="flex gap-10 px-6 py-4 border-b text-gray-600">
+                <div className="cursor-pointer group">
+                  <h1 className="relative text-base font-semibold transition-colors duration-300 text-white  px-2 rounded-md">
+                    Recently Active Users
+                  </h1>
+                </div>
+              </div>
 
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>NAME</TableHead>
-                  <TableHead>EMAIL</TableHead>
-                  <TableHead>ACCOUNT_NO</TableHead>
-                  <TableHead>ACTIONS</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedData.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                           <img
-                            src={user.passportUrl || avatar}
-                            alt="image"
-                            className="w-10 h-10 rounded-full object-cover"
-                           />
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>NAME</TableHead>
+                      <TableHead>EMAIL</TableHead>
+                      <TableHead>ACCOUNT_NO</TableHead>
+                      <TableHead>ACTIONS</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedData.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-3">
+                            <Avatar>
+                              <img
+                                src={user.passportUrl || avatar}
+                                alt="image"
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
 
-                        </Avatar>
-                        <div>
-                          <div>{user.firstName} {user.lastName}</div>
-                          <div className="text-xs text-muted-foreground">ID: {user.id}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                     
-                        {user.accountNumber}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Open menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent   className=" right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >            
-                          <DropdownMenuItem className="hover:bg-[#3A859E]"
-                                                     onClick={() => handleViewDetails(user)
-                                                      
-                                                       }>View Profile</DropdownMenuItem>
-                                                    {/* <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
+                            </Avatar>
+                            <div>
+                              <div>{user.firstName} {user.lastName}</div>
+                              <div className="text-xs text-muted-foreground">ID: {user.id}</div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+
+                          {user.accountNumber}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Open menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className=" right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >
+                              <DropdownMenuItem className="hover:bg-[#3A859E]"
+                                onClick={() => handleViewDetails(user)
+
+                                }>View Profile</DropdownMenuItem>
+                              {/* <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
                                                       dispatch(setSelectedUser(user));
                                                       navigate("/edit-user"); }}>Edit User</DropdownMenuItem> */}
-                                                       <DropdownMenuItem className="hover:bg-[#3A859E]" 
-                                                       onClick={() => 
-                              handleViewTransactions(user, user.walletId)
-                              }>View Transactions</DropdownMenuItem>
-                                                    <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() =>  handleResetPassword(user)
-                                                        
-                          
-                                                       }>initiate Reset Password</DropdownMenuItem>
-                                                    {user.enabled === true && (
-                                                      <DropdownMenuItem className="hover:bg-red-500"onClick={() => handleFlagUser(user)}>Flag User</DropdownMenuItem>
-                                                    )}
-                                                    {user.enabled === false && (
-                                                      <DropdownMenuItem className="hover:bg-green-400">
-                                                        Reactivate Account
-                                                      </DropdownMenuItem>
-                                                    )}
-                                                    {user.status === "Pending" && (
-                                                      <DropdownMenuItem className="text-blue-600">
-                                                        Approve Account
-                                                      </DropdownMenuItem>
-                                                    )}
-                                                  </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <FlagUser
+                              <DropdownMenuItem className="hover:bg-[#3A859E]"
+                                onClick={() =>
+                                  handleViewTransactions(user, user.walletId)
+                                }>View Transactions</DropdownMenuItem>
+                              <DropdownMenuItem className="hover:bg-[#3A859E]" onClick={() => handleResetPassword(user)
+
+
+                              }>initiate Reset Password</DropdownMenuItem>
+                              {user.enabled === true && (
+                                <DropdownMenuItem className="hover:bg-red-500" onClick={() => handleFlagUser(user)}>Flag User</DropdownMenuItem>
+                              )}
+                              {user.enabled === false && (
+                                <DropdownMenuItem className="hover:bg-green-400">
+                                  Reactivate Account
+                                </DropdownMenuItem>
+                              )}
+                              {user.status === "Pending" && (
+                                <DropdownMenuItem className="text-blue-600">
+                                  Approve Account
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <FlagUser
                   isOpen={showFlagModal}
                   onClose={() => setShowFlagModal(false)}
                   selectedUser={selectedUser}
                 />
-            <InitiatePasswordReset
+                <InitiatePasswordReset
                   isOpen={showInitiatePasswordModal}
                   onClose={() => setInitiatePasswordModal(false)}
                   selectedUser={selectedUser}
                 />
-            <div className="flex items-center justify-between mt-4">
-            
-            <Pagination
-     currentPage={currentPage}
-     totalPages={totalPages}
-     onPageChange={(page) => setCurrentPage(page)}
-      itemsPerPage={itemsPerPage}
-      itemLabel="Recently Active Users"
-      totalItems={ totalUsers }
-   />
-         </div>
-          </CardContent>
-        </Card>
-      </main>
-      </div>
-        )}
+                <div className="flex items-center justify-between mt-4">
+
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => setCurrentPage(page)}
+                    itemsPerPage={itemsPerPage}
+                    itemLabel="Recently Active Users"
+                    totalItems={totalUsers}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </main>
+        </div>
+      )}
     </div>
   )
 }
