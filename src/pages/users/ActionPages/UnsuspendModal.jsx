@@ -4,6 +4,10 @@ import { Button } from "../../../components/ui/button";
 import { Textarea } from '../../../components/ui/textarea';
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSuspendedUsers } from "../../../redux/suspendedAccounts";
+import apiService from "../../../services/apiService";
+
+const token = localStorage.getItem('token')
+
 
 
 const UnsuspendUserModal = ({ isOpen, onClose, }) => {
@@ -31,29 +35,17 @@ const UnsuspendUserModal = ({ isOpen, onClose, }) => {
       reason: reason
     }
     try {
-      const response = await fetch(import.meta.env.VITE_UNSUSPEND_USER, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          'X-Admin-Id': id
-
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message || "Failed to unsuspend user");
-
-      setSuccessMessage("Successful!");
-       setTimeout(() => {
-        setSuccessMessage('');
-        dispatch(fetchSuspendedUsers()); 
-      onClose() 
-    }, 2000)
-    } catch (err) {
-      console.error("Error:", err.message);
-      setErrorMessage(`Error unsuspending user, ${err.message}`);
+       await apiService.unsuspendUser(token, requestData);
+       
+        setSuccessMessage('New unsuspended user created.'); 
+        setTimeout(() => {
+          setSuccessMessage('');
+          onClose()
+        }, 3000);
+      } 
+     catch (error) {
+      console.error('Error:', error);
+      setErrorMessage(`Error creating unsuspended user: ${error.message}`);
     } finally {
       setLoading(false);
     }
