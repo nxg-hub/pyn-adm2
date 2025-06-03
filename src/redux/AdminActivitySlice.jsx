@@ -1,15 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { useSelector} from "react-redux";
+import apiService from '../services/apiService';
 
 
 // Async thunk to fetch admin activities
 export const fetchActivities = createAsyncThunk(
     "AdminActivities/fetchActivities",
-    async ({ adminId, superAdminId }, thunkAPI) => {
+    async ({ adminId, superAdminId } , thunkAPI) => {
       try {
        
-
-
       const queryParams = new URLSearchParams({
         page: 0,
         size: 100,
@@ -17,20 +15,10 @@ export const fetchActivities = createAsyncThunk(
         sortDirection: "desc"
     }).toString();
 
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/activity-logs?${queryParams}`, {
-        method: "GET",
-        headers: {
-          'X-Admin-Id': superAdminId,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-      console.log(data.data.content)
-
-      return data.data.content;
+      const activities = await apiService.fetchActivities(adminId, superAdminId, queryParams)
+      return activities;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message || 'Failed to fetch admin activity');
     }
   }
 );

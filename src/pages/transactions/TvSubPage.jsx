@@ -102,25 +102,19 @@ function TVSubscriptionPage() {
 
   const handleMarkSuccess = () => {
     setShowMarkSuccessDialog(false)
-    // logic to mark as success
   }
 
   const handleFlagTransaction = () => {
     setShowFlagDialog(false)
     setFlagReason("")
-    // logic to flag transaction
   }
 
   const handleAdjustAmount = () => {
     setShowAdjustDialog(false)
-    setAdjustAmount("")
-    // logic to adjust amount
   }
 
   const handleDownloadReceipt = (id) => {
-    // This is where the actual download logic would go. For now, let's log the ID.
     console.log(`Download receipt for subscription: ${id}`)
-    // You can replace the console log with actual logic like fetching a PDF or image.
   }
 
   const filteredTransactions = tvSubscriptions.filter((subscription) =>

@@ -1,23 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import apiService from '../services/apiService';
 
 // Async thunk to fetch user data
-export const fetchUsers = createAsyncThunk('user/fetchUsers',   async (_, { rejectWithValue }) => {
+export const fetchUsers = createAsyncThunk('user/fetchUsers',  
+  async (_, { rejectWithValue }) => {
 
   try {
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_ALL_USERS}`, {
-        method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to fetch user');
-    }
-
-    return data; 
+    const res = await apiService.fetchUsers()
+    return res;
   } catch (error) {
     console.error("Error fetching users:", error);
     return rejectWithValue(error?.message || "An unknown error occurred");

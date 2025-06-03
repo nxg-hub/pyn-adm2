@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import backgroundImage from "../../assets/vector.png";
 import dashboardImage from "../../assets/dashboard.png";
-import payinaLogo from "../../assets/payina.png"
+import payinaLogo from "../../assets/payina.png";
+import blueCircleImage from "../../assets/bluecircle.png";
+import yellowCircle from "../../assets/yellowcircle.png";
+import eclipse93 from "../../assets/eclipse93.png";
+import eclipse92 from "../../assets/eclipse92.png";
+import yellowstripe from "../../assets/yellowstripe.png"
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,12 +45,31 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <div className="flex w-full max-w-6xl">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-16 left-14 z-0 pointer-events-none">
+      <img src={yellowCircle} className="h-[8.75rem]" alt="decoration" />
+    </div>
+    <div className="absolute top-[6.25rem] left-0 z-0 pointer-events-none">
+      <img src={blueCircleImage} className="h-[7.5rem]" alt="decoration" />
+    </div>
+    <div className="absolute top-[21.25rem] left-20 z-0 pointer-events-none">
+      <img src={eclipse93} className="h-[8.75rem]" alt="decoration" />
+    </div>
+    <div className="absolute top-[33.75rem] left-10 z-0 pointer-events-none">
+      <img src={eclipse92} className="h-[17.5rem]" alt="decoration" />
+    </div>
+    <div className="absolute top-0 right-0 z-0 pointer-events-none">
+      <img src={yellowstripe} className="h-[12.5rem]" alt="decoration" />
+    </div>
+    <div className="absolute top-[27.5rem] right-10 z-0 pointer-events-none">
+      <img src={yellowCircle} className="h-[8.75rem]" alt="decoration" />
+    </div>
+
+      <div className="flex w-full max-w-6xl relative z-10">
         {/* Left Border Box */}
-        <div className="w-1/2 h-[600px] border border-black flex items-center justify-center relative overflow-hidden">
+        <div className="w-1/2 h-[500px] bg-black border border-black flex items-center justify-center relative overflow-hidden">
           <div className="absolute top-6 left-6 z-10">
-            <img src={payinaLogo} alt="logo" className="h-10 w-auto" />
+            <img src={payinaLogo} alt="logo" className="h-8 w-auto" />
           </div>
           <div className="absolute inset-0">
             <img src={backgroundImage} alt="Background" className="w-full h-full object-cover" />
@@ -56,7 +80,7 @@ const LoginForm = () => {
         </div>
 
         {/* Right Border Box */}
-        <div className="w-1/2 h-[600px] bg-[#161616] border border-black border-l-0 flex items-center justify-center p-6">
+        <div className="w-1/2 h-[500px] bg-[#161616] border border-black border-l-0 flex items-center justify-center relative p-6">
           <div className="w-full max-w-md">
             <h1 className="text-[#006181] text-center mb-8 font-semibold text-2xl md:text-3xl xl:text-4xl">
               Payina Back Office
