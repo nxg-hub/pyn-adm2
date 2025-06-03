@@ -4,7 +4,9 @@ import { Button } from "../../../components/ui/button";
 import { Textarea } from '../../../components/ui/textarea';
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsers } from "../../../redux/UsersSlice";
+import apiService from "../../../services/apiService";
 
+const token = localStorage.getItem('token')
 
 const SuspendUserModal = ({ isOpen, onClose, selectedUser }) => {
   const [reason, setReason] = useState("")
@@ -20,6 +22,7 @@ const SuspendUserModal = ({ isOpen, onClose, selectedUser }) => {
 
   const handleSuspend = async () => {
     setLoading(true);
+    setErrorMessage('');
 
   const id = super_admin?.id
 
@@ -32,29 +35,17 @@ const SuspendUserModal = ({ isOpen, onClose, selectedUser }) => {
       reason: reason
     }
     try {
-      const response = await fetch(import.meta.env.VITE_SUSPEND_USER, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          'X-Admin-Id': id
-
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message || "Failed to suspend user");
-
-      setSuccessMessage("User suspended successfully!");
-       setTimeout(() => {
-        setSuccessMessage('');
-        dispatch(fetchUsers()); 
-      onClose() 
-    }, 2000)
-    } catch (err) {
-      console.error("Error:", err.message);
-      setErrorMessage(`Error suspending user, ${err.message}`);
+      await apiService.suspendUser(token, requestData);
+       
+        setSuccessMessage('New suspended user created.'); 
+        setTimeout(() => {
+          setSuccessMessage('');
+          onClose()
+        }, 3000);
+      } 
+     catch (error) {
+      console.error('Error:', error);
+      setErrorMessage(`Error creating suspended user: ${error.message}`);
     } finally {
       setLoading(false);
     }
