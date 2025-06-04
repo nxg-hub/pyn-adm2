@@ -40,7 +40,7 @@ const UpdatePermission = ({ isOpen, onClose }) => {
     
 
     try {
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/admin/management/${adminId}/permissions`, {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/permissions`, {
          method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

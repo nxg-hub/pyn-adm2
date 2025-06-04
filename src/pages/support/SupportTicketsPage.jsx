@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from 'react-redux';
-import { AlertCircle, CheckCircle, Clock, MessageSquare, Search, User, FilePlus } from "lucide-react"
+import { FileText, CheckCircle, Clock, MessageSquare, MessageCircle, Search, User, FilePlus } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { Input } from "../../components/ui/input"
@@ -20,6 +20,10 @@ import Pagination from "../../components/ui/pagination"
 import { TableLoader } from "../../components/ui/loader";
 import { setActiveTicket } from "../../redux/supportTicketsSlice";
 import Resolve from "./Resolve";
+import AddMessage from "./AddMessage";
+import ViewTicketDetails from "./ViewTicketDetails";
+import ViewTicketMessages from "./viewTicketMessage";
+
 
 
 const SupportTicketsPage = () => {
@@ -29,11 +33,14 @@ const SupportTicketsPage = () => {
   const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false)
   const [openResolveModal, setOpenResolveModal] = useState(false);
   const [openAssignModal, setOpenAssignModal] = useState(false);
+  const [openViewModal, setOpenViewModal] = useState(false);
+  const [openViewMessages, setOpenViewMessages] = useState(false);
   const [replyMessage, setReplyMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false);
   const { activeTicket } = useSelector((state) => state.supportTickets);
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useDispatch();
+  const [openAddMessageModal, setOpenAddMessageModal] = useState(false);
   const { tickets, loading, error } = useSelector((state) => state.supportTickets); 
   
 useEffect(() => {
@@ -73,7 +80,7 @@ const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE
       OPEN: "border-blue-200 bg-blue-50 text-blue-700",
       ASSIGNED: "border-yellow-200 bg-yellow-50 text-yellow-700",
       RESOLVED: "border-green-200 bg-green-50 text-green-700",
-      Closed: "border-gray-200 bg-gray-50 text-gray-700",
+      IN_PROGRESS: "border-gray-200 bg-gray-50 text-gray-700",
     }
 
     return (
@@ -163,11 +170,11 @@ render: (row) => (
             size="sm"
             onClick={() => {
               dispatch(setActiveTicket(row))
-              setIsReplyDialogOpen(true)
+              setOpenAddMessageModal(true)
             }}
           >
             <MessageSquare className="mr-2 h-4 w-4" />
-            Reply
+            Add Message
           </Button>
           {row.status !== "RESOLVED" && row.status !== "Closed" && (
             <Button variant="ghost" size="sm"
@@ -178,12 +185,27 @@ render: (row) => (
               Resolve
             </Button>
           )}
-          {hasPermission("viewFullTransactionHistory") && (
+            <Button variant="ghost" size="sm"
+            onClick={() => {
+              dispatch(setActiveTicket(row))
+             setOpenViewModal(true)            }}>
+              <FileText className="mr-2 h-4 w-4" />
+              Details
+            </Button>
+                      <Button variant="ghost" size="sm"
+            onClick={() => {
+              dispatch(setActiveTicket(row))
+             setOpenViewMessages(true)            }}>
+              <MessageCircle className="mr-2 h-4 w-4" />
+              Messages
+            </Button>
+          
+          {/* {hasPermission("viewFullTransactionHistory") && (
             <Button variant="ghost" size="sm">
               <AlertCircle className="mr-2 h-4 w-4" />
               Escalate
             </Button>
-          )}
+          )} */}
         </div>
       ),
     },
@@ -248,7 +270,8 @@ render: (row) => (
                 <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "OPEN")} />
               </TabsContent>
               <TabsContent value="in-progress" className="mt-4">
-                <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "ASSIGNED")} />
+                <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "ASSIGNED" || ticket.status === "IN_PROGRESS")}
+ />
               </TabsContent>
               <TabsContent value="resolved" className="mt-4">
                 <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "RESOLVED")} />
@@ -301,6 +324,15 @@ render: (row) => (
             <Resolve
             isOpen={openResolveModal}
             onClose={() => setOpenResolveModal(false)}/>
+            <AddMessage
+            isOpen={openAddMessageModal}
+            onClose={() => setOpenAddMessageModal(false)}/>
+            <ViewTicketDetails
+            isOpen={openViewModal}
+            onClose={() => setOpenViewModal(false)}/>
+            <ViewTicketMessages
+            isOpen={openViewMessages}
+            onClose={() => setOpenViewMessages(false)}/>
       </main>
       
     </div>

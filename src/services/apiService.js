@@ -134,6 +134,48 @@ try {
       throw error;
     }
   },
+  addMessageToTicket: async (id, requestData) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/support/tickets/${id}/messages`,
+         {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+             Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestData),
+
+        }
+      );
+       const data = await response.json();
+
+      return data
+    } catch (error) {
+      throw error;
+    }
+  },
+  getTicketMessages: async (id, requestData) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/support/tickets/${id}/messages`,
+         {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+             Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestData),
+
+        }
+      );
+       const data = await response.json();
+
+      return data.data.content
+    } catch (error) {
+      throw error;
+    }
+  },
       
     
   
