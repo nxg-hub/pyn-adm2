@@ -4,8 +4,10 @@ import { useState } from "react"
 import { Search, Filter, Download, MoreHorizontal, CreditCard, Wallet } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
+import { CardLoader } from "../../components/ui/loader";
 import { Input } from "../../components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table"
+import { TableLoader } from "../../components/ui/loader";
 import {
   DropdownMenu,
   DropdownMenuContent,

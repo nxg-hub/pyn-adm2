@@ -4,8 +4,10 @@ import { Button } from "../../../components/ui/button";
 import { Textarea } from '../../../components/ui/textarea';
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsers } from "../../../redux/UsersSlice";
+import apiService from "../../../services/apiService";
 
 
+const token = localStorage.getItem('token')
 
 const FlagUser = ({ isOpen, onClose, selectedUser }) => {
   const [reason, setReason] = useState("")
@@ -19,6 +21,7 @@ const FlagUser = ({ isOpen, onClose, selectedUser }) => {
 
   const handleFlag = async () => {
     setLoading(true);
+    setErrorMessage('');
 
   const id = super_admin?.id
 
@@ -31,29 +34,17 @@ const FlagUser = ({ isOpen, onClose, selectedUser }) => {
       reason: reason
     }
     try {
-      const response = await fetch(import.meta.env.VITE_FLAG_USER, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          'X-Admin-Id': id
-
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message || "Failed to flag user");
-
-      setSuccessMessage("This user has been flagged!");
-       setTimeout(() => {
-        setSuccessMessage('');
-        dispatch(fetchUsers()); 
-      onClose() 
-    }, 2000)
-    } catch (err) {
-      console.error("Error:", err.message);
-      setErrorMessage(`Error flagging user, ${err.message}`);
+     await apiService.flagUser(token, requestData);
+       
+        setSuccessMessage('New flag user created.');
+        setTimeout(() => {
+          setSuccessMessage('');
+          onClose()
+        }, 3000);
+      } 
+     catch (error) {
+      console.error('Error:', error);
+      setErrorMessage(`Error creating flag user: ${error.message}`);
     } finally {
       setLoading(false);
     }

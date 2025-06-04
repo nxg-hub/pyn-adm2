@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, Download, MoreHorizontal, CreditCard } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { CardLoader } from "../../components/ui/loader";
 import { Input } from "../../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
-import { TableLoader } from "../../components/ui/loader"; 
+import { TableLoader } from "../../components/ui/loader";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,6 +65,24 @@ const cards = [
 
 function VirtualCardsPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -105,33 +124,39 @@ function VirtualCardsPage() {
 
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Cards</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">5,432</div>
-              <p className="text-xs text-muted-foreground">+8.4% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$1,234,567.89</div>
-              <p className="text-xs text-green-500">+7.1% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Active Cards</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">4,890</div>
-              <p className="text-xs text-muted-foreground">90% of total cards</p>
-            </CardContent>
-          </Card>
+          {loading ? (
+            Array.from({ length: 3 }).map((_, index) => <CardLoader key={index} />)
+          ) : (
+            <>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Total Cards</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">5,432</div>
+                  <p className="text-xs text-muted-foreground">+8.4% from last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">$1,234,567.89</div>
+                  <p className="text-xs text-green-500">+7.1% from last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Active Cards</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">4,890</div>
+                  <p className="text-xs text-muted-foreground">90% of total cards</p>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
 
         <Card>
@@ -153,53 +178,58 @@ function VirtualCardsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {cards.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell className="font-medium">{card.id}</TableCell>
-                    <TableCell>{card.cardNumber}</TableCell>
-                    <TableCell>{card.cardholder}</TableCell>
-                    <TableCell>{card.balance}</TableCell>
-                    <TableCell>{card.currency}</TableCell>
-                    <TableCell>{card.expiryDate}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          card.status === "Active"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {card.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Transaction History</DropdownMenuItem>
-                          <DropdownMenuItem>Edit Card</DropdownMenuItem>
-                          {card.status === "Active" && (
-                            <DropdownMenuItem className="text-red-600">Freeze Card</DropdownMenuItem>
-                          )}
-                          {card.status === "Frozen" && (
-                            <DropdownMenuItem className="text-green-600">Activate Card</DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-6">
+                      <TableLoader />
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  cards.map((card) => (
+                    <TableRow key={card.id}>
+                      <TableCell className="font-medium">{card.id}</TableCell>
+                      <TableCell>{card.cardNumber}</TableCell>
+                      <TableCell>{card.cardholder}</TableCell>
+                      <TableCell>{card.balance}</TableCell>
+                      <TableCell>{card.currency}</TableCell>
+                      <TableCell>{card.expiryDate}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${card.status === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                        >
+                          {card.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>View Details</DropdownMenuItem>
+                            <DropdownMenuItem>Transaction History</DropdownMenuItem>
+                            <DropdownMenuItem>Edit Card</DropdownMenuItem>
+                            {card.status === "Active" && (
+                              <DropdownMenuItem className="text-red-600">Freeze Card</DropdownMenuItem>
+                            )}
+                            {card.status === "Frozen" && (
+                              <DropdownMenuItem className="text-green-600">Activate Card</DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
+
             </Table>
           </CardContent>
         </Card>
       </main>
-    </div>
+    </div >
   );
 }
 
