@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
+import { TableLoader } from "../../components/ui/loader";
 
 // Sample data for withdrawals
 const withdrawals = [
@@ -38,6 +39,17 @@ const withdrawals = [
 ];
 
 export function FundingWithdrawalsPage() {
+  const [isLoading, setIsLoading] = React.useState(true);
+  
+    React.useEffect(() => {
+      // Simulate a network request
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1500);
+  
+      return () => clearTimeout(timer);
+    }, []);
+
   return (
     <div className="flex flex-col">
       <header className="border-b">
@@ -65,42 +77,49 @@ export function FundingWithdrawalsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {withdrawals.map((withdrawal) => (
-                  <TableRow key={withdrawal.id}>
-                    <TableCell>{withdrawal.id}</TableCell>
-                    <TableCell>{withdrawal.user}</TableCell>
-                    <TableCell>${withdrawal.amount.toFixed(2)}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          withdrawal.status === "Completed"
-                            ? "bg-green-100 text-green-800"
-                            : withdrawal.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {withdrawal.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>{withdrawal.date}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Transaction History</DropdownMenuItem>
-                          {/* <DropdownMenuItem>Withdrawal</DropdownMenuItem> */}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center">
+                    <TableLoader />
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  withdrawals.map((withdrawal) => (
+                    <TableRow key={withdrawal.id}>
+                      <TableCell>{withdrawal.id}</TableCell>
+                      <TableCell>{withdrawal.user}</TableCell>
+                      <TableCell>${withdrawal.amount.toFixed(2)}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${withdrawal.status === "Completed"
+                              ? "bg-green-100 text-green-800"
+                              : withdrawal.status === "Pending"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                        >
+                          {withdrawal.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>{withdrawal.date}</TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>View Details</DropdownMenuItem>
+                            <DropdownMenuItem>Transaction History</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
+
             </Table>
           </CardContent>
         </Card>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { PageLoader } from "../components/ui/loader";
-import {TableLoader} from "../components/ui/loader";
+//import {TableLoader} from "../components/ui/loader";
 
 const RouteWrapper = () => {
   const [loading, setLoading] = useState(true);
