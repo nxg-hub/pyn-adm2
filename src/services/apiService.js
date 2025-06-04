@@ -275,28 +275,33 @@ try {
     }
   },
   fetchActivities: async (adminId, superAdminId, queryParams) => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/activity-logs?${queryParams}`,
-        {
-          method: 'GET',
-          headers: {
-            'X-Admin-Id': superAdminId,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch activities');
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/activity-logs?${queryParams}`,
+      {
+        method: 'GET',
+        headers: {
+          'X-Admin-Id': superAdminId,
+          "Content-Type": "application/json",
+        },
       }
+    );
+    
+    const data = await response.json();
 
-      return data.data.content;
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to fetch activities');
     }
-  },
+
+    // Return the complete data structure instead of just content
+    return {
+      data: data, // Return the full response so Redux can access data.data.content and data.data.totalElements
+      success: true
+    };
+  } catch (error) {
+    throw error;
+  }
+},
   fetchAdmins: async () => {
     try {
       const response = await fetch(
