@@ -4,19 +4,21 @@ import { useSelector } from 'react-redux';
 import { FormModal } from "../../../components/ui/modal";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label"; // Make sure you have this component
+import { Label } from "../../../components/ui/label"; 
+import apiService from "../../../services/apiService";
+
 
 const AdminInvite = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const admin = useSelector((state) => state.admin.admin);
+  const x_admin = useSelector((state) => state.admin.admin);
 
   const handleInvite = async (values, { resetForm }) => {
     setIsLoading(true);
     setErrorMessage('');
 
-    const id = admin?.id;
+    const AdminId = x_admin?.id;
 
     const requestData = {
       email: values.email,
@@ -24,18 +26,8 @@ const AdminInvite = ({ isOpen, onClose }) => {
     };
 
     try {
-      const response = await fetch(import.meta.env.VITE_ADMIN_INVITE, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Inviting-Admin-Id': id
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.message === 'Admin invitation has been sent successfully') {
+      const result = await apiService.inviteAdmin( requestData, AdminId)
+      if ( result.message === 'Admin invitation has been sent successfully') {
         setSuccessMessage('Admin invite sent.');
         setTimeout(() => {
           setSuccessMessage('');

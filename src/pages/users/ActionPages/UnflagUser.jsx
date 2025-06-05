@@ -14,8 +14,8 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
   const [reason, setReason] = useState("")
   const selected = useSelector((state) => state.flaggedUsers.selectedDetails);
   const flaggedUser = selected?.userDetails;
-  const user = useSelector((state) => state.users.selectedUser);
-  const super_admin = useSelector((state) => state.admin.admin);
+  // const user = useSelector((state) => state.users.selectedUser);
+  const x_admin = useSelector((state) => state.admin.admin);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('');
@@ -25,9 +25,6 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
   const handleUnflag = async () => {
     setLoading(true);
 
-
-  const id = super_admin?.id
-
     const requestData = {
       userId:  flaggedUser.id,
       email:  flaggedUser.email,
@@ -36,22 +33,25 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
       accountNumber:  flaggedUser.accountNumber,
       reason: reason
     }
+   const AdminId = x_admin?.id
+
     try {
-       await apiService.unflagUser(token, requestData);
-       
-        setSuccessMessage('New unflag user created.'); 
-        setTimeout(() => {
-          setSuccessMessage('');
-          onClose()
-        }, 3000);
-      } 
-     catch (error) {
-      console.error('Error:', error);
-      setErrorMessage(`Error creating unflag user: ${error.message}`);
+      await apiService.unflagUser(requestData, AdminId);
+
+      setSuccessMessage("This user has been unflagged!");
+       setTimeout(() => {
+        setSuccessMessage('');
+        dispatch(fetchUsers()); 
+      onClose() 
+    }, 2000)
+    } catch (err) {
+      console.error("Error:", err.message);
+      setErrorMessage(`Error unflagging user, ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <FormModal

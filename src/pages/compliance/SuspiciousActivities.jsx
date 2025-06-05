@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react"
-import { AlertCircle, CheckCircle, Clock, FileText, Search, Shield, User, XCircle } from "lucide-react"
+import { AlertCircle, Search, Shield} from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table"
-
 import { Input } from "../../components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { useAdmin } from "../../contexts/AdminContext"
 import { Badge } from "../../components/ui/badge"
 import DataTable from "../../components/common/DataTable"
@@ -13,6 +11,7 @@ import CreateSuspiciousReport from "./CreateSuspicious"
 import Pagination from "../../components/ui/pagination"
 import { TableLoader } from "../../components/ui/loader"
 import apiService from "../../services/apiService";
+import ViewSuspiciousActivities from "./ViewSuspiciousActivityDetails"
 
 
 const SuspiciousActivities = () => {
@@ -22,6 +21,8 @@ const SuspiciousActivities = () => {
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
+  const [selectedActivity, setSelectedActivity] = useState('');
   const [suspiciousModal, setSuspiciousModal] = useState('')
 
  const handleAddSusClick = () => {
@@ -147,16 +148,19 @@ useEffect(() => {
         >
           {activity.severity}
         </Badge>
-                                                   
-                                                      {/* {activity.severity} */}
-                                                  </TableCell>
+                                                                                                     </TableCell>
                                                    <TableCell>
                                                         <TableCell>{new Date(activity.createdAt).toLocaleString()}</TableCell>
 
                                                   </TableCell>
                                                   <TableCell>
                                                      <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm"
+          onClick={() => {
+    setSelectedActivity(activity);
+    setIsDetailsModalOpen(true);
+  }}
+>
             <Shield className="mr-2 h-4 w-4" />
             Investigate
           </Button>
@@ -169,13 +173,18 @@ useEffect(() => {
                 ))}
               </TableBody>
             </Table> <div className="flex items-center justify-between mt-4">
-            
+            <ViewSuspiciousActivities
+              isOpen={isDetailsModalOpen}  
+              onClose= {() => setIsDetailsModalOpen(false)
+              }
+              selectedActivity= {selectedActivity}
+          />
             <Pagination
      currentPage={currentPage}
      totalPages={totalPages}
      onPageChange={(page) => setCurrentPage(page)}
       itemsPerPage={itemsPerPage}
-      itemLabel="Recently Active Users"
+      itemLabel="Suspicious Activities"
       totalItems={ totalActivities }
    />
          </div>

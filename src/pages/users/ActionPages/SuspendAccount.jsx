@@ -6,13 +6,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchUsers } from "../../../redux/UsersSlice";
 import apiService from "../../../services/apiService";
 
-const token = localStorage.getItem('token')
 
 const SuspendUserModal = ({ isOpen, onClose, selectedUser }) => {
   const [reason, setReason] = useState("")
   const selected = useSelector((state) => state.flaggedUsers.selectedDetails);
   const user = selected?.userDetails;
-  const super_admin = useSelector((state) => state.admin.admin);
+  const x_admin = useSelector((state) => state.admin.admin);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('');
@@ -24,8 +23,6 @@ const SuspendUserModal = ({ isOpen, onClose, selectedUser }) => {
     setLoading(true);
     setErrorMessage('');
 
-  const id = super_admin?.id
-
     const requestData = {
       userId: user?.id || selectedUser?.id,
       email: user?.email || selectedUser?.email,
@@ -34,12 +31,15 @@ const SuspendUserModal = ({ isOpen, onClose, selectedUser }) => {
       accountNumber: user?.accountNumber || selectedUser?.accountNumber,
       reason: reason
     }
+    const AdminId = x_admin?.id
+
     try {
-      await apiService.suspendUser(token, requestData);
-       
+      await apiService.suspendUser(requestData, AdminId);
+
         setSuccessMessage('New suspended user created.'); 
         setTimeout(() => {
           setSuccessMessage('');
+          dispatch(fetchUsers()); 
           onClose()
         }, 3000);
       } 

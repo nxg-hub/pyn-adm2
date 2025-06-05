@@ -33,13 +33,13 @@ const AssignTicket = ({ isOpen, onClose }) => {
     await apiService.assignTicket(id, requestData);
       console.log("Received ID in resolveTicket:", id); // <- Add this line
 
-setSuccessMessage('Ticket assigned.');
-        setTimeout(() => {
-          setSuccessMessage('');
-          onClose()
-        }, 3000); 
-      dispatch(fetchSupportTickets());
- }
+     setSuccessMessage('Ticket assigned.');
+setTimeout(() => {
+  setSuccessMessage('');
+  onClose();
+  dispatch(fetchSupportTickets());
+}, 3000);
+  }
   catch(error) {
 console.error('Error:', error);
       (`Error creating support ticket: ${error.message}`);

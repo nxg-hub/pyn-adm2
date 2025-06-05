@@ -14,7 +14,7 @@ const UnsuspendUserModal = ({ isOpen, onClose, }) => {
   const [reason, setReason] = useState("")
   const selected = useSelector((state) => state.suspendedUsers.selectedDetails);
   const user = selected?.userDetails;
-  const super_admin = useSelector((state) => state.admin.admin);
+  const x_admin = useSelector((state) => state.admin.admin);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('');
@@ -24,7 +24,6 @@ const UnsuspendUserModal = ({ isOpen, onClose, }) => {
   const handleUnsuspend = async () => {
     setLoading(true);
 
-  const id = super_admin?.id
 
     const requestData = {
       userId: user?.id,
@@ -34,12 +33,15 @@ const UnsuspendUserModal = ({ isOpen, onClose, }) => {
       accountNumber: user?.accountNumber,
       reason: reason
     }
+    const AdminId = x_admin?.id
+
     try {
-       await apiService.unsuspendUser(token, requestData);
+       await apiService.unsuspendUser(requestData, AdminId);
        
-        setSuccessMessage('New unsuspended user created.'); 
+        setSuccessMessage('User unsuspended.'); 
         setTimeout(() => {
           setSuccessMessage('');
+          dispatch(fetchSuspendedUsers());  
           onClose()
         }, 3000);
       } 

@@ -3,12 +3,12 @@ import { FormModal } from "../../../components/ui/modal";
 import { Button } from "../../../components/ui/button";
 import { Textarea } from '../../../components/ui/textarea';
 import { useSelector, useDispatch } from "react-redux";
-
+import apiService from "../../../services/apiService";
 
 
 const DeleteAdminModal = ({ isOpen, onClose, }) => {
   const admin = useSelector((state) => state.admins.selectedAdmin);
-  const super_admin = useSelector((state) => state.admin.admin);
+  const x_admin = useSelector((state) => state.admin.admin);
 
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
@@ -17,39 +17,21 @@ const DeleteAdminModal = ({ isOpen, onClose, }) => {
 
   const handleDelete = async () => {
     setLoading(true);
-    const id = super_admin?.id;
+    const XAdminId= x_admin?.id;
     const adminId = admin?.id;
 
-    console.log('id:',id)
-
   try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/admin/management/${adminId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          'X-Admin-Id': id
-
-        },
-        // body: JSON.stringify({ email:  }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        const message = result.message || 'Unknown error';
-        setErrorMessage(`Failed to delete: ${message}`);
-      } else {
+      await apiService.deleteAdmin(XAdminId, adminId);
+ 
         setSuccessMessage('Admin deleted!');
-  
         setTimeout(() => {
           setSuccessMessage('');
           dispatch(fetchAdmins());
-          onClose(); // Navigate or go back
+          onClose(); 
         }, 4000);
   
       }
-    } catch (error) {
-      const message = response.message || 'Unexpected error';
+     catch (error) {
       setErrorMessage(`Failed to delete: ${message}`);
     } finally {
       setLoading(false);

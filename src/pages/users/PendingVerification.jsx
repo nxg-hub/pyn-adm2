@@ -32,44 +32,30 @@ function PendingVerification() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-   const [successMessage, setSuccessMessage] = useState('')
   const [activeSection, setActiveSection] = useState("personalUsers"); // if not already defined
 
-  const token = localStorage.getItem('token')
 
-  const GetPendingVerifications = async () => {
+  const GetPendingVerifications= async () => {
     setLoading(true);
-    // const queryParams = new URLSearchParams({
-    //   page: 0,
-    //   size: 100,
-    // }).toString();
-
-    const requestData = {
-      userId: selectedUser?.id,
-      email: selectedUser?.email,
-      phoneNumber: selectedUser?.phoneNumber,
-      payinaUserName: selectedUser?.payinaUserName,
-      accountNumber: selectedUser?.accountNumber,
-      userType: selectedUser?.userType
-    };
+    const queryParams = new URLSearchParams({
+      page: 0,
+      size: 100,
+    }).toString();
 
 
-    try {
-      await apiService.getPendingVerificationUsers(token, requestData);
+  try {
+      const content = await apiService.getPendingVerificationUsers(queryParams);
        
-        setSuccessMessage('New pending verification user created.'); 
-        setTimeout(() => {
-          setSuccessMessage('');
-          onClose()
-        }, 3000);
-      } 
-     catch (error) {
-      console.error('Error:', error);
-      setErrorMessage(`Error creating pending verification user: ${error.message}`);
+      setUsers(content || []);
+      
+    } catch (error) {
+      const message = data.message || 'Unexpected error';
+      setErrorMessage(`Failed to load users: ${message}`);
     } finally {
       setLoading(false);
     }
   };
+
 
   const personalUsers = users?.filter((u) => u.userType === "PERSONAL");
   const businessUsers = users?.filter((u) => u.userType === "CORPORATE");

@@ -21,7 +21,6 @@ import InitiatePasswordReset from "./ActionPages/ChangePassword"
 import FlagUser from "./ActionPages/FlagUser"
 import apiService from "../../services/apiService"
 
-const token = localStorage.getItem('token')
 
 const ITEMS_PER_PAGE = 5;
 const itemsPerPage = ITEMS_PER_PAGE;
@@ -34,46 +33,30 @@ function RecentlyActive() {
   const [selectedUser, setSelectedUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState('')
   const navigate = useNavigate();
   const [showFlagModal, setShowFlagModal] = useState(false);
-  const [showSuspendModal, setShowSuspendModal] = useState(false);
   const [showInitiatePasswordModal, setInitiatePasswordModal] = useState(false);
 
 
-  const GetRecentlyActive = async () => {
+   const GetRecentlyActive= async () => {
     setLoading(true);
+    const queryParams = new URLSearchParams({
+      page: 0,
+      size: 100,
+    }).toString();
 
-    const id = super_admin?.id
-
-    const requestData = {
-      userId: selectedUser?.id,
-      email: selectedUser?.email,
-      phoneNumber: selectedUser?.phoneNumber,
-      payinaUserName: selectedUser?.payinaUserName,
-      accountNumber: selectedUser?.accountNumber,
-      //reason: reason
-    };
-
-
-
-    try {
-      await apiService.getRecentlyActiveUsers(token, requestData);
-
-      setSuccessMessage('New recent active user created.');
-      setTimeout(() => {
-        setSuccessMessage('');
-        onClose()
-      }, 3000);
-    }
-    catch (error) {
-      console.error('Error:', error);
-      setErrorMessage(`Error creating recent active user: ${error.message}`);
+ try {
+      const content = await apiService.getRecentlyActiveUsers(queryParams);
+       
+      setUsers(content || []);
+      
+    } catch (error) {
+      const message = data.message || 'Unexpected error';
+      setErrorMessage(`Failed to load users: ${message}`);
     } finally {
       setLoading(false);
     }
   };
-
 
   const filteredData = (users)?.filter((user) => {
     const firstNameMatch = user.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
