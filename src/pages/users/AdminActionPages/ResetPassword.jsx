@@ -1,23 +1,15 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { FormModal } from "../../../components/ui/modal";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input"
 import { Label } from "../../../components/ui/label";
-import { useNavigate } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
 import { useSelector } from 'react-redux';
+import apiService from '../../../services/apiService';
 
 const AdminPasswordReset = ({ isOpen, onClose, }) => {
-      const navigate = useNavigate()
       const [loading, setLoading] = useState(false);
       const [successMessage, setSuccessMessage] = useState('')
       const admin = useSelector((state) => state.admins.selectedAdmin);
-
-      const handleBack = () => {
-        navigate (-1);
-      }
-      const token = localStorage.getItem('token')
-
  
       const handleResetPassword = async (e) => {
         e.preventDefault(); // prevent the form from submitting
@@ -34,28 +26,14 @@ const AdminPasswordReset = ({ isOpen, onClose, }) => {
     
         setLoading(true);
         try {
-          const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/password-reset/request`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-               Authorization: `Bearer ${token}`,
-
-            },
-          body: JSON.stringify(requestData),
-
-          });
-    
-          const data = await response.json();
-    
-          if (!response.ok) {
-            throw new Error(data.message || 'Failed to initiate password reset');
-          }
+      await apiService.resetAdminPassword(requestData);
+            
           setSuccessMessage('Token successfully sent!');
           setTimeout(() => {
             setSuccessMessage('');
              onClose();
           }, 4000);
-          console.log('Password reset token sent successfully:', data);
+          console.log('Password reset token sent successfully');
         } catch (error) {
           console.error('Password reset failed:', error.message);
         } finally {

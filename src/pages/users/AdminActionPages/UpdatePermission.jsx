@@ -1,19 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
 import { FormModal } from "../../../components/ui/modal";
 import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label"; // Make sure you have this component
 import { fetchAdmins } from "../../../redux/adminsSlice";
-
+import apiService from "../../../services/apiService";
 
 const UpdatePermission = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const admin = useSelector((state) => state.admins.selectedAdmin);
-  const super_admin = useSelector((state) => state.admin.admin);
+  const x_admin = useSelector((state) => state.admin.admin);
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
@@ -36,38 +35,24 @@ const UpdatePermission = ({ isOpen, onClose }) => {
     setErrorMessage('');
 
     const adminId = admin?.id;
-    const id = super_admin?.id;
+    const XAdminId= x_admin?.id;
     
 
     try {
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/permissions`, {
-         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Admin-Id': id
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        const message = result.message || 'Unknown error';
-        setErrorMessage(`Failed to update: ${message}`);
-      } else {
-        console.log("Updated data:", result);
+      await apiService.updateAdminPermission(formData, XAdminId, adminId);
+         
         setSuccessMessage('Permission updated!');
   
         setTimeout(() => {
           setSuccessMessage('');
-          dispatch(fetchAdmins()); // Refresh the admin list
+          dispatch(fetchAdmins()); 
 
-          onClose(); // Navigate or go back
+          onClose();
         }, 2000);
   
       }
-    } catch (error) {
-      const message = response.message || 'Unexpected error';
+    catch (error) {
+      const message = error.message || 'Unexpected error';
       setErrorMessage(`Failed to update: ${message}`);
     } finally {
       setLoading(false);
