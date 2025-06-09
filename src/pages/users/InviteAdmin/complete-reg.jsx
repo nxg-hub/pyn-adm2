@@ -3,6 +3,8 @@ import { CompleteRegSchema } from './schema/complete-reg-schema';
 import { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
+import apiService from '../../../services/apiService';
+
 
 const CompleteRegForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,32 +31,15 @@ const CompleteRegForm = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token'); // Gets the token from url
   
-    if (!token) {
-      setErrorMessage('Invalid or missing token.');
-      setIsLoading(false);
-      return;
-    }
-  
-    // Append token to the API URL
-    const url = `${import.meta.env.VITE_COMPLETE_REG}?token=${token}`;
-  
+    // if (!token) {
+    //   setErrorMessage('Invalid or missing token.');
+    //   setIsLoading(false);
+    //   return;
+    // }
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      });
-
-
-    const result = await response.json();
-
-    if (response.ok) {
-      navigate("/login")
-    } else {
-      setErrorMessage(result.debugMessage || 'An error occurred during registration.');
-    }
+      await apiService.completeRegistration(requestData, token);
+      navigate("/")
+   
   } catch (error) {
     console.error('Error completing registration:', error);
     setErrorMessage(`Error: ${error.message}`);

@@ -1,12 +1,14 @@
 import  { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { useSelector } from 'react-redux';
-import { FormModal } from "../../components/ui/modal";
+import {useDispatch, useSelector } from 'react-redux';
+import { DetailsModal } from "../../components/ui/modal";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import apiService from "../../services/apiService";
+import { fetchSupportTickets } from '../../redux/supportTicketsSlice';
+
 
 const token = localStorage.getItem('token')
 
@@ -16,6 +18,8 @@ const CreateNewTicket = ({ isOpen, onClose }) => {
   const [successMessage, setSuccessMessage] = useState('');
   const [category, setCategory] = useState("")
   const [priority, setPriority] = useState("")
+  const dispatch = useDispatch();
+
 
 
   const handleCreate = async (values) => {
@@ -38,6 +42,8 @@ const CreateNewTicket = ({ isOpen, onClose }) => {
         setTimeout(() => {
           setSuccessMessage('');
           onClose()
+          dispatch(fetchSupportTickets());
+
         }, 3000);
       } 
      catch (error) {
@@ -49,10 +55,10 @@ const CreateNewTicket = ({ isOpen, onClose }) => {
   };
 
   return (
-    <FormModal
+    <DetailsModal
       isOpen={isOpen}
       onClose={onClose}
-    //   title="Create New Support Ticket"
+      title="Create New Support Ticket"
     >
       <Formik
         initialValues={{ customerId: '', subject: '', customerName: '', description: '' }}
@@ -138,7 +144,7 @@ const CreateNewTicket = ({ isOpen, onClose }) => {
           </Form>
         )}
       </Formik>
-    </FormModal>
+    </DetailsModal>
   );
 };
 

@@ -6,13 +6,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchUsers } from "../../../redux/UsersSlice";
 import apiService from "../../../services/apiService";
 
-
-const token = localStorage.getItem('token')
-
 const FlagUser = ({ isOpen, onClose, selectedUser }) => {
   const [reason, setReason] = useState("")
   const user = useSelector((state) => state.users.selectedUser);
-  const super_admin = useSelector((state) => state.admin.admin);
+  const x_admin = useSelector((state) => state.admin.admin);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('');
@@ -23,7 +20,6 @@ const FlagUser = ({ isOpen, onClose, selectedUser }) => {
     setLoading(true);
     setErrorMessage('');
 
-  const id = super_admin?.id
 
     const requestData = {
       id: user?.id || selectedUser.id,
@@ -33,18 +29,20 @@ const FlagUser = ({ isOpen, onClose, selectedUser }) => {
       accountNumber: user?.accountNumber || selectedUser.accountNumber,
       reason: reason
     }
+    const AdminId = x_admin?.id
+
     try {
-     await apiService.flagUser(token, requestData);
-       
-        setSuccessMessage('New flag user created.');
-        setTimeout(() => {
-          setSuccessMessage('');
-          onClose()
-        }, 3000);
-      } 
-     catch (error) {
-      console.error('Error:', error);
-      setErrorMessage(`Error creating flag user: ${error.message}`);
+      await apiService.flagUser(requestData, AdminId);
+
+      setSuccessMessage("This user has been flagged!");
+       setTimeout(() => {
+        setSuccessMessage('');
+        dispatch(fetchUsers()); 
+      onClose() 
+    }, 2000)
+    } catch (err) {
+      console.error("Error:", err.message);
+      setErrorMessage(`Error flagging user, ${err.message}`);
     } finally {
       setLoading(false);
     }
