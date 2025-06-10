@@ -7,6 +7,8 @@ import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 
 // Auth
 import LoginForm from "./pages/Login/login";
+import ForgotPasswordForm from "./pages/users/ActionPages/ForgotPassword.jsx";
+import CompleteRegForm from "./pages/users/InviteAdmin/complete-reg.jsx";
 
 // Dashboard
 import Dashboard from "./pages/Dashboard";
@@ -69,7 +71,7 @@ import Security from "./pages/settings/Security.jsx";
 import ApiKeysSettings from "./pages/settings/API-Keys.jsx";
 import SystemAdminSettings from "./pages/settings/SystemAdministrators.jsx";
 import TwoFactorSettings from "./pages/settings/2FAManagement.jsx";
-import CompleteRegForm from "./pages/users/InviteAdmin/complete-reg.jsx";
+// import CompleteRegForm from "./pages/users/InviteAdmin/complete-reg.jsx";
 import { AnalyticsDashboard } from "./components/analytics-dashboard.jsx";
 // Support & Reports
 import Support from "./pages/support/page";
@@ -84,6 +86,7 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/complete-reg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
 
         {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>

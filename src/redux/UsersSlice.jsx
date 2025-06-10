@@ -7,10 +7,14 @@ export const fetchUsers = createAsyncThunk('user/fetchUsers',
 
   try {
     const res = await apiService.fetchUsers()
+    console.log("API response", res);
     return res;
   } catch (error) {
     console.error("Error fetching users:", error);
-    return rejectWithValue(error?.message || "An unknown error occurred");
+    return rejectWithValue({
+        message: error?.message || 'Failed to fetch users',
+        code: error?.code || 'FETCH_USERS_ERROR'
+      });
   }
 });
 
@@ -31,10 +35,8 @@ const usersSlice = createSlice({
       state.selectedUser = action.payload;
     },
     
-    logOut: (state) => {
-      state.users = null;
-      state.success = false;
-    },
+   logOut: () => initialState,
+
   },
   extraReducers: (builder) => {
     builder

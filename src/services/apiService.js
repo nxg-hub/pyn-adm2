@@ -433,8 +433,9 @@ try {
         throw new Error(data.message || 'Failed to fetch all users');
       }
 
-      return data?.data?.content ?? [];
+      return data
     } catch (error) {
+      console.error('Fetch users error:', error);
       throw error;
     }
   },  

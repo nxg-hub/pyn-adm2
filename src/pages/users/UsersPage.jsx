@@ -53,17 +53,17 @@ function UsersPage() {
     dispatch(fetchUsers());
   }, [dispatch]);
 
-  const personalUsers = users?.filter((u) => u.userType === "PERSONAL");
-  const businessUsers = users?.filter((u) => u.userType === "CORPORATE");
+  const personalUsers = users?.filter((u) => u.userType === "PERSONAL") || [];
+  const businessUsers = users?.filter((u) => u.userType === "CORPORATE") || [];
 
-const filteredData = (activeSection === "personalUsers" ? personalUsers : businessUsers)?.filter((user) => {
-  const firstNameMatch = user.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
-  const emailMatch = user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  return firstNameMatch || emailMatch
-})
+  const filteredData = (activeSection === "personalUsers" ? personalUsers : businessUsers).filter((user) => {
+    const firstNameMatch = user.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
+    const emailMatch = user.email?.toLowerCase().includes(searchQuery.toLowerCase());
+    return firstNameMatch || emailMatch;
+  });
 
 
-const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedData = filteredData.slice(
     startIndex,

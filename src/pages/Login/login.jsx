@@ -66,8 +66,8 @@ const LoginForm = () => {
     </div>
 
       <div className="flex w-full max-w-6xl relative z-10">
-        {/* Left Border Box */}
-        <div className="w-1/2 h-[500px] bg-black border border-black flex items-center justify-center relative overflow-hidden">
+       
+        <div className="w-1/2 h-[600px] bg-black border border-black flex items-center justify-center relative overflow-hidden">
           <div className="absolute top-6 left-6 z-10">
             <img src={payinaLogo} alt="logo" className="h-8 w-auto" />
           </div>
@@ -79,8 +79,8 @@ const LoginForm = () => {
           </div>
         </div>
 
-        {/* Right Border Box */}
-        <div className="w-1/2 h-[500px] bg-[#161616] border border-black border-l-0 flex items-center justify-center relative p-6">
+  
+        <div className="w-1/2 h-[600px] bg-[#161616] border border-black border-l-0 flex items-center justify-center relative p-6">
           <div className="w-full max-w-md">
             <h1 className="text-[#006181] text-center mb-8 font-semibold text-2xl md:text-3xl xl:text-4xl">
               Payina Back Office
@@ -150,3 +150,7 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
+
+
+
