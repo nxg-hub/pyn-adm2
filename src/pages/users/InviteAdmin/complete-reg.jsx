@@ -11,6 +11,8 @@ import yellowstripe from '../../../assets/yellowstripe.png';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { CompleteRegSchema } from './schema/complete-reg-schema';
 import { useNavigate } from 'react-router-dom';
+import apiService from '../../../services/apiService';
+
 
 const CompleteRegForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,34 +34,21 @@ const CompleteRegForm = () => {
       phoneNumber: values.phoneNumber,
     };
 
-    const token = new URLSearchParams(window.location.search).get('token');
-
-    if (!token) {
-      setErrorMessage('Invalid or missing token.');
-      setIsLoading(false);
-      return;
-    }
-
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token'); // Gets the token from url
+  
     try {
-      const response = await fetch(`${import.meta.env.VITE_COMPLETE_REG}?token=${token}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData),
-      });
+      await apiService.completeRegistration(requestData, token);
+      navigate("/")
+   
+  } catch (error) {
+    console.error('Error completing registration:', error);
+    setErrorMessage(`Error: ${error.message}`);
+} finally {
+  setIsLoading(false);
+}
+};
 
-      const result = await response.json();
-
-      if (response.ok) {
-        navigate('/login');
-      } else {
-        setErrorMessage(result.debugMessage || 'An error occurred during registration.');
-      }
-    } catch (error) {
-      setErrorMessage(`Error: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">

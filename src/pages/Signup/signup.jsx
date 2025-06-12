@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
 import { SignUpSchema } from '../Signup/schema';
+import apiService from '../../services/apiService';
 
 const SignUpForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,17 +27,9 @@ const SignUpForm = () => {
       userType: "SUPER_ADMIN",
     };
 
-    const url = `${import.meta.env.VITE_REGISTER_SUPER_ADMIN_ENDPOINT}?secretKey=${import.meta.env.VITE_API_KEY}`;
-
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData),
-      });
-
-      const result = await response.json();
-
+      const result = await apiService.registerSuperAdmin(requestData);
+      
       if (result.debugMessage === "User already exists") {
         setErrorMessage(`Failed to sign up: ${result.debugMessage}`);
       } else if (response.ok) {

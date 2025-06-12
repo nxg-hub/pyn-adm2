@@ -28,143 +28,207 @@ const apiService = {
 
 
   registerSuperAdmin: async (requestData) => {
-    const response = await fetch(`${import.meta.env.VITE_REGISTER_SUPER_ADMIN_ENDPOINT}`, {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_REGISTER_SUPER_ADMIN_ENDPOINT}?secretKey=${import.meta.env.VITE_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(requestData),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to register super admin');
-    }
+    const result = await response.json();
 
-    return response.json();
+    if (!response.ok) {
+      throw new Error( result.message || 'Failed to register super admin');
+    }
   },
 
-  inviteAdmin: async (requestData) => {
+  inviteAdmin: async (requestData, AdminId) => {
     const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_ADMIN_INVITE}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+          'X-Inviting-Admin-Id': AdminId
       },
       body: JSON.stringify(requestData),
     });
 
-    return response.json();
+     const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to send invite');
+    }
+    },
+
+  completeRegistration: async (requestData, token) => {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_COMPLETE_REG}?token=${token}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    });
+
+   const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to complete registration');
+    }
+    },
+
+  getPendingVerificationUsers: async (queryParams) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_PENDING_VERIFICATION_USERS}?${queryParams}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+          },
+        }
+      );
+       const data = await response.json();
+      return data.data.content;
+    } catch (error) {
+      throw error;
+    }
+  },
+  
+  getRecentlyActiveUsers: async (queryParams) => {
+     try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_RECENTLY_ACTIVE_USERS}?${queryParams}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+          },
+        }
+      );
+       const data = await response.json();
+      return data.data.content;
+    } catch (error) {
+      throw error;
+    }
   },
 
-  completeRegistration: async (requestData) => {
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_COMPLETE_REG}`, {
+  suspendUser: async (requestData, AdminId) => {
+    const response = await fetch(`${import.meta.env.VITE_SUSPEND_USER}/${userId}`, {
+      method: 'PUT',
+     headers: {
+        'Content-Type': 'application/json',
+          'X-Admin-Id': AdminId
+      },
+     body: JSON.stringify(requestData),
+
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to suspend user');
+    }
+  },
+
+  unsuspendUser: async (requestData, AdminId) => {
+    const response = await fetch(`${import.meta.env.VITE_UNSUSPEND_USER}/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+          'X-Admin-Id': AdminId
+      },
+     body: JSON.stringify(requestData),
+
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to unsuspend user');
+    }
+  },
+
+  flagUser: async (requestData, AdminId) => {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_FLAG_USER}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+          'X-Admin-Id': AdminId
+      },
+     body: JSON.stringify(requestData),
+
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to flag user');
+    }
+  },
+
+
+  unflagUser: async (requestData, AdminId) => {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_UNFLAG_USER}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+       'X-Admin-Id': AdminId
+      },
+     body: JSON.stringify(requestData),
+    });
+
+   const result = await response.json();
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to flag user');
+    }
+  },
+
+ 
+  deleteAdmin: async (XAdminId, adminId) => {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}api//v1/admin/management/${adminId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+          'X-Admin-Id': XAdminId
+      },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to delete admin');
+    }
+  },
+  resetAdminPassword: async (requestData) => {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/password-reset/request`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(requestData),
+     body: JSON.stringify(requestData),
     });
 
-    return response.json();
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to delete admin');
+    }
   },
 
-  getPendingVerificationUsers: async () => {
-    const response = await fetch(`${import.meta.env.VITE_GET_PENDING_VERIFICATION_USERS}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.json();
-  },
-
-  getRecentlyActiveUsers: async () => {
-    const response = await fetch(`${import.meta.env.VITE_GET_RECENTLY_ACTIVE_USERS}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.json();
-  },
-
-  suspendUser: async (userId) => {
-    const response = await fetch(`${import.meta.env.VITE_SUSPEND_USER}/${userId}`, {
+   updateAdminPermission: async (formData, XAdminId, adminId) => {
+     const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/permissions`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+          'X-Admin-Id': XAdminId
       },
+     body: JSON.stringify(formData),
     });
 
-    return response.json();
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to update admin');
+    }
   },
 
-  unsuspendUser: async (userId) => {
-    const response = await fetch(`${import.meta.env.VITE_UNSUSPEND_USER}/${userId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.json();
-  },
-
-  flagUser: async (userId) => {
-    const response = await fetch(`${import.meta.env.VITE_FLAG_USER}/${userId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.json();
-  },
-
-  unflagUser: async (userId) => {
-    const response = await fetch(`${import.meta.env.VITE_UNFLAG_USER}/${userId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.json();
-  },
-
-  getSuspendedUsers: async () => {
-    const response = await fetch(`${import.meta.env.VITE_GET_SUSPENDED_USERS}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.json();
-  },
-
-  getFlaggedUsers: async () => {
-    const response = await fetch(`${import.meta.env.VITE_GET_FLAGGED_USERS}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.json();
-  },
 
   SuspiciousActivities: async () => {
     try {
@@ -186,6 +250,8 @@ const apiService = {
       throw error;
     }
   }, 
+  
+  
    CreateNewSupportTicket: async (token, requestData) => {
 try {
       const response = await fetch(
@@ -211,10 +277,34 @@ try {
       throw error
     }
   },
+
+   CreateSuspiciousReport: async (token, requestData) => {
+try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/compliance/suspicious`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.debugMessage || 'An error occurred.');
+      }
+
+      return result;
+    } catch (error) {
+      throw error
+    }
+  },
   FetchSupportTickets: async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/support/tickets?page=0&size=10&sortBy=createdAt&sortDir=desc`,
+         `${import.meta.env.VITE_BASE_URL}/api/support/tickets?status=status&priority=priority&category=category&page=0&size=10&sortBy=createdAt&sortDir=desc`,
         {
           method: 'GET',
           headers: {
@@ -274,6 +364,49 @@ try {
       throw error;
     }
   },
+  addMessageToTicket: async (id, requestData) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/support/tickets/${id}/messages`,
+         {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+             Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestData),
+
+        }
+      );
+       const data = await response.json();
+
+      return data
+    } catch (error) {
+      throw error;
+    }
+  },
+  getTicketMessages: async (id, requestData) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/support/tickets/${id}/messages`,
+         {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+             Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestData),
+
+        }
+      );
+       const data = await response.json();
+
+      return data.data.content
+    } catch (error) {
+      throw error;
+    }
+  },
+
   fetchActivities: async (adminId, superAdminId, queryParams) => {
   try {
     const response = await fetch(
@@ -293,9 +426,8 @@ try {
       throw new Error(data.message || 'Failed to fetch activities');
     }
 
-    // Return the complete data structure instead of just content
     return {
-      data: data, // Return the full response so Redux can access data.data.content and data.data.totalElements
+      data: data, 
       success: true
     };
   } catch (error) {
@@ -439,6 +571,7 @@ try {
       throw error;
     }
   },  
+  
 };
 
 export default apiService;

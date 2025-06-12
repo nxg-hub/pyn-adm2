@@ -77,16 +77,17 @@ import { AnalyticsDashboard } from "./components/analytics-dashboard.jsx";
 import Support from "./pages/support/page";
 import Report from "./pages/reports/page";
 
+import PageNotFound from "./pages/PageNotFound.jsx";
+
 function App() {
   return (
     <BrowserRouter>
      
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<LoginForm />} />
+        <Route path="/" element={<LoginForm />} />
         <Route path="/complete-reg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
 
         {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
