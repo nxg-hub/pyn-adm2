@@ -7,6 +7,7 @@ import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 
 // Auth
 import LoginForm from "./pages/Login/login";
+import ForgotPasswordForm from "./pages/users/ActionPages/ForgotPassword.jsx";
 
 // Dashboard
 import Dashboard from "./pages/Dashboard";
@@ -87,10 +88,10 @@ function App() {
         <Route path="/complete-reg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<PageNotFound />} />
-
+        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
 
         {/* Protected Admin Routes */}
-<Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
+          <Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
           {/* Dashboard */}
           <Route path="dashboard" element={<Dashboard />} />
 
@@ -110,6 +111,7 @@ function App() {
           <Route path="/view-activities" element={<ActivityLogs />} />
           <Route path="/view-details" element={<ViewSuspension />} />
           <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
+  
 
 {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />

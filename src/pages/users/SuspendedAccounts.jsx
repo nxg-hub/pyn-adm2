@@ -34,13 +34,17 @@ function SuspendedAccounts() {
   const [ShowUnsuspendModal, setShowUnsuspendModal] = useState(false)
   const dispatch = useDispatch();
   const navigate = useNavigate()
-  const suspendedUsers = useSelector(state => state.suspendedUsers.all);
+  const suspendedUsers = Array.isArray(useSelector(state => state.suspendedUsers.all))
+  ? useSelector(state => state.suspendedUsers.all)
+  : [];
+
 
 
   useEffect(() => {
-    dispatch(fetchSuspendedUsers());
-    console.log("Loaded users:", suspendedUsers);
-  }, [dispatch]);
+  setLoading(true);
+  dispatch(fetchSuspendedUsers())
+    .finally(() => setLoading(false));
+}, [dispatch]);
 
 
   const filteredData = suspendedUsers?.filter((su) => {

@@ -116,8 +116,8 @@ const LiveChatPage = () => {
               key={idx}
               className={`max-w-[70%] px-4 py-2 rounded-lg ${
                 msg.from === "agent"
-                  ? "bg-blue-100 text-left ml-auto"
-                  : "bg-gray-100 text-left"
+                  ? "bg-blue-600 text-white ml-auto"
+                  : "bg-gray-200 text-black"
               }`}
             >
               <p className="text-sm">{msg.content}</p>

@@ -1,11 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import apiService from '../services/apiService';
 
 export const fetchUnsuspendedUsers = createAsyncThunk(
  'unsuspendedUsers/fetch',
-  async () => {
-    const res = await fetch(import.meta.env.VITE_GET_UNSUSPENDED_USERS)
-    const data = await res.json();
-    return data.data.content; 
+ async (_, thunkAPI) => {
+  try{
+      const res = await apiService.fetchUnsuspendedUsers()
+      return res;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.message || "An unknown error occurred");
+    }
   }
 );
 

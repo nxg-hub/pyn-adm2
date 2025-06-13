@@ -1,23 +1,30 @@
-import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { CompleteRegSchema } from './schema/complete-reg-schema';
 import { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
-import { Link, useNavigate } from 'react-router-dom';
+import backgroundImage from '../../../assets/vector.png';
+import dashboardImage from '../../../assets/dashboard.png';
+import payinaLogo from '../../../assets/payina.png';
+import blueCircleImage from '../../../assets/bluecircle.png';
+import yellowCircle from '../../../assets/yellowcircle.png';
+import eclipse93 from '../../../assets/eclipse93.png';
+import eclipse92 from '../../../assets/eclipse92.png';
+import yellowstripe from '../../../assets/yellowstripe.png';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { CompleteRegSchema } from './schema/complete-reg-schema';
+import { useNavigate } from 'react-router-dom';
 import apiService from '../../../services/apiService';
 
 
 const CompleteRegForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const toggleShowPassword = () => setShowPassword(!showPassword);
+
   const handleSubmit = async (values) => {
     setIsLoading(true);
-
+    setErrorMessage('');
 
     const requestData = {
       firstName: values.firstName,
@@ -26,16 +33,10 @@ const CompleteRegForm = () => {
       confirmPassword: values.confirmPassword,
       phoneNumber: values.phoneNumber,
     };
-    setErrorMessage('');
 
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token'); // Gets the token from url
   
-    // if (!token) {
-    //   setErrorMessage('Invalid or missing token.');
-    //   setIsLoading(false);
-    //   return;
-    // }
     try {
       await apiService.completeRegistration(requestData, token);
       navigate("/")
@@ -50,101 +51,100 @@ const CompleteRegForm = () => {
 
 
   return (
-    <div className="md:w-[40%] mx-10 md:mx-auto md:py-10">
-      <div className="text-center text-[#006181]  mt-3 xl:mt-0 font-bold xl:text-4xl text-2xl py-5">
-        Complete your registration 
-      </div>
-      <div className="bg-black flex flex-col justify-center items-start mx-auto py-6">
-        <Formik 
-          initialValues={{ firstName: '', lastName: '' , password: '', confirmPassword: '', phoneNumber: '' }}
-          validationSchema={CompleteRegSchema}
-          onSubmit={handleSubmit}>
-          {() => (
-            <Form className="w-full space-y-4">
-              <div className="xl:py-16 p-4 pt-[2.2rem] xl:p-10 xl:pl-[5rem] xl:pr-40 xl:w-auto w-full m-auto xl:space-y-8 space-y-4 pb-2 xl:pb-6">
-                
-                <div className="xl:w-[120%] flex flex-col space-y-2">
-                  <label htmlFor="firstName" className="text-sm font-normal text-[#006181]">
-                    First Name
-                  </label>
-                  <Field
-                    name="firstName"
-                    type="text"
-                    placeholder="Enter First Name"
-                    className="w-full h-[3.4rem] border border-[#9ca3af] outline-none font-light text-base text-gray rounded-[5px] py-2 px-[10px]"
-                  />
-                  <ErrorMessage name="firstName" component="span" className="text-[#db3a3a]" />
-                </div>
-                <div className="xl:w-[120%] flex flex-col space-y-2">
-                  <label htmlFor="lastName" className="text-sm font-normal text-[#006181]">
-                    Last Name
-                  </label>
-                  <Field
-                    name="lastName"
-                    type="text"
-                    placeholder="Enter Last Name"
-                    className="w-full h-[3.4rem] border border-[#9ca3af] outline-none font-light text-base text-gray rounded-[5px] py-2 px-[10px]"
-                  />
-                  <ErrorMessage name="lastName" component="span" className="text-[#db3a3a]" />
-                </div>
-                <div className="xl:w-[120%] flex flex-col space-y-2">
-                  <label htmlFor="phoneNumber" className="text-sm font-normal text-[#006181]">
-                    Phone Number
-                  </label>
-                  <Field
-                    name="phoneNumber"
-                    type="text"
-                    placeholder="Enter Phone Number"  
-                    className="w-full h-[3.4rem] border border-[#9ca3af] outline-none font-light text-base text-gray rounded-[5px] py-2 px-[10px]"
-                  />
-                  <ErrorMessage name="phoneNumber" component="span" className="text-[#db3a3a]" />
-                </div>
-                <div className="xl:w-[120%] flex flex-col space-y-2 relative">
-                  <label htmlFor="password" className="text-sm font-normal text-[#006181]">
-                    Password
-                  </label>
-                  <Field
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter Password"
-                    className="w-full h-[3.4rem] border border-[#9ca3af] outline-none font-light text-base text-gray rounded-[5px] py-2 px-[10px]"
-                  />
-                  
-                  <ErrorMessage name="password" component="span" className="text-[#db3a3a]" />
-                  {showPassword ? (
-                    <BsEye onClick={handleShowPassword} className="absolute top-10 right-1" />
-                  ) : (
-                    <BsEyeSlash onClick={handleShowPassword} className="absolute top-10 right-1" />
-                  )}
-                
-                  </div>
-                  
-                  <div className="xl:w-[120%] flex flex-col space-y-2 relative">
-                  <label htmlFor="password2" className="text-sm font-normal text-[#006181]">
-                    Confirm Password
-                  </label>
-                  <Field
-                    name="confirmPassword"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Re-enter Password"
-                    className="w-full h-[3.4rem] border border-[#9ca3af] outline-none font-light text-base text-gray rounded-[5px] py-2 px-[10px]"
-                  />
-                  <ErrorMessage name="confirmPassword" component="span" className="text-[#db3a3a]" />
-                </div>
-                
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative Elements */}
+      <img src={yellowCircle} className="absolute top-16 left-14 h-36 z-0 pointer-events-none" alt="yellow circle" />
+      <img src={blueCircleImage} className="absolute top-24 left-0 h-30 z-0 pointer-events-none" alt="blue circle" />
+      <img src={eclipse93} className="absolute top-[21.25rem] left-20 h-36 z-0 pointer-events-none" alt="eclipse 93" />
+      <img src={eclipse92} className="absolute top-[33.75rem] left-10 h-70 z-0 pointer-events-none" alt="eclipse 92" />
+      <img src={yellowstripe} className="absolute top-0 right-0 h-50 z-0 pointer-events-none" alt="yellow stripe" />
+      <img src={yellowCircle} className="absolute top-[27.5rem] right-10 h-36 z-0 pointer-events-none" alt="yellow circle" />
 
-                {errorMessage && <div className="text-[#db3a3a]">{errorMessage}</div>}
-                <button
-                  type="submit"
-                  className="w-full mt-4 md:mt-6 text-base md:text-lg flex justify-center items-center rounded-md bg-[#006181] px-6 py-3 font-bold text-black hover:bg- transition disabled:opacity-50"
-                  disabled={isLoading}>
-                  {isLoading ? 'Loading...' : 'Sign Up'}
-                </button>
-              </div>
-              
-            </Form>
-          )}
-        </Formik>
+      {/* Main Container */}
+      <div className="flex w-full max-w-6xl relative z-10">
+        {/* Left Image Side */}
+        <div className="w-1/2 h-[600px] bg-black border border-black relative flex items-center justify-center overflow-hidden">
+          <img src={payinaLogo} alt="Payina Logo" className="absolute top-6 left-6 h-8 z-10" />
+          <img src={backgroundImage} alt="Background" className="absolute inset-0 object-cover w-full h-full" />
+          <img src={dashboardImage} alt="Dashboard" className="absolute inset-0 object-contain max-w-full max-h-full" />
+        </div>
+
+        {/* Right Form Side */}
+        <div className="w-1/2 h-[600px] bg-[#161616] p-10 border border-black border-l-0 flex items-center justify-center relative">
+          <div className="w-full max-w-md">
+            <h1 className="text-[#006181] text-center mb-4 font-semibold text-3xl">
+              Complete your registration
+            </h1>
+
+            <Formik
+              initialValues={{ firstName: '', lastName: '', phoneNumber: '', password: '', confirmPassword: '' }}
+              validationSchema={CompleteRegSchema}
+              onSubmit={handleSubmit}
+            >
+              {() => (
+                <Form>
+                  {['firstName', 'lastName', 'phoneNumber'].map((field) => (
+                    <div key={field} className="flex flex-col space-y-2">
+                      <label htmlFor={field} className="text-md font-normal mt-2 text-white capitalize">
+                        {field === 'phoneNumber' ? 'Phone Number' : field.replace(/([A-Z])/g, ' $1')}
+                      </label>
+                      <Field
+                        name={field}
+                        type="text"
+                        placeholder={`Enter ${field === 'phoneNumber' ? 'Phone Number' : field}`}
+                        className="w-full h-10 border border-[#9ca3af] rounded-[5px] px-3 py-2 text-base font-light text-gray outline-none"
+                      />
+                      <ErrorMessage name={field} component="span" className="text-[#db3a3a]" />
+                    </div>
+                  ))}
+
+                  {/* Password Field */}
+                  <div className="flex flex-col space-y-2 relative">
+                    <label htmlFor="password" className="text-md font-normal text-white">
+                      Password
+                    </label>
+                    <Field
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter Password"
+                      className="w-full h-10 border border-[#9ca3af] rounded-[5px] px-3 py-2 text-base font-light text-gray outline-none"
+                    />
+                    <ErrorMessage name="password" component="span" className="text-[#db3a3a]" />
+                    <span onClick={toggleShowPassword} className="absolute top-10 right-2 cursor-pointer">
+                      {showPassword ? <BsEye /> : <BsEyeSlash />}
+                    </span>
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div className="flex flex-col space-y-2 relative">
+                    <label htmlFor="confirmPassword" className="text-md font-normal text-white">
+                      Confirm Password
+                    </label>
+                    <Field
+                      name="confirmPassword"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Re-enter Password"
+                      className="w-full h-10 border border-[#9ca3af] rounded-[5px] px-3 py-2 text-base font-light text-gray outline-none"
+                    />
+                    <ErrorMessage name="confirmPassword" component="span" className="text-[#db3a3a]" />
+                  </div>
+
+                  {/* Error Message */}
+                  {errorMessage && <div className="text-[#db3a3a] text-sm">{errorMessage}</div>}
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-[#006181] hover:opacity-90 py-3 mt-4 rounded-md text-white font-bold text-lg disabled:opacity-50"
+                  >
+                    {isLoading ? 'Loading...' : 'Complete Registration'}
+                  </button>
+                </Form>
+              )}
+            </Formik>
+          </div>
+        </div>
       </div>
     </div>
   );
