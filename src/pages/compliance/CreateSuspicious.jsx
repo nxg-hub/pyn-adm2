@@ -1,11 +1,11 @@
 import  { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { useSelector } from 'react-redux';
 import { FormModal } from "../../components/ui/modal";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
+import apiService from "../../services/apiService";
 
 const CreateSuspiciousReport = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,26 +27,14 @@ const token = localStorage.getItem('token')
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/compliance/suspicious`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(requestData),
-      });
+        await apiService.CreateSuspiciousReport(token, requestData); 
 
-      const result = await response.json();
-
-      if (response.ok) {
         setSuccessMessage('Suspicious activity reported.');
         setTimeout(() => {
           setSuccessMessage('');
           onClose()
         }, 3000);
-      } else {
-        setErrorMessage(result.debugMessage || 'An error occurred.');
-      }
+      
     } catch (error) {
       console.error('Error:', error);
       setErrorMessage(`Error reporting activity: ${error.message}`);

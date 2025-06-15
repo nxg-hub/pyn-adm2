@@ -8,7 +8,7 @@ import { Label } from "../../components/ui/label";
 import apiService from "../../services/apiService";
 import { fetchSupportTickets } from '../../redux/supportTicketsSlice';
 
-const Resolve = ({ isOpen, onClose }) => {
+const AddMessage = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -17,30 +17,29 @@ const Resolve = ({ isOpen, onClose }) => {
 
 
 
-const handleResolve = async (values) => {
+const handleAddMessage = async (values) => {
   setIsLoading(true);
 
   const requestData = {
-      resolutionNotes: values.resolutionNotes,
-      resolution: values.resolution,
+      ticketId: activeTicket?.id,
+      message: values.message
     };
   try {
         const id = activeTicket?.id
 
-    await apiService.resolveTicket(id, requestData);
-      console.log("Received ID in resolveTicket:", id); // <- Add this line
+    await apiService.addMessageToTicket(id, requestData);
 
-setSuccessMessage('Ticket resolved.');
+setSuccessMessage(`Message added to ${activeTicket?.customerName}'s Ticket`);
         setTimeout(() => {
           setSuccessMessage('');
           onClose()
-          dispatch(fetchSupportTickets());
+        dispatch(fetchSupportTickets());
 
         }, 3000); 
  }
   catch(error) {
 console.error('Error:', error);
-      (`Error creating support ticket: ${error.message}`);
+      (`Error adding message to ticket: ${error.message}`);
     } finally {
       setIsLoading(false);
     }  
@@ -54,22 +53,17 @@ return (
               onClose={onClose}
             >
               <Formik
-                initialValues={{ resolutionNotes: '', resolution: '' }}
-                 onSubmit={handleResolve}
+                initialValues={{ message: '' }}
+                 onSubmit={handleAddMessage}
 
                 
               >
                 {() => (
                   <Form className="space-y-4">
                     <div>
-                      <Label htmlFor="resolutionNotes">Resolution Notes</Label>
-                      <Field as={Input} name="resolutionNotes" type="text" required />
-                      <ErrorMessage name="resolutionNotes" component="div" className="text-red-500" />
-                    </div>
-                    <div>
-                      <Label htmlFor="resolution">Resolution</Label>
-                      <Field as={Input} name="resolution" type="text" required />
-                      <ErrorMessage name="resolution" component="div" className="text-red-500" />
+                      <Label htmlFor="resolutionNotes">Add Message to ticket</Label>
+                      <Field as={Input} name="message" type="text" required />
+                      <ErrorMessage name="message" component="div" className="text-red-500" />
                     </div>
                     
         
@@ -88,7 +82,7 @@ return (
                     <div className="flex justify-end space-x-2 mt-4">
                       <Button type="submit" disabled={isLoading} className="bg-[#3A859E]"
                       >
-                        {isLoading ? 'Please wait...' : 'Resolve'}
+                        {isLoading ? 'Please wait...' : 'Add'}
                       </Button>
                     </div>
                   </Form>
@@ -97,4 +91,4 @@ return (
             </FormModal>
 );
 };
-export default Resolve;
+export default AddMessage;

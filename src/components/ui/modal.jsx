@@ -55,3 +55,22 @@ export const FormModal = ({ isOpen, onClose, title, description, children, foote
     </Dialog>
   )
 }
+
+export const DetailsModal = ({ isOpen, onClose, title, description, children, footer }) => {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          {description && <DialogDescription>{description}</DialogDescription>}
+        </DialogHeader>
+
+        <div className="mt-4 space-y-4">
+          {children}
+        </div>
+
+        {footer && <DialogFooter>{footer}</DialogFooter>}
+      </DialogContent>
+    </Dialog>
+  );
+};

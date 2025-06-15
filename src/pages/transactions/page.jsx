@@ -14,6 +14,7 @@ import InternationalAirtimePage from "./InternationalAirtimePage";
 import VirtualCardsePage from "./VirtualCardsPage";
 import PayrollPage from "./PayrollPage";
 import ScanToPayPage from "./ScanToPayPage";
+import LoanAndSavingPage from "./loanAndSaving";
 
 function Transactions() {
   return (
@@ -21,6 +22,8 @@ function Transactions() {
       <Route index element={<TransactionsPage />} />
       <Route path="money-transfers" element={<MoneyTransfersPage />} />
       <Route path="bills" element={<BillsAndUtilitiesPage />} />
+      <Route path="loans" element={<LoanAndSavingPage />} />
+      <Route path="savings" element={<LoanAndSavingPage />} />
       <Route path="airtime" element={<AirtimeAndDataPage />} />
       <Route path="tv" element={<TvSubPage />} />
       <Route path="electricity" element={<ElectrictyPage />} />

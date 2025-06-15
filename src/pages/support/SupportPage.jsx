@@ -18,9 +18,9 @@ import AssignTicket from "./assignTicket";
 import { fetchSupportTickets } from "../../redux/supportTicketsSlice"
 import Pagination from "../../components/ui/pagination"
 import { TableLoader } from "../../components/ui/loader";
-import apiService from "../../services/apiService";
 import { setActiveTicket } from "../../redux/supportTicketsSlice";
 import Resolve from "./Resolve";
+import AddMessage from "./AddMessage";
 
 
 const SupportPage = () => {
@@ -29,6 +29,7 @@ const SupportPage = () => {
   const [openCreateNew, setOpenCreateNew] = useState(false);
   const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false)
   const [openResolveModal, setOpenResolveModal] = useState(false);
+  const [openAddMessageModal, setOpenAddMessageModal] = useState(false);
   const [openAssignModal, setOpenAssignModal] = useState(false);
   const [replyMessage, setReplyMessage] = useState("")
   const { activeTicket } = useSelector((state) => state.supportTickets);
@@ -82,7 +83,7 @@ const totalAssignedTickets = assignedTickets.length;
       OPEN: "border-blue-200 bg-blue-50 text-blue-700",
       ASSIGNED: "border-yellow-200 bg-yellow-50 text-yellow-700",
       RESOLVED: "border-green-200 bg-green-50 text-green-700",
-      Closed: "border-gray-200 bg-gray-50 text-gray-700",
+      IN_PROGRESS: "border-gray-200 bg-gray-50 text-gray-700",
     }
 
     return (
@@ -172,13 +173,13 @@ render: (row) => (
             size="sm"
             onClick={() => {
               dispatch(setActiveTicket(row))
-              setIsReplyDialogOpen(true)
+              setOpenAddMessageModal(true)
             }}
           >
             <MessageSquare className="mr-2 h-4 w-4" />
-            Reply
+            Add Message
           </Button>
-          {row.status !== "RESOLVED" && row.status !== "Closed" && (
+          {/* {row.status !== "RESOLVED" && row.status !== "Closed" && (
             <Button variant="ghost" size="sm"
             onClick={() => {
               dispatch(setActiveTicket(row))
@@ -186,13 +187,13 @@ render: (row) => (
               <CheckCircle className="mr-2 h-4 w-4" />
               Resolve
             </Button>
-          )}
-          {hasPermission("viewFullTransactionHistory") && (
+          )} */}
+          {/* {hasPermission("viewFullTransactionHistory") && (
             <Button variant="ghost" size="sm">
               <AlertCircle className="mr-2 h-4 w-4" />
               Escalate
             </Button>
-          )}
+          )} */}
         </div>
       ),
     },
@@ -264,8 +265,9 @@ render: (row) => (
                 <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "OPEN")} />
               </TabsContent>
               <TabsContent value="in-progress" className="mt-4">
-                <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "ASSIGNED")} />
-              </TabsContent>
+                <DataTable columns={columns} 
+data={paginatedData.filter((ticket) => ticket.status === "ASSIGNED" || ticket.status === "IN_PROGRESS")}
+  />            </TabsContent>
               <TabsContent value="resolved" className="mt-4">
                 <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "RESOLVED")} />
               </TabsContent>
@@ -282,7 +284,7 @@ render: (row) => (
         </Card>
 
         {/* Reply Dialog */}
-        <Dialog open={isReplyDialogOpen} onOpenChange={setIsReplyDialogOpen}>
+        {/* <Dialog open={isReplyDialogOpen} onOpenChange={setIsReplyDialogOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Reply to Ticket {activeTicket?.id}</DialogTitle>
@@ -309,7 +311,7 @@ render: (row) => (
               </Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
         
             <AssignTicket
             isOpen={openAssignModal}
@@ -317,6 +319,11 @@ render: (row) => (
             <Resolve
             isOpen={openResolveModal}
             onClose={() => setOpenResolveModal(false)}/>
+            <AddMessage
+            isOpen={openAddMessageModal}
+            onClose={() => setOpenAddMessageModal(false)}
+            
+            />
       </main>
       
     </div>

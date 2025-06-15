@@ -76,6 +76,8 @@ import { AnalyticsDashboard } from "./components/analytics-dashboard.jsx";
 import Support from "./pages/support/page";
 import Report from "./pages/reports/page";
 
+import PageNotFound from "./pages/PageNotFound.jsx";
+
 function App() {
   return (
     
@@ -86,6 +88,8 @@ function App() {
         <Route path="/" element={<LoginForm />} />
         <Route path="/complete-reg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="*" element={<PageNotFound />} />
+
 
         {/* Protected Admin Routes */}
 <Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
