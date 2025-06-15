@@ -30,6 +30,7 @@ import ViewFlagDetails from "./pages/users/ActionPages/ViewFlaggedDetails.jsx";
 
 // Transactions
 import Transactions from "./pages/transactions/page";
+import LoanAndSavingPage from "./pages/transactions/loanAndSaving.jsx";
 
 // Wallets
 import WalletsPage from "./pages/wallets/WalletsPage";
@@ -77,6 +78,7 @@ import Report from "./pages/reports/page";
 
 function App() {
   return (
+    
     <BrowserRouter>
      
       <Routes>
@@ -109,6 +111,7 @@ function App() {
 
 {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />
+          <Route path="dashboard/transactions/loanAndSaving" element={<LoanAndSavingPage/>} />
 
 
             {/* Wallets */}
