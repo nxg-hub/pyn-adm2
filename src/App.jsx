@@ -6,13 +6,13 @@ import ProtectedRoute from "./utilities/ProtectedRoutes.jsx";
 import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 
 // Auth
-import LoginForm from "./pages/Login/login";
-import ForgotPasswordForm from "./pages/users/ActionPages/ForgotPassword.jsx";
+import LoginForm from "./pages/Login/login.jsx";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.jsx";
 
 // Dashboard
 import Dashboard from "./pages/Dashboard";
 
-// Users
+// Users/
 import UsersPage from "./pages/users/UsersPage";
 import AdminsPage from "./pages/users/AdminUsers";
 import SuspendedAccounts from "./pages/users/SuspendedAccounts";
@@ -78,6 +78,7 @@ import Report from "./pages/reports/page";
 
 import PageNotFound from "./pages/PageNotFound.jsx";
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -88,7 +89,7 @@ function App() {
         <Route path="/complete-reg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<PageNotFound />} />
-        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
