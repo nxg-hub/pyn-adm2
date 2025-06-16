@@ -114,7 +114,7 @@ function App() {
           <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
   
 
-{/* Transactions */}
+          {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />
 
 
