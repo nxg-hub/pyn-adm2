@@ -31,6 +31,8 @@ import ViewFlagDetails from "./pages/users/ActionPages/ViewFlaggedDetails.jsx";
 
 // Transactions
 import Transactions from "./pages/transactions/page";
+import LoanPage from "./pages/transactions/LoanPage.jsx";
+import SavingsPage from "./pages/transactions/SavingsPage.jsx";
 
 // Wallets
 import WalletsPage from "./pages/wallets/WalletsPage";
@@ -116,6 +118,8 @@ function App() {
 
           {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />
+          <Route path="dashboard/transactions/loan" element={<LoanPage />} />
+          <Route path="dashboard/transactions/savings" element={<SavingsPage />} />
 
 
             {/* Wallets */}
