@@ -1,28 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import apiService from '../services/apiService';
 
 // Async thunk to fetch logged in admin data
-export const fetchAdmin = createAsyncThunk('admin/fetchAdmin', async (email, { rejectWithValue }) => {
+export const fetchAdmin = createAsyncThunk(
+  'admin/fetchAdmin', 
+  async (email, { rejectWithValue }) => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_ADMIN_DETAILS}?email=${email}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to fetch admin');
-    }
-
-    return data; 
+    const response = await apiService.fetchAdmin(email)
+    return response; 
   } catch (error) {
     return rejectWithValue(error.message);
   }
 });
 
-// Initial state
 const initialState = {
   admin: null,
   success: false,

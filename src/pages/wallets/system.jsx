@@ -109,17 +109,17 @@ export function SystemBalancePage() {
                           <MoreHorizontal className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Edit Balance</DropdownMenuItem>
+                      <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             >
+                        <DropdownMenuItem className="hover:bg-[#3A859E]">View Details</DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-[#3A859E]">Edit Balance</DropdownMenuItem>
                         {balance.status === "Active" && (
-                          <DropdownMenuItem className="text-red-600">Suspend Balance</DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">Suspend Balance</DropdownMenuItem>
                         )}
                         {balance.status === "Suspended" && (
-                          <DropdownMenuItem className="text-green-600">Reactivate Balance</DropdownMenuItem>
+                          <DropdownMenuItem className="text-green-600 hover:bg-[#3A859E]">Reactivate Balance</DropdownMenuItem>
                         )}
                         {balance.status === "Inactive" && (
-                          <DropdownMenuItem className="text-blue-600">Activate Balance</DropdownMenuItem>
+                          <DropdownMenuItem className="text-blue-600 hover:bg-[#3A859E]">Activate Balance</DropdownMenuItem>
                         )}
                       </DropdownMenuContent>
                     </DropdownMenu>

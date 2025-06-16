@@ -14,9 +14,6 @@ import { TableLoader } from "../../../components/ui/loader"
 
 const ITEMS_PER_PAGE = 10;
 
-const itemsPerPage =  ITEMS_PER_PAGE;
-
-
 const ActivityLogs = () => {
     const [searchQuery, setSearchQuery] = useState("")
     const [currentPage, setCurrentPage] = useState(1);
@@ -26,7 +23,6 @@ const ActivityLogs = () => {
     const { AdminActivities, loading, error } = useSelector((state) => state.AdminActivities);
     const superAdmin = useSelector((state) => state.admin.admin);
 
-
     const adminId = admin?.id;
 
     useEffect(() => {
@@ -35,132 +31,136 @@ const ActivityLogs = () => {
       }
     }, [adminId, superAdmin?.id, dispatch]);
 
-  // if (!admin?.adminId) return <p>This user has no Id</p>;
-console.log (admin?.id)
+    // Reset to first page when search query changes
+    useEffect(() => {
+      setCurrentPage(1);
+    }, [searchQuery]);
 
-const filteredData = AdminActivities.filter((activity) => {
-  const action = activity.actionType?.toLowerCase().includes(searchQuery.toLowerCase());
-  return  action;
-}); 
-const totalItems = AdminActivities?.length
+    console.log('Admin ID:', admin?.id)
+    console.log('Admin Activities:', AdminActivities)
+    console.log('Loading:', loading)
+    console.log('Error:', error)
 
-const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    // Filter data based on search query
+    const filteredData = (AdminActivities || []).filter((activity) => {
+      if (!searchQuery) return true;
+      const action = activity.actionType?.toLowerCase().includes(searchQuery.toLowerCase());
+      return action;
+    }); 
+    console.log('Filtered Data:', filteredData)
 
-const handleBack = () => {
-  navigate (-1);
-}
-   
-    // {
-    //   key: "actions",
-    //   header: "ACTIONS",
-    //   render: () => (
-    //     <div className="flex items-center gap-2">
-    //       <Button variant="ghost" size="sm">
-    //         <Shield className="mr-2 h-4 w-4" />
-    //         Investigate
-    //       </Button>
-    //       <Button variant="ghost" size="sm" className="text-red-600">
-    //         <AlertCircle className="mr-2 h-4 w-4" />
-    //         Escalate
-    //       </Button>
-    //     </div>
-    //   ),
-    // },
-  
+    // Calculate pagination based on filtered data
+    const totalFilteredItems = filteredData.length;
+    const totalPages = Math.ceil(totalFilteredItems / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  return (
-    <div>
-    {loading ? (
-      <TableLoader/>
-    ) : (
-    <div className="flex flex-col">
-      <button
+    const handleBack = () => {
+      navigate(-1);
+    }
+
+    const handlePageChange = (page) => {
+      setCurrentPage(page);
+    }
+
+    return (
+      <div>
+        {loading ? (
+          <TableLoader/>
+        ) : (
+          <div className="flex flex-col">
+            <button
               onClick={handleBack}
               className="mb-9 text-white text-xl font-medium flex items-center gap-5">
               <ChevronLeft className="h-8 w-8" />
               Back
             </button>
- <header className="border-b">
-        <div className="flex h-16 items-center px-4 gap-4">
-          <h1 className="text-xl font-semibold">Admin Activities</h1>
-          <span className="text-sm text-muted-foreground">Monitor Admin Activities</span>
-          <div className="ml-auto flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search action type..."
-                className="w-[250px] pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
             
+            <header className="border-b">
+              <div className="flex h-16 items-center px-4 gap-4">
+                <h1 className="text-xl font-semibold">Admin Activities</h1>
+                <span className="text-sm text-muted-foreground">Monitor Admin Activities</span>
+                <div className="ml-auto flex items-center gap-4">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder="Search action type..."
+                      className="w-[250px] pl-8"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </header>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Admin Activities</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ID</TableHead>
+                      <TableHead>TIME STAMP</TableHead>
+                      <TableHead>ACTION TYPE</TableHead>
+                      <TableHead>DESCRIPTION</TableHead>
+                      <TableHead>TARGET TYPE</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedData.length > 0 ? (
+                      paginatedData.map((activity, index) => (
+                        <TableRow key={activity.id || index}>
+                          <TableCell>{activity.id}</TableCell>
+                          <TableCell>{new Date(activity.timestamp).toLocaleString()}</TableCell>
+                          <TableCell>
+                            {activity.actionType
+                              ?.toLowerCase()
+                              .replace(/_/g, ' ')
+                              .replace(/\b\w/g, (char) => char.toUpperCase())
+                            }
+                          </TableCell>
+                          <TableCell>
+                            {activity.description
+                              ?.toLowerCase()
+                              .replace(/_/g, ' ')
+                              .replace(/\b\w/g, (char) => char.toUpperCase())
+                            }
+                          </TableCell>
+                          <TableCell>{activity.targetType}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                          {searchQuery ? `No activities found matching "${searchQuery}"` : "No activities found"}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+                
+                {totalFilteredItems > 0 && (
+                  <div className="flex items-center justify-between mt-4">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      itemLabel="Activities"
+                      itemsPerPage={ITEMS_PER_PAGE}
+                      onPageChange={handlePageChange}
+                      totalItems={totalFilteredItems}
+                    />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
-        </div>
-      </header>
-      
-          <Card>
-            <CardHeader>
-              <CardTitle>Admin Activities</CardTitle>
-            </CardHeader>
-            <CardContent>
-                       <Table>
-                         <TableHeader>
-                           <TableRow>
-                             <TableHead>ID</TableHead>
-                             <TableHead>TIME STAMP</TableHead>
-                             <TableHead>ACTION TYPE</TableHead>
-                             <TableHead>DESCRIPTION</TableHead>
-                             <TableHead>TARGET TYPE</TableHead>
-                             {/* <TableHead>TARGET ID</TableHead> */}
-                             {/* <TableHead>ACTIONS</TableHead> */}
-                           </TableRow>
-                         </TableHeader>
-                         <TableBody>
-                         {paginatedData.map((activity, index) => (
-    <TableRow key={activity.id || index}>
-      <TableCell>{activity.id}</TableCell>
-      <TableCell>{new Date(activity.timestamp).toLocaleString()}</TableCell>
-      <TableCell>{activity.actionType
-    ?.toLowerCase()
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase())}</TableCell>
-      <TableCell>{activity.description
-    ?.toLowerCase()
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase())}</TableCell>
-      <TableCell>{activity.targetType}</TableCell>
-      {/* <TableCell>{activity.targetId}</TableCell> */}
-      <TableCell>
-        {/* Placeholder for action buttons if needed */}
-        {/* <Button variant="ghost" size="sm">Investigate</Button> */}
-      </TableCell>
-           </TableRow>
-                         ))}
-           </TableBody>
-           </Table>
-           <div className="flex items-center justify-between mt-4">
-            
-               <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        itemLabel="Activities"
-        itemsPerPage={itemsPerPage}
-        onPageChange={(page) => setCurrentPage(page)}
-        totalItems={totalItems }
-
-      />
-            </div>
-           </CardContent>
-          </Card>
-        
-    </div>
-    )}
-    </div>
-  )
+        )}
+      </div>
+    )
 };
 
 export default ActivityLogs;

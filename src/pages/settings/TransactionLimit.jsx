@@ -11,6 +11,8 @@ import { Switch } from "../../components/ui/switch"
 import Separator from "../../components/ui/separator"
 const TransactionLimits = () => {
   const { currentRole, hasPermission } = useAdmin()
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
   
 
   const [transactionLimits, setTransactionLimits] = useState({
@@ -25,9 +27,14 @@ const TransactionLimits = () => {
     businessAccountLimit: "5000000",
   })
 
+  const handleSaveLimits = async () => {
+    setIsLoading(true)
+    setIsSaved(false)
+  }
+
   return (
     <div className="flex flex-col">
- <header className="border-b">
+      <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
           <h1 className="text-xl font-bold">Transaction Settings</h1>
          
@@ -137,9 +144,17 @@ const TransactionLimits = () => {
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button>Save Limits</Button>
-                </CardFooter>
+                <CardFooter className="flex items-center gap-3">
+                  <Button 
+                    onClick={handleSaveLimits}
+                    disabled={isLoading}
+                    className="min-w-[140px] hover:scale-105 cursor:pointer"
+                    variant="outline"
+                    size="lg"
+                  >
+                    Save Limits
+                  </Button>
+                </CardFooter>  
               </Card>
           )}
       </main>

@@ -1,45 +1,37 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { useSelector} from "react-redux";
-
+import apiService from '../services/apiService';
 
 // Async thunk to fetch admin activities
 export const fetchActivities = createAsyncThunk(
-    "AdminActivities/fetchActivities",
-    async ({ adminId, superAdminId }, thunkAPI) => {
-      try {
-       
-
-
+  "AdminActivities/fetchActivities",
+  async ({ adminId, superAdminId }, thunkAPI) => {
+    try {
       const queryParams = new URLSearchParams({
         page: 0,
         size: 100,
         sortBy: "timestamp",
         sortDirection: "desc"
-    }).toString();
+      }).toString();
 
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/activity-logs?${queryParams}`, {
-        method: "GET",
-        headers: {
-          'X-Admin-Id': superAdminId,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-      console.log(data.data.content)
-
-      return data.data.content;
+      const response = await apiService.fetchActivities(adminId, superAdminId, queryParams);
+      
+      // Now we can properly access the nested data structure
+      return {
+        data: response?.data?.data?.content || [],
+        total: response?.data?.data?.totalElements || 0
+      };
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message || 'Failed to fetch admin activity');
     }
   }
 );
-// console.log(data.data.content)
+
 const AdminActivitiesSlice = createSlice({
   name: "AdminActivities",
   initialState: {
     adminId: null,
     AdminActivities: [],
+    totalItems: 0,
     loading: false,
     error: null,
   },
@@ -55,7 +47,8 @@ const AdminActivitiesSlice = createSlice({
       })
       .addCase(fetchActivities.fulfilled, (state, action) => {
         state.loading = false;
-        state.AdminActivities = action.payload;
+        state.AdminActivities = action.payload.data;
+        state.totalItems = action.payload.total;
       })
       .addCase(fetchActivities.rejected, (state, action) => {
         state.loading = false;

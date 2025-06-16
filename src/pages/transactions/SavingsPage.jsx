@@ -31,7 +31,7 @@ const loansAndSavingTransactions = [
     { id: "BILL-009", user: "Olivia White", provider: "GasPlus", amount: 50, date: "2024-04-20", time: "5:26pm", status: "Failed", },
 ]
 
-function LoanAndSavingPage() {
+function SavingsPage() {
     const [searchQuery, setSearchQuery] = useState("")
     const { hasPermission } = useAdmin()
     const [selectedTransaction, setSelectedTransaction] = useState(null)
@@ -85,8 +85,8 @@ function LoanAndSavingPage() {
         <div className="flex flex-col">
             <header className="border-b">
                 <div className="flex h-16 items-center px-4 gap-4">
-                    <h1 className="text-xl font-semibold">Loans and Saving Transaction Overview</h1>
-                    <span className="text-sm text-muted-foreground">Manage bills and utilities transactions</span>
+                    <h1 className="text-xl font-semibold">Saving  Overview</h1>
+                    <span className="text-sm text-muted-foreground">Manage saings transactions</span>
                     <div className="ml-auto flex items-center gap-4">
                         <div className="relative">
                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -106,7 +106,7 @@ function LoanAndSavingPage() {
             <div className="grid gap-6 md:grid-cols-3 p-6">
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Savings</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">320</div>
@@ -136,7 +136,7 @@ function LoanAndSavingPage() {
             <main className="grid gap-6 md:grid-cols-7">
                 <Card className="md:col-span-4">
                     <CardHeader>
-                        <CardTitle>Recent Bills and Utilities Transactions</CardTitle>
+                        <CardTitle>Recent Savings</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Table>
@@ -178,19 +178,19 @@ function LoanAndSavingPage() {
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
+                                                <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >
+                                                    <DropdownMenuItem  className="hover:bg-[#3A859E]" onClick={() => handleViewDetails(transaction)}>
                                                         <CheckCircle className="mr-2 h-4 w-4" /> View Details
                                                     </DropdownMenuItem>
 
                                                     {transaction.status === "Successful" && (
-                                                        <DropdownMenuItem onClick={() => handleDownloadReceipt(transaction.id)}>
+                                                        <DropdownMenuItem  className="hover:bg-[#3A859E]" onClick={() => handleDownloadReceipt(transaction.id)}>
                                                             <Download className="mr-2 h-4 w-4 text-blue-600" /> Download Receipt
                                                         </DropdownMenuItem>
                                                     )}
 
                                                     {hasPermission("manageBillsAndUtilitiesTransactions") && transaction.status === "Pending" && (
-                                                        <DropdownMenuItem
+                                                        <DropdownMenuItem className="hover:bg-[#3A859E]" 
                                                             onClick={() => {
                                                                 setSelectedTransaction(transaction)
                                                                 setShowMarkSuccessDialog(true)
@@ -201,7 +201,7 @@ function LoanAndSavingPage() {
                                                     )}
 
                                                     {hasPermission("monitorHighRiskTransactions") && (
-                                                        <DropdownMenuItem
+                                                        <DropdownMenuItem className="hover:bg-[#3A859E]" 
                                                             onClick={() => {
                                                                 setSelectedTransaction(transaction)
                                                                 setShowFlagDialog(true)
@@ -212,7 +212,7 @@ function LoanAndSavingPage() {
                                                     )}
 
                                                     {hasPermission("adjustTransactionAmounts") && (
-                                                        <DropdownMenuItem
+                                                        <DropdownMenuItem className="hover:bg-[#3A859E]" 
                                                             onClick={() => {
                                                                 setSelectedTransaction(transaction)
                                                                 setAdjustAmount(transaction.amount.toString())
@@ -224,7 +224,7 @@ function LoanAndSavingPage() {
                                                     )}
 
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem>
+                                                    <DropdownMenuItem className="hover:bg-[#3A859E]" >
                                                         <AlertCircle className="mr-2 h-4 w-4" /> Contact User
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
@@ -419,4 +419,4 @@ function LoanAndSavingPage() {
     )
 }
 
-export default LoanAndSavingPage
+export default SavingsPage
