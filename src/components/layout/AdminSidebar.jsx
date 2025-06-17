@@ -191,6 +191,17 @@ export function AdminSidebar() {
               href="/dashboard/transactions/bills"
               isActive={location.pathname === "/dashboard/transactions/bills"}
             />
+
+             <SidebarSubItem
+              label="Loans"
+              href="/dashboard/transactions/loan"
+              isActive={location.pathname === "/dashboard/transactions/loan"}
+            />
+             <SidebarSubItem
+              label="Savings"
+              href="/dashboard/transactions/savings"
+              isActive={location.pathname === "/dashboard/transactions/savings"}
+            />
             <SidebarSubItem
               label="Airtime & Data"
               href="/dashboard/transactions/airtime"

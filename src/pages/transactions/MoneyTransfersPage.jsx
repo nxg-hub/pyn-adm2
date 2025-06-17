@@ -45,23 +45,19 @@ function MoneyTransfersPage() {
 
   const handleMarkSuccess = () => {
     setShowMarkSuccessDialog(false)
-    // logic to mark as success
   }
 
   const handleFlagTransaction = () => {
     setShowFlagDialog(false)
     setFlagReason("")
-    // logic to flag transaction
   }
 
   const handleAdjustAmount = () => {
     setShowAdjustDialog(false)
     setAdjustAmount("")
-    // logic to adjust amount
   }
 
   const handleDownloadReceipt = (id) => {
-    // This is where the actual download logic would go. For now, let's log the ID.
     console.log(`Download receipt for transaction: ${id}`)
   }
 
@@ -93,7 +89,19 @@ function MoneyTransfersPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button>Export</Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Export as CSV</DropdownMenuItem>
+                <DropdownMenuItem>Export as PDF</DropdownMenuItem>
+                <DropdownMenuItem>Export as Excel</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -174,7 +182,7 @@ function MoneyTransfersPage() {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >
                           <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
                             <CheckCircle className="mr-2 h-4 w-4" /> View Details
                           </DropdownMenuItem>

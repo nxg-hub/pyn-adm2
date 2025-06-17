@@ -87,40 +87,6 @@ function TransactionsPage() {
   ); 
   
 
-  // const fetchTransactions = async () => {
-  //   setLoading(true); // Set loading state
-  //   try {
-  //     const response = await fetch(import.meta.env.VITE_GET_TRANSACTION_HISTORY, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         // Include any necessary authentication headers
-  //       },
-  //       body: JSON.stringify({
-  //         page: 1,
-  //         perPage: 50, // Adjust page size if needed
-  //       }),
-  //     });
-  
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch transactions");
-  //     }
-  
-  //     const data = await response.json();
-  //     setTransactionsData(data.transactions || []); // Set the fetched transactions in state
-  //   } catch (error) {
-  //     console.error(error.message);
-  //     setError(error.message || "Unexpected error occurred");
-  //   } finally {
-  //     setLoading(false); // Disable loading state
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchTransactions();
-  //   console.log("i'm here")
-  // }, []);
-  
-
 
   return (
     <div className="flex flex-col">
@@ -139,7 +105,19 @@ function TransactionsPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button>Export</Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Export as CSV</DropdownMenuItem>
+                <DropdownMenuItem>Export as PDF</DropdownMenuItem>
+                <DropdownMenuItem>Export as Excel</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -219,24 +197,25 @@ function TransactionsPage() {
                                 <span className="sr-only">Open menu</span>
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
+                            <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " 
+                            >
+                              <DropdownMenuItem  className="hover:bg-[#3A859E]" onClick={() => handleViewDetails(transaction)}>
                                 <Eye className="mr-2 h-4 w-4" /> View Details
                               </DropdownMenuItem>
 
                               {hasPermission("approveRejectTransactions") && transaction.status === "Pending" && (
                                 <>
-                                  <DropdownMenuItem>
+                                  <DropdownMenuItem  className="hover:bg-[#3A859E]">
                                     <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Approve
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
+                                  </DropdownMenuItem> 
+                                  <DropdownMenuItem  className="hover:bg-[#3A859E]">
                                     <XCircle className="mr-2 h-4 w-4 text-red-600" /> Decline
                                   </DropdownMenuItem>
                                 </>
                               )}
 
                               {hasPermission("approveRejectTransactions") && transaction.status === "Completed" && (
-                                <DropdownMenuItem
+                                <DropdownMenuItem  className="hover:bg-[#3A859E]"
                                   onClick={() => {
                                     setSelectedTransaction(transaction)
                                     setShowReverseDialog(true)
@@ -247,7 +226,7 @@ function TransactionsPage() {
                               )}
 
                               {hasPermission("monitorHighRiskTransactions") && (
-                                <DropdownMenuItem
+                                <DropdownMenuItem  className="hover:bg-[#3A859E]"
                                   onClick={() => {
                                     setSelectedTransaction(transaction)
                                     setShowFlagDialog(true)
@@ -258,7 +237,7 @@ function TransactionsPage() {
                               )}
 
                               {hasPermission("adjustWalletBalances") && (
-                                <DropdownMenuItem
+                                <DropdownMenuItem  className="hover:bg-[#3A859E]"
                                   onClick={() => {
                                     setSelectedTransaction(transaction)
                                     setAdjustAmount(transaction.amount.toString())
@@ -271,7 +250,7 @@ function TransactionsPage() {
 
                               <DropdownMenuSeparator />
 
-                              <DropdownMenuItem>
+                              <DropdownMenuItem  className="hover:bg-[#3A859E]">
                                 <AlertCircle className="mr-2 h-4 w-4" /> Contact User
                               </DropdownMenuItem>
                             </DropdownMenuContent>

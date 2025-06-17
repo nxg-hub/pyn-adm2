@@ -1,11 +1,19 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import apiService from '../../services/apiService';
 import { LoginSchema } from './schema';
 import { useState, useEffect } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { fetchAdmin } from '../../redux/LoggedInAdminSlice';
+import backgroundImage from "../../assets/vector.png";
+import dashboardImage from "../../assets/dashboard.png";
+import payinaLogo from "../../assets/payina.png";
+import blueCircleImage from "../../assets/bluecircle.png";
+import yellowCircle from "../../assets/yellowcircle.png";
+import eclipse93 from "../../assets/eclipse93.png";
+import eclipse92 from "../../assets/eclipse92.png";
+import yellowstripe from "../../assets/yellowstripe.png";
+import apiService from '../../services/apiService';
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -48,91 +56,129 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
-useEffect(() => {       
-          localStorage.getItem("adminRole")
-        }
+    
+    useEffect(() => {       
+      localStorage.getItem("adminRole")
+    }
   ,);
 
   return (
-      <div className="min-h-screen flex flex-col md:flex-row bg-black">
-       
-       
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-16 left-14 z-0 pointer-events-none">
+        <img src={yellowCircle} className="h-[8.75rem]" alt="decoration" />
+      </div>
+      <div className="absolute top-[6.25rem] left-0 z-0 pointer-events-none">
+        <img src={blueCircleImage} className="h-[7.5rem]" alt="decoration" />
+      </div>
+      <div className="absolute top-[21.25rem] left-20 z-0 pointer-events-none">
+        <img src={eclipse93} className="h-[8.75rem]" alt="decoration" />
+      </div>
+      <div className="absolute top-[33.75rem] left-10 z-0 pointer-events-none">
+        <img src={eclipse92} className="h-[17.5rem]" alt="decoration" />
+      </div>
+      <div className="absolute top-0 right-0 z-0 pointer-events-none">
+        <img src={yellowstripe} className="h-[12.5rem]" alt="decoration" />
+      </div>
+      <div className="absolute top-[27.5rem] right-10 z-0 pointer-events-none">
+        <img src={yellowCircle} className="h-[8.75rem]" alt="decoration" />
+      </div>
 
-        <div className="w-full  flex flex-col justify-center p-6 md:p-8">
-          <div className="max-w-md w-full mx-auto">
-            <div className="text-center mb-8 md:mb-10">
-              <h1 className="text-[#006181] font-bold text-2xl md:text-3xl xl:text-4xl">
-                Login to Admin
-              </h1>
+      <div className="flex w-full max-w-6xl relative z-10">
+        <div className="w-1/2 h-[600px] bg-black border border-black flex items-center justify-center relative overflow-hidden">
+          <div className="absolute top-6 left-6 z-10">
+            <img src={payinaLogo} alt="Payina Logo" className="h-8 w-auto" />
+          </div>
+          <div className="absolute inset-0">
+            <img src={backgroundImage} alt="Background" className="w-full h-full object-cover" />
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img src={dashboardImage} alt="Dashboard Preview" className="max-w-full max-h-full object-contain" />
+          </div>
+        </div>
+
+        <div className="w-1/2 h-[600px] bg-[#161616] border border-black border-l-0 flex items-center justify-center relative p-6">
+          <div className="w-full max-w-md">
+            <h1 className="text-[#006181] text-center mb-8 font-semibold text-2xl md:text-3xl xl:text-4xl">
+              Payina Back Office
+            </h1>
+            <div className="text-white text-center font-semibold text-lg md:text-xl mb-6">
+              Hi Admin, Please login to your Dashboard
             </div>
 
-            <div className="bg-black rounded-lg shadow-sm">
-              <Formik
-                  initialValues={{ email: '', password: '' }}
-                  validationSchema={LoginSchema}
-                  onSubmit={handleSubmit}
-              >
-                {() => (
-                    <Form className="w-full space-y-4 md:space-y-6 p-4 md:p-6">
-                      <div className="text-[#006181] text-start font-bold text-xl md:text-2xl">
-                        Login
-                      </div>
+            <Formik
+              initialValues={{ email: '', password: '' }}
+              validationSchema={LoginSchema}
+              onSubmit={handleSubmit}
+            >
+              {() => (
+                <Form className="space-y-4">
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="email" className="text-sm font-normal text-[#006181] text-left">
+                      Email Address
+                    </label>
+                    <Field
+                      name="email"
+                      type="email"
+                      placeholder="Enter Email Address"
+                      className="w-full h-10 border border-gray-300 outline-none font-light text-base rounded px-3 text-black"
+                    />
+                    <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
+                  </div>
 
-                      <div className="flex flex-col space-y-2">
-                        <label htmlFor="email" className="text-sm font-normal text-[#006181]">
-                          Email Address
-                        </label>
-                        <Field
-                            name="email"
-                            type="email"
-                            placeholder="Enter Email Address"
-                            className="w-full h-12 border border-gray-300 outline-none font-light text-base rounded px-3"
-                        />
-                        <ErrorMessage name="email" component="span" className="text-red-500 text-sm" />
-                      </div>
+                  <div className="flex flex-col space-y-2 relative">
+                    <label htmlFor="password" className="text-sm font-normal text-[#006181] text-left">
+                      Password
+                    </label>
+                    <Field
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter Password"
+                      className="w-full h-10 border border-gray-300 outline-none font-light text-base rounded px-3 pr-10 text-black"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-8 cursor-pointer"
+                      onClick={handleShowPassword}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? ( 
+                        <BsEye className="text-gray-500" />
+                      ) : (
+                        <BsEyeSlash className="text-gray-500" />
+                      )}
+                    </button>
+                    <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
+                  </div>
 
-                      <div className="flex flex-col space-y-2 relative">
-                        <label htmlFor="password" className="text-sm font-normal text-[#006181]">
-                          Password
-                        </label>
-                        <Field
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="Enter Password"
-                            className="w-full h-12 border border-gray-300 outline-none font-light text-base rounded px-3"
-                        />
-                        <div className="absolute right-3 top-10 cursor-pointer">
-                          {showPassword ? (
-                              <BsEye onClick={handleShowPassword} className="text-gray-500" />
-                          ) : (
-                              <BsEyeSlash onClick={handleShowPassword} className="text-gray-500" />
-                          )}
-                        </div>
-                        <ErrorMessage name="password" component="span" className="text-red-500 text-sm" />
-                      </div>
+                  {errorMessage && (
+                    <div className="text-red-500 text-sm bg-red-50 border border-red-200 rounded p-2">
+                      {errorMessage}
+                    </div>
+                  )}
 
-                      <div className="pt-1 md:pt-2">
-                        <Link to="/forgot-password" className="text-[#006181] underline font-semibold text-sm">
-                          Forgot password?
-                        </Link>
-                      </div>
+                  <button
+                    type="submit"
+                    className="w-full text-base flex justify-center items-center rounded-md bg-[#006181] px-6 py-2 font-semibold text-white hover:bg-opacity-80 transition disabled:opacity-50"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Logging in...' : 'Login'}
+                  </button>
 
-                      {errorMessage && <div className="text-red-500">{errorMessage}</div>}
-
-                      <button
-                          type="submit"
-                          className="w-full mt-4 md:mt-6 text-base md:text-lg flex justify-center items-center rounded-md bg-[#006181] px-6 py-3 font-bold text-black hover:bg- transition disabled:opacity-50"
-                          disabled={isLoading}
-                      >
-                        {isLoading ? 'Logging in...' : 'Log in'}
-                      </button>
-                    </Form>
-                )}
-              </Formik>
-            </div>
+                  <div className="pt-2 text-right">
+                    <Link 
+                      to="/forgot-password" 
+                      className="text-white font-semibold text-md hover:text-[#006181] transition"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </div>
         </div>
       </div>
+    </div>
   );
 };
 

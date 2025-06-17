@@ -1,12 +1,16 @@
 // flaggedUsersSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import apiService from '../services/apiService';
 
 export const fetchFlaggedUsers = createAsyncThunk(
   'flaggedUsers/fetch',
-  async () => {
-    const res = await fetch(import.meta.env.VITE_GET_FLAGGED_USERS)
-    const data = await res.json();
-    return data.data.content; // array of objects with userDetails & suspensionDetails
+  async (_, thunkAPI) => {
+  try{
+      const res = await apiService.fetchFlaggedUsers()
+      return res;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.message || "An unknown error occurred");
+    }
   }
 );
 

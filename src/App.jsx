@@ -6,12 +6,13 @@ import ProtectedRoute from "./utilities/ProtectedRoutes.jsx";
 import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 
 // Auth
-import LoginForm from "./pages/Login/login";
+import LoginForm from "./pages/Login/login.jsx";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.jsx";
 
 // Dashboard
 import Dashboard from "./pages/Dashboard";
 
-// Users
+// Users/
 import UsersPage from "./pages/users/UsersPage";
 import AdminsPage from "./pages/users/AdminUsers";
 import SuspendedAccounts from "./pages/users/SuspendedAccounts";
@@ -30,6 +31,8 @@ import ViewFlagDetails from "./pages/users/ActionPages/ViewFlaggedDetails.jsx";
 
 // Transactions
 import Transactions from "./pages/transactions/page";
+import LoanPage from "./pages/transactions/LoanPage.jsx";
+import SavingsPage from "./pages/transactions/SavingsPage.jsx";
 
 // Wallets
 import WalletsPage from "./pages/wallets/WalletsPage";
@@ -77,6 +80,7 @@ import Report from "./pages/reports/page";
 
 import PageNotFound from "./pages/PageNotFound.jsx";
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -87,10 +91,10 @@ function App() {
         <Route path="/completereg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<PageNotFound />} />
-
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* Protected Admin Routes */}
-<Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
+          <Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>
           {/* Dashboard */}
           <Route path="dashboard" element={<Dashboard />} />
 
@@ -110,9 +114,12 @@ function App() {
           <Route path="/view-activities" element={<ActivityLogs />} />
           <Route path="/view-details" element={<ViewSuspension />} />
           <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
+  
 
-{/* Transactions */}
+          {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />
+          <Route path="dashboard/transactions/loan" element={<LoanPage />} />
+          <Route path="dashboard/transactions/savings" element={<SavingsPage />} />
 
 
             {/* Wallets */}

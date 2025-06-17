@@ -92,18 +92,18 @@ export function CorporateAccountsPage() {
                         <MoreHorizontal className="h-5 w-5" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>View Details</DropdownMenuItem>
-                      <DropdownMenuItem>Transaction History</DropdownMenuItem>
-                      <DropdownMenuItem>Employees Account</DropdownMenuItem>
+                    <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             >
+                      <DropdownMenuItem className="hover:bg-[#3A859E]">View Details</DropdownMenuItem>
+                      <DropdownMenuItem className="hover:bg-[#3A859E]">Transaction History</DropdownMenuItem>
+                      <DropdownMenuItem className="hover:bg-[#3A859E]">Employees Account</DropdownMenuItem>
                       {account.status === "Active" && (
-                        <DropdownMenuItem className="text-red-600">Suspend Account</DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">Suspend Account</DropdownMenuItem>
                       )}
                       {account.status === "Suspended" && (
-                        <DropdownMenuItem className="text-green-600">Reactivate Account</DropdownMenuItem>
+                        <DropdownMenuItem className="text-green-600 hover:bg-[#3A859E]">Reactivate Account</DropdownMenuItem>
                       )}
                       {account.status === "Inactive" && (
-                        <DropdownMenuItem className="text-blue-600">Activate Account</DropdownMenuItem>
+                        <DropdownMenuItem className="text-blue-600 hover:bg-[#3A859E]">Activate Account</DropdownMenuItem>
                       )}
                     </DropdownMenuContent>
                   </DropdownMenu>

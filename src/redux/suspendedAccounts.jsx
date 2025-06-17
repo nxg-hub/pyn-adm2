@@ -1,12 +1,20 @@
 // suspendedUsersSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import apiService from '../services/apiService';
 
 export const fetchSuspendedUsers = createAsyncThunk(
   'suspendedUsers/fetch',
-  async () => {
-    const res = await fetch(import.meta.env.VITE_GET_SUSPENDED_USERS)
-    const data = await res.json();
-    return data.data.content; // array of objects with userDetails & suspensionDetails
+  async (_, thunkAPI) => {
+    try{
+      const res = await apiService.fetchSuspendedUsers()
+      console.log("Fetched suspended users:", res);
+      if (!Array.isArray(res)) {
+      throw new Error("Invalid data format: expected an array");
+    }
+      return res;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.message || "An unknown error occurred");
+    }
   }
 );
 

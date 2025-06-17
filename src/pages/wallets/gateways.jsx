@@ -147,21 +147,21 @@ export function PaymentGatewaysPage() {
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
-                            <DropdownMenuItem>Transaction History</DropdownMenuItem>
+                          <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             >
+                            <DropdownMenuItem className="hover:bg-[#3A859E]">View Details</DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-[#3A859E]">Transaction History</DropdownMenuItem>
                             {gateway.status === "Active" && (
-                              <DropdownMenuItem className="text-red-600">
+                              <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">
                                 Suspend Gateway
                               </DropdownMenuItem>
                             )}
                             {gateway.status === "Suspended" && (
-                              <DropdownMenuItem className="text-green-600">
+                              <DropdownMenuItem className="text-green-600 hover:bg-[#3A859E]">
                                 Reactivate Gateway
                               </DropdownMenuItem>
                             )}
                             {gateway.status === "Inactive" && (
-                              <DropdownMenuItem className="text-blue-600">
+                              <DropdownMenuItem className="text-blue-600 hover:bg-[#3A859E]">
                                 Activate Gateway
                               </DropdownMenuItem>
                             )}
