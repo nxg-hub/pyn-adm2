@@ -207,15 +207,15 @@ function VirtualCardsPage() {
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
-                            <DropdownMenuItem>Transaction History</DropdownMenuItem>
-                            <DropdownMenuItem>Edit Card</DropdownMenuItem>
+                          <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             >
+                            <DropdownMenuItem className="hover:bg-[#3A859E]">View Details</DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-[#3A859E]">Transaction History</DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-[#3A859E]">Edit Card</DropdownMenuItem>
                             {card.status === "Active" && (
-                              <DropdownMenuItem className="text-red-600">Freeze Card</DropdownMenuItem>
+                              <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">Freeze Card</DropdownMenuItem>
                             )}
                             {card.status === "Frozen" && (
-                              <DropdownMenuItem className="text-green-600">Activate Card</DropdownMenuItem>
+                              <DropdownMenuItem className="text-green-600 hover:bg-[#3A859E]">Activate Card</DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
                         </DropdownMenu>

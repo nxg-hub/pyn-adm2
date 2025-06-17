@@ -182,7 +182,7 @@ function MoneyTransfersPage() {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >
                           <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
                             <CheckCircle className="mr-2 h-4 w-4" /> View Details
                           </DropdownMenuItem>

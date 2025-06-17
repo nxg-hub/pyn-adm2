@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, Filter, Download, MoreHorizontal, CreditCard, Wallet } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -60,6 +60,24 @@ const wallets = [
 
 function WalletsPage() {
   const [searchQuery, setSearchQuery] = useState("")
+    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+  
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+  
+      return () => clearTimeout(timer);
+    }, []);
+  
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1500);
+  
+      return () => clearTimeout(timer);
+    }, []);
 
   return (
     <div className="flex flex-col">
@@ -101,6 +119,10 @@ function WalletsPage() {
 
       <main className="flex-1 p-4 md:p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-3">
+          {loading ? (
+            Array.from({ length: 3 }).map((_, index) => <CardLoader key={index} />)
+          ) : (
+            <>
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Wallets</CardTitle>
@@ -128,6 +150,8 @@ function WalletsPage() {
               <p className="text-xs text-muted-foreground">87% of total wallets</p>
             </CardContent>
           </Card>
+            </>
+         )}
         </div>
 
         <Card>
@@ -183,18 +207,18 @@ function WalletsPage() {
                             <span className="sr-only">Open menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Transaction History</DropdownMenuItem>
-                          <DropdownMenuItem>Edit Wallet</DropdownMenuItem>
+                        <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             >
+                          <DropdownMenuItem className="hover:bg-[#3A859E]">View Details</DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]">Transaction History</DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]">Edit Wallet</DropdownMenuItem>
                           {wallet.status === "Active" && (
-                            <DropdownMenuItem className="text-red-600">Suspend Wallet</DropdownMenuItem>
+                            <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">Suspend Wallet</DropdownMenuItem>
                           )}
                           {wallet.status === "Suspended" && (
-                            <DropdownMenuItem className="text-green-600">Reactivate Wallet</DropdownMenuItem>
+                            <DropdownMenuItem className="text-green-600 hover:bg-[#3A859E]">Reactivate Wallet</DropdownMenuItem>
                           )}
                           {wallet.status === "Inactive" && (
-                            <DropdownMenuItem className="text-blue-600">Activate Wallet</DropdownMenuItem>
+                            <DropdownMenuItem className="text-blue-600 hover:bg-[#3A859E]">Activate Wallet</DropdownMenuItem>
                           )}
                         </DropdownMenuContent>
                       </DropdownMenu>

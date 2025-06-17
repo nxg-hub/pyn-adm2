@@ -185,19 +185,19 @@ function EventAndLifestylePage() {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
+                        <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >
+                          <DropdownMenuItem className="hover:bg-[#3A859E]"  onClick={() => handleViewDetails(transaction)}>
                             <CheckCircle className="mr-2 h-4 w-4" /> View Details
                           </DropdownMenuItem>
 
                           {transaction.status === "Successful" && (
-                            <DropdownMenuItem onClick={() => handleDownloadReceipt(transaction.id)}>
+                            <DropdownMenuItem  className="hover:bg-[#3A859E]" onClick={() => handleDownloadReceipt(transaction.id)}>
                               <Download className="mr-2 h-4 w-4 text-blue-600" /> Download Receipt
                             </DropdownMenuItem>
                           )}
 
                           {hasPermission("manageEventTransactions") && transaction.status === "Pending" && (
-                            <DropdownMenuItem
+                            <DropdownMenuItem className="hover:bg-[#3A859E]" 
                               onClick={() => {
                                 setSelectedTransaction(transaction)
                                 setShowMarkSuccessDialog(true)
@@ -208,7 +208,7 @@ function EventAndLifestylePage() {
                           )}
 
                           {hasPermission("monitorSuspiciousEventTransactions") && (
-                            <DropdownMenuItem
+                            <DropdownMenuItem className="hover:bg-[#3A859E]" 
                               onClick={() => {
                                 setSelectedTransaction(transaction)
                                 setShowFlagDialog(true)
@@ -219,7 +219,7 @@ function EventAndLifestylePage() {
                           )}
 
                           {hasPermission("adjustTransactionAmounts") && (
-                            <DropdownMenuItem
+                            <DropdownMenuItem className="hover:bg-[#3A859E]" 
                               onClick={() => {
                                 setSelectedTransaction(transaction)
                                 setAdjustAmount(transaction.amount.toString())
@@ -231,7 +231,7 @@ function EventAndLifestylePage() {
                           )}
 
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]" >
                             <AlertCircle className="mr-2 h-4 w-4" /> Contact Participant
                           </DropdownMenuItem>
                         </DropdownMenuContent>

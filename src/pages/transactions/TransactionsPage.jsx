@@ -197,24 +197,25 @@ function TransactionsPage() {
                                 <span className="sr-only">Open menu</span>
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
+                            <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " 
+                            >
+                              <DropdownMenuItem  className="hover:bg-[#3A859E]" onClick={() => handleViewDetails(transaction)}>
                                 <Eye className="mr-2 h-4 w-4" /> View Details
                               </DropdownMenuItem>
 
                               {hasPermission("approveRejectTransactions") && transaction.status === "Pending" && (
                                 <>
-                                  <DropdownMenuItem>
+                                  <DropdownMenuItem  className="hover:bg-[#3A859E]">
                                     <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Approve
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
+                                  </DropdownMenuItem> 
+                                  <DropdownMenuItem  className="hover:bg-[#3A859E]">
                                     <XCircle className="mr-2 h-4 w-4 text-red-600" /> Decline
                                   </DropdownMenuItem>
                                 </>
                               )}
 
                               {hasPermission("approveRejectTransactions") && transaction.status === "Completed" && (
-                                <DropdownMenuItem
+                                <DropdownMenuItem  className="hover:bg-[#3A859E]"
                                   onClick={() => {
                                     setSelectedTransaction(transaction)
                                     setShowReverseDialog(true)
@@ -225,7 +226,7 @@ function TransactionsPage() {
                               )}
 
                               {hasPermission("monitorHighRiskTransactions") && (
-                                <DropdownMenuItem
+                                <DropdownMenuItem  className="hover:bg-[#3A859E]"
                                   onClick={() => {
                                     setSelectedTransaction(transaction)
                                     setShowFlagDialog(true)
@@ -236,7 +237,7 @@ function TransactionsPage() {
                               )}
 
                               {hasPermission("adjustWalletBalances") && (
-                                <DropdownMenuItem
+                                <DropdownMenuItem  className="hover:bg-[#3A859E]"
                                   onClick={() => {
                                     setSelectedTransaction(transaction)
                                     setAdjustAmount(transaction.amount.toString())
@@ -249,7 +250,7 @@ function TransactionsPage() {
 
                               <DropdownMenuSeparator />
 
-                              <DropdownMenuItem>
+                              <DropdownMenuItem  className="hover:bg-[#3A859E]">
                                 <AlertCircle className="mr-2 h-4 w-4" /> Contact User
                               </DropdownMenuItem>
                             </DropdownMenuContent>

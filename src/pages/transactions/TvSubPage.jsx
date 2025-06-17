@@ -240,19 +240,19 @@ function TVSubscriptionPage() {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleViewDetails(subscription)}>
+                        <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >
+                          <DropdownMenuItem  className="hover:bg-[#3A859E]" onClick={() => handleViewDetails(subscription)}>
                             <CheckCircle className="mr-2 h-4 w-4" /> View Details
                           </DropdownMenuItem>
 
                           {subscription.status === "Successful" && (
-                            <DropdownMenuItem onClick={() => handleDownloadReceipt(subscription.id)}>
+                            <DropdownMenuItem  className="hover:bg-[#3A859E]"  onClick={() => handleDownloadReceipt(subscription.id)}>
                               <Download className="mr-2 h-4 w-4 text-blue-600" /> Download Receipt
                             </DropdownMenuItem>
                           )}
 
                           {hasPermission("manageTVSubscriptions") && subscription.status === "Pending" && (
-                            <DropdownMenuItem
+                            <DropdownMenuItem  className="hover:bg-[#3A859E]" 
                               onClick={() => {
                                 setSelectedSubscription(subscription)
                                 setShowMarkSuccessDialog(true)
@@ -263,7 +263,7 @@ function TVSubscriptionPage() {
                           )}
 
                           {hasPermission("monitorHighRiskTransactions") && (
-                            <DropdownMenuItem
+                            <DropdownMenuItem  className="hover:bg-[#3A859E]" 
                               onClick={() => {
                                 setSelectedSubscription(subscription)
                                 setShowFlagDialog(true)
@@ -274,7 +274,7 @@ function TVSubscriptionPage() {
                           )}
 
                           {hasPermission("adjustSubscriptionAmounts") && (
-                            <DropdownMenuItem
+                            <DropdownMenuItem  className="hover:bg-[#3A859E]" 
                               onClick={() => {
                                 setSelectedTransaction(subscription)
                                 setAdjustAmount(subscription.amount.toString())
@@ -286,7 +286,7 @@ function TVSubscriptionPage() {
                           )}
 
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>
+                          <DropdownMenuItem  className="hover:bg-[#3A859E]" >
                             <AlertCircle className="mr-2 h-4 w-4" /> Contact User
                           </DropdownMenuItem>
                         </DropdownMenuContent>
