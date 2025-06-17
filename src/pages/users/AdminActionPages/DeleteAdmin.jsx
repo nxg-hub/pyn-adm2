@@ -13,7 +13,7 @@ const DeleteAdminModal = ({ isOpen, onClose, }) => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('');
-  const dispatch = useDispatch
+  const dispatch = useDispatch();
 
   const handleDelete = async () => {
     setLoading(true);
@@ -21,7 +21,7 @@ const DeleteAdminModal = ({ isOpen, onClose, }) => {
     const adminId = admin?.id;
 
   try {
-      await apiService.deleteAdmin(XAdminId, adminId);
+     await apiService.deleteAdmin(XAdminId, adminId);
  
         setSuccessMessage('Admin deleted!');
         setTimeout(() => {
@@ -30,9 +30,9 @@ const DeleteAdminModal = ({ isOpen, onClose, }) => {
           onClose(); 
         }, 4000);
   
-      }
-     catch (error) {
-      setErrorMessage(`Failed to delete: ${message}`);
+      
+    }catch (error) {
+  setErrorMessage(error.responseData?.message || error.message || 'Failed to delete admin.');
     } finally {
       setLoading(false);
     }

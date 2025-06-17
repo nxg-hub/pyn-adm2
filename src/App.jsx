@@ -84,7 +84,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LoginForm />} />
-        <Route path="/complete-reg" element={<CompleteRegForm />} />
+        <Route path="/completereg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<PageNotFound />} />
 

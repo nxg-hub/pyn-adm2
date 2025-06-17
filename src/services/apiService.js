@@ -58,6 +58,8 @@ const apiService = {
     if (!response.ok) {
       throw new Error( result.debugMessage || 'Failed to send invite');
     }
+
+    return result;
     },
 
   completeRegistration: async (requestData, token) => {
@@ -181,8 +183,8 @@ const apiService = {
 
  
   deleteAdmin: async (XAdminId, adminId) => {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}api//v1/admin/management/${adminId}`, {
-      method: 'POST',
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}`, {
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
           'X-Admin-Id': XAdminId
@@ -210,6 +212,8 @@ const apiService = {
     if (!response.ok) {
       throw new Error( result.debugMessage || 'Failed to delete admin');
     }
+
+    return result;
   },
 
    updateAdminPermission: async (formData, XAdminId, adminId) => {
