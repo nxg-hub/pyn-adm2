@@ -35,7 +35,7 @@ import {
   Briefcase,
 } from "lucide-react";
 import { useEffect } from "react";
-
+import logo from '../../assets/logo.png'
 import { useAdmin } from "../../contexts/AdminContext";
 import { cn } from "../../lib/utils";
 
@@ -108,8 +108,8 @@ export function AdminSidebar() {
 
   return (
     <div className="w-64 border-r bg-card h-screen overflow-y-auto">
-      <div className="flex h-14 items-center border-b px-4 font-bold text-xl bg-[#006181] text-white">
-        Payina Admin
+      <div className="flex h-14 items-center border-b px-4">
+        <img src={logo} alt='logo'/>
       </div>
       <nav className="space-y-1 p-2">
         <ul className="space-y-1">

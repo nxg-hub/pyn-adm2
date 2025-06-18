@@ -27,14 +27,14 @@ const AdminInvite = ({ isOpen, onClose }) => {
 
     try {
       const result = await apiService.inviteAdmin( requestData, AdminId)
-      if ( result.message === 'Admin invitation has been sent successfully') {
+      if ( result?.message === 'Admin invitation has been sent successfully') {
         setSuccessMessage('Admin invite sent.');
         setTimeout(() => {
           setSuccessMessage('');
         }, 3000);
-        resetForm();
+        onClose();
       } else {
-        setErrorMessage(result.debugMessage || 'An error occurred while sending the invite.');
+        setErrorMessage(result?.message || 'An error occurred while sending the invite.');
       }
     } catch (error) {
       console.error('Error sending invite:', error);

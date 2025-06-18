@@ -25,11 +25,13 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { useSelector } from 'react-redux';
+
 
 const userData = [
   { name: "Jan", value: 125000 },
   { name: "Feb", value: 85000 },
-  { name: "Mar", value: 175000 },
+  { name: "Mar", value: 15000 },
   { name: "Apr", value: 95000 },
   { name: "May", value: 65000 },
   { name: "Jun", value: 45000 },
@@ -41,12 +43,23 @@ const userData = [
   { name: "Dec", value: 75000 },
 ];
 
-const userSegmentData = [
-  { name: "Business", value: 50, color: "#10b981" },
-  { name: "Personal", value: 50, color: "#f59e0b" },
-];
+
 
 const UserAnalytics = () => {
+   const users = useSelector((state) => state.users.users);
+
+
+   const personalUsers = users?.filter(user => user.userType === "PERSONAL")
+   const businessUsers = users?.filter(user => user.userType === "CORPORATE")
+
+const totalPersonalUsers = personalUsers.length;
+const totalBusinessUsers = businessUsers.length;
+
+const userSegmentData = [
+  { name: "Business", value: totalBusinessUsers ,color: "#10b981" },
+  { name: "Personal", value: totalPersonalUsers, color: "#f59e0b" },
+];
+
   return (
     <div className="flex flex-col">
       <header className="border-b">
@@ -77,7 +90,7 @@ const UserAnalytics = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">427,832</div>
+              <div className="text-2xl font-bold">{users.length}</div>
               {/* <p className="text-xs text-green-500">
                 +12.5% from previous period
               </p> */}
@@ -90,7 +103,7 @@ const UserAnalytics = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">58,456</div>
+              <div className="text-2xl font-bold">{totalPersonalUsers}</div>
               {/* <p className="text-xs text-green-500">
                 +8.3% from previous period
               </p> */}
@@ -103,7 +116,7 @@ const UserAnalytics = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">32,543</div>
+              <div className="text-2xl font-bold">{totalBusinessUsers}</div>
               {/* <p className="text-xs text-red-500">-3.1% from previous period</p> */}
             </CardContent>
           </Card>
