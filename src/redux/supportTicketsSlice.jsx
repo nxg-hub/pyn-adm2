@@ -5,9 +5,22 @@ import apiService from '../services/apiService';
 
 export const fetchSupportTickets = createAsyncThunk(
   'supportTickets/fetchSupportTickets',
-  async (_, thunkAPI) => {
+  async ({ status, priority, category, searchQuery}, thunkAPI) => {
+
+
     try {
-      const tickets = await apiService.FetchSupportTickets();
+
+      const queryParams = new URLSearchParams({
+      page: 0,
+      size: 10,
+      // status,
+      // search: searchQuery,
+      priority,
+      category,
+      sortBy: "createdAt",
+      sortDir: "desc"
+    }).toString();
+      const tickets = await apiService.FetchSupportTickets(queryParams);
       return tickets;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message || 'Failed to fetch support tickets');

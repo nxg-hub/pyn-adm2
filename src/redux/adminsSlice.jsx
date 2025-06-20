@@ -6,9 +6,7 @@ export const fetchAdmins = createAsyncThunk('admin/fetchAdmins',   async (_, { r
 
   try {
     const response = await apiService.fetchAdmins()
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch admins');
-      }
+     
     return response; 
   } catch (error) {
     return rejectWithValue(error?.message || "An unknown error occurred");

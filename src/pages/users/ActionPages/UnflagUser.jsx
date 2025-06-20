@@ -41,7 +41,7 @@ const UnflagUserModal = ({ isOpen, onClose, }) => {
       setSuccessMessage("This user has been unflagged!");
        setTimeout(() => {
         setSuccessMessage('');
-        dispatch(fetchUsers()); 
+        dispatch(fetchFlaggedUsers()); 
       onClose() 
     }, 2000)
     } catch (err) {

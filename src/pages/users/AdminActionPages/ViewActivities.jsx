@@ -105,9 +105,9 @@ const ActivityLogs = () => {
                     <TableRow>
                       <TableHead>ID</TableHead>
                       <TableHead>TIME STAMP</TableHead>
-                      <TableHead>ACTION TYPE</TableHead>
+                      {/* <TableHead>ACTION TYPE</TableHead> */}
                       <TableHead>DESCRIPTION</TableHead>
-                      <TableHead>TARGET TYPE</TableHead>
+                      {/* <TableHead>TARGET TYPE</TableHead> */}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -116,13 +116,13 @@ const ActivityLogs = () => {
                         <TableRow key={activity.id || index}>
                           <TableCell>{activity.id}</TableCell>
                           <TableCell>{new Date(activity.timestamp).toLocaleString()}</TableCell>
-                          <TableCell>
+                          {/* <TableCell>
                             {activity.actionType
                               ?.toLowerCase()
                               .replace(/_/g, ' ')
                               .replace(/\b\w/g, (char) => char.toUpperCase())
                             }
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell>
                             {activity.description
                               ?.toLowerCase()
@@ -130,7 +130,7 @@ const ActivityLogs = () => {
                               .replace(/\b\w/g, (char) => char.toUpperCase())
                             }
                           </TableCell>
-                          <TableCell>{activity.targetType}</TableCell>
+                          {/* <TableCell>{activity.targetType}</TableCell> */}
                         </TableRow>
                       ))
                     ) : (
