@@ -6,12 +6,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Input } from "../../components/ui/input"
 import { useAdmin } from "../../contexts/AdminContext"
 import { Badge } from "../../components/ui/badge"
-import DataTable from "../../components/common/DataTable"
 import CreateSuspiciousReport from "./CreateSuspicious"
 import Pagination from "../../components/ui/pagination"
 import { TableLoader } from "../../components/ui/loader"
 import apiService from "../../services/apiService";
 import ViewSuspiciousActivities from "./ViewSuspiciousActivityDetails"
+import SearchFilterBar from "../../components/common/SearchFilterBar"
 
 
 const SuspiciousActivities = () => {
@@ -23,6 +23,7 @@ const SuspiciousActivities = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
   const [selectedActivity, setSelectedActivity] = useState('');
+  const [severity, setSeverity] = useState('');
   const [suspiciousModal, setSuspiciousModal] = useState('')
 
  const handleAddSusClick = () => {
@@ -51,9 +52,10 @@ const handleFetchActivities = async () => {
 };
 
 const filteredData = (activities)?.filter((activity) => {
-  const NameMatch = activity.customerName?.toLowerCase().includes(searchQuery.toLowerCase())
-  // const emailMatch = user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  return NameMatch 
+  const NameMatch = activity.customerName?.toLowerCase().includes(searchQuery.toLowerCase());
+const matchesSeverity = severity
+  ? activity.severity.toLowerCase() === severity.toLowerCase()
+  : true;  return NameMatch && matchesSeverity
 })
 
 const totalActivities= activities.length
@@ -79,16 +81,24 @@ useEffect(() => {
  <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
           <h1 className="text-xl font-semibold">Suspicious Activities</h1>
-          <span className="text-sm text-muted-foreground">Monitor Suspicious Activities</span>
+          </div>
+          </header>
+                <main className="flex-1 p-4 md:p-6 space-y-6">
+
           <div className="ml-auto flex items-center gap-4">
             <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search verifications..."
-                className="w-[250px] pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+             <SearchFilterBar
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+      filters={[
+        {
+          label: 'Severity',
+          name: 'severity',
+          options: ['High risk', 'Low risk'],
+          value: severity,
+          onChange: setSeverity,
+        },
+      ]}
               />
             </div>
             
@@ -103,11 +113,10 @@ useEffect(() => {
           />
             
           </div>
-        </div>
-      </header>
-      <div className="flex items-center justify-between">
+        
+      {/* <div className="flex items-center justify-between">
       <Button>Export Report</Button>
-    </div>
+    </div> */}
     {hasPermission("monitorHighRiskTransactions") && (
           <Card>
             <CardHeader>
@@ -119,7 +128,7 @@ useEffect(() => {
                               <TableRow>
                                 <TableHead>USER</TableHead>
                                 <TableHead>ACTIVITY TYPE</TableHead>
-                                <TableHead>RISK LEVEL</TableHead>
+                                <TableHead>SEVERITY</TableHead>
                                 <TableHead>REPORTED AT</TableHead>
                                 <TableHead>ACTIONS</TableHead>
 
@@ -128,7 +137,7 @@ useEffect(() => {
                             <TableBody>
                                {paginatedData.map((activity) => (
                                                 <TableRow key={activity.id}>
-                                                  <TableCell className="font-medium">
+                                                  <TableCell className="font-medium ">
                                                     <div className="flex items-center gap-3">
                                                       <div>
                                                         <div>{activity.customerName}</div>
@@ -191,7 +200,8 @@ useEffect(() => {
 
             </CardContent>
           </Card>
-        )}     
+        )} 
+        </main>    
     </div>
       )}
       </div>

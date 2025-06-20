@@ -2,17 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from 'react-redux';
-import { FileText, CheckCircle, Clock, MessageSquare, MessageCircle, Search, User, FilePlus } from "lucide-react"
+import { FileText, CheckCircle, Clock, MessageSquare, MessageCircle, Search, User, FilePlus, Filter } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
-import { Input } from "../../components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { useAdmin } from "../../contexts/AdminContext"
 import { Badge } from "../../components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog"
 import { Textarea } from "../../components/ui/textarea"
 import DataTable from "../../components/common/DataTable"
-import StatCard from "../../components/common/StatCard"
 import CreateNewTicket from "./CreateNewTicket";
 import AssignTicket from "./assignTicket";
 import { fetchSupportTickets } from "../../redux/supportTicketsSlice"
@@ -23,6 +21,7 @@ import Resolve from "./Resolve";
 import AddMessage from "./AddMessage";
 import ViewTicketDetails from "./ViewTicketDetails";
 import ViewTicketMessages from "./viewTicketMessage";
+import SearchFilterBar from "../../components/common/SearchFilterBar";
 
 
 
@@ -41,18 +40,30 @@ const SupportTicketsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useDispatch();
   const [openAddMessageModal, setOpenAddMessageModal] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [status, setStatus] = useState('');
+  const [priority, setPriority] = useState('');
+  const [category, setCategory] = useState(''); 
   const { tickets, loading, error } = useSelector((state) => state.supportTickets); 
   
 useEffect(() => {
-    dispatch(fetchSupportTickets());
-  }, [dispatch]);
+  dispatch(fetchSupportTickets({ priority, category}));
+  }, [dispatch, priority, category]);
 
   const ITEMS_PER_PAGE = 5;
   const itemsPerPage = ITEMS_PER_PAGE;
 
   const filteredData = (tickets)?.filter((ticket) => {
-  const Id = ticket.customerId?.toLowerCase().includes(searchQuery.toLowerCase())
-  return Id 
+  const matchesSearch =
+    ticket.customerId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ticket.customerName?.toLowerCase().includes(searchQuery.toLowerCase());
+
+   const matchesStatus = status ? ticket.status === status : true;
+  const matchesPriority = priority ? ticket.priority === priority : true;
+  const matchesCategory = category ? ticket.category === category : true;
+
+  return  matchesSearch && matchesStatus && matchesPriority && matchesCategory;
+
 })
 
 const totalTickets= tickets.length
@@ -227,23 +238,40 @@ render: (row) => (
             </div>
           </header>
       <main className="flex-1 p-4 md:p-6 space-y-6">
+        <div className="ml-auto flex items-center gap-5">
+          <div className="relative">
+    <SearchFilterBar
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+      filters={[
+        {
+          label: 'Status',
+          name: 'status',
+          options: ['OPEN', 'ASSIGNED', 'IN_PROGRESS', 'RESOLVED'],
+          value: status,
+          onChange: setStatus,
+        },
+        {
+          label: 'Priority',
+          name: 'priority',
+          options: ['LOW', 'MEDIUM', 'HIGH'],
+          value: priority,
+          onChange: setPriority,
+        },
+        {
+          label: 'Category',
+          name: 'category',
+          options: ['billing', 'technical', 'general'],
+          value: category,
+          onChange: setCategory,
+        },
+      ]}
+    />
+    </div>
 
-        <div className="flex items-center justify-between">
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search..."
-                    className="w-[250px] pl-8"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                
-                
-              </div>
           {hasPermission("assignSupportTickets") && <Button onClick={handleCreateNew}>
             <FilePlus className="mr-2 h-4 w-4" />Create New Ticket</Button>}
-        </div>
+            </div>
         <CreateNewTicket
         isOpen={openCreateNew}
         onClose={()=> setOpenCreateNew(false)}
@@ -261,6 +289,7 @@ render: (row) => (
                 <TabsTrigger value="all">All Tickets</TabsTrigger>
                 <TabsTrigger value="open">Open</TabsTrigger>
                 <TabsTrigger value="in-progress">In Progress</TabsTrigger>
+                <TabsTrigger value="assigned">Assigned</TabsTrigger>
                 <TabsTrigger value="resolved">Resolved</TabsTrigger>
               </TabsList>
               <TabsContent value="all" className="mt-4">
@@ -270,8 +299,11 @@ render: (row) => (
                 <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "OPEN")} />
               </TabsContent>
               <TabsContent value="in-progress" className="mt-4">
-                <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "ASSIGNED" || ticket.status === "IN_PROGRESS")}
+                <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "IN_PROGRESS")}
  />
+              </TabsContent>
+              <TabsContent value="assigned" className="mt-4">
+                <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "ASSIGNED")} />
               </TabsContent>
               <TabsContent value="resolved" className="mt-4">
                 <DataTable columns={columns} data={paginatedData.filter((ticket) => ticket.status === "RESOLVED")} />

@@ -7,6 +7,7 @@ import { useAdmin } from "../contexts/AdminContext"
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from "../redux/UsersSlice";
 import { fetchAdmins } from "../redux/adminsSlice"
+import { fetchAdmin } from "../redux/LoggedInAdminSlice"
 import { useState, useEffect } from "react"
 import UserSegmentPieChart from "../components/ui/pie-chart"
 
@@ -26,11 +27,20 @@ const transactionData = [
 function Dashboard() {
   const dispatch = useDispatch()
 
+
   const { currentRole, hasPermission } = useAdmin();
-  const users = useSelector((state) => state.users.users); 
+  const users = useSelector((state) => state.users.users);
+    const admin = useSelector((state) => state.admin.admin);
+
+ const f = admin?.firstName
+
+console.log(f)
 
 
    useEffect(() => { 
+     const email =  localStorage.getItem("email")
+
+          dispatch(fetchAdmin(email))
           dispatch(fetchUsers());
           dispatch(fetchAdmins());
           localStorage.getItem("adminRole")

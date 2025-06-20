@@ -1,8 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apiService from '../services/apiService';
 
+
 // Async thunk to fetch logged in admin data
 export const fetchAdmin = createAsyncThunk(
+
+
   'admin/fetchAdmin', 
   async (email, { rejectWithValue }) => {
   try {

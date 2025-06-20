@@ -82,9 +82,9 @@ const CreateNewTicket = ({ isOpen, onClose }) => {
                           value={priority}
                     onChange={(e) => setPriority(e.target.value)}>
                             <option value="" disabled>Choose priority</option>
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
+                            <option value="HIGH">High</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="LOW">Low</option>
 
                           
                           </Field>
