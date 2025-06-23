@@ -63,16 +63,16 @@ const CompleteRegForm = () => {
       {/* Main Container */}
       <div className="flex w-full max-w-6xl relative z-10">
         {/* Left Image Side */}
-        <div className="w-1/2 h-[600px] bg-black border border-black relative flex items-center justify-center overflow-hidden">
+        <div className="hidden md:flex w-1/2 bg-black border border-black relative flex items-center justify-center overflow-hidden">
           <img src={payinaLogo} alt="Payina Logo" className="absolute top-6 left-6 h-8 z-10" />
           <img src={backgroundImage} alt="Background" className="absolute inset-0 object-cover w-full h-full" />
           <img src={dashboardImage} alt="Dashboard" className="absolute inset-0 object-contain max-w-full max-h-full" />
         </div>
 
         {/* Right Form Side */}
-        <div className="w-1/2 h-[600px] bg-[#161616] p-10 border border-black border-l-0 flex items-center justify-center relative">
+        <div className="w-full md:w-1/2 bg-[#161616] p-6 border border-black border-l-0 flex items-center justify-center relative">
           <div className="w-full max-w-md">
-            <h1 className="text-[#006181] text-center mb-4 font-semibold text-3xl">
+            <h1 className="text-[#006181] text-center  font-semibold text-3xl">
               Complete your registration
             </h1>
 
@@ -83,14 +83,15 @@ const CompleteRegForm = () => {
             >
               {() => (
                 <Form>
-                  {['firstName', 'lastName', 'phoneNumber'].map((field) => (
+                  {['firstName', 'lastName', 'email', 'phoneNumber'].map((field) => (
                     <div key={field} className="flex flex-col space-y-2">
                       <label htmlFor={field} className="text-md font-normal mt-2 text-white capitalize">
-                        {field === 'phoneNumber' ? 'Phone Number' : field.replace(/([A-Z])/g, ' $1')}
+                        {field === 'phoneNumber' ? 'Phone Number' : field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                       </label>
                       <Field
+                        id={field}
                         name={field}
-                        type="text"
+                        type={field === 'email' ? 'email' : field === 'phoneNumber' ? 'tel' : 'text'}
                         placeholder={`Enter ${field === 'phoneNumber' ? 'Phone Number' : field}`}
                         className="w-full h-10 border border-[#9ca3af] rounded-[5px] px-3 py-2 text-base font-light text-gray outline-none"
                       />

@@ -1,15 +1,8 @@
-"use client"
-
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import { ArrowLeft, Mail } from "lucide-react"
-import { Button } from "../../components/ui/button"
-import { Input } from "../../components/ui/input"
-import { Label } from "../../components/ui/label"
-import { ButtonLoader } from "../../components/ui/loader"
-
-import { BsEye, BsEyeSlash } from 'react-icons/bs'
-import backgroundImage from '../../assets/vector.png'
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Formik, Field, Form, ErrorMessage } from 'formik'
+import { Mail, ArrowLeft } from 'lucide-react'
+import { ButtonLoader } from '../../components/ui/loader'
 import dashboardImage from '../../assets/dashboard.png'
 import payinaLogo from '../../assets/payina.png'
 import blueCircleImage from '../../assets/bluecircle.png'
@@ -17,35 +10,73 @@ import yellowCircle from '../../assets/yellowcircle.png'
 import eclipse93 from '../../assets/eclipse93.png'
 import eclipse92 from '../../assets/eclipse92.png'
 import yellowstripe from '../../assets/yellowstripe.png'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import backgroundImage from '../../assets/vector.png'
 import { ForgotPasswordSchema } from './schema/forgot-password-schema'
-import { useNavigate } from 'react-router-dom'
+import apiService from '../../services/apiService'
 
 const ForgotPasswordPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [submittedEmail, setSubmittedEmail] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const navigate = useNavigate()
+ 
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { resetForm }) => {
     setIsLoading(true)
     setErrorMessage('')
+    setSuccessMessage('')
 
     try {
-      // Add your actual API call here
-      // const response = await forgotPasswordAPI(values.email)
+      // const token = localStorage.getItem('token')
+      const response = await apiService.forgotPassword(values.email)
       
-      // Simulate API call
+      setIsLoading(false)
+      setIsSubmitted(true)
+      setSubmittedEmail(values.email)
+      setSuccessMessage(response.message || 'Token sent successfully!')
+      resetForm()
+
       setTimeout(() => {
-        setIsLoading(false)
-        setIsSubmitted(true)
-        setSubmittedEmail(values.email)
+        navigate('/otp-validation', { 
+          state: { 
+            email: values.email,
+            fromForgotPassword: true
+          } 
+        })
       }, 1500)
+
+
+      return response
     } catch (error) {
       setIsLoading(false)
-      setErrorMessage('Failed to send token. Please try again.')
+      setErrorMessage(error.message || 'Failed to send token. Please try again.')
+      throw(error)
     }
+  }
+
+  const handleResendToken = async () => {
+    if (!submittedEmail) return
+    
+    setIsLoading(true)
+    setErrorMessage('')
+    
+    try {
+      const response = await apiService.forgotPassword(submittedEmail)
+      setSuccessMessage(response.message || 'Token resent successfully!')
+      setIsLoading(false)
+    } catch (error) {
+      setErrorMessage(error.message || 'Failed to resend token. Please try again.')
+      setIsLoading(false)
+    }
+  }
+
+  const resetForm = () => {
+    setIsSubmitted(false)
+    setSubmittedEmail('')
+    setErrorMessage('')
+    setSuccessMessage('')
   }
 
   // Success state - when token has been sent
@@ -61,28 +92,36 @@ const ForgotPasswordPage = () => {
         <img src={yellowCircle} className="absolute top-[27.5rem] right-10 h-36 z-0 pointer-events-none" alt="yellow circle" />
 
         <div className="flex w-full max-w-6xl relative z-10">
-          {/* Left side with images */}
-          <div className="w-1/2 h-[600px] bg-black border border-black relative flex items-center justify-center overflow-hidden">
+          {/* Left side with images - hidden on mobile and small screens */}
+          <div className="hidden md:flex w-1/2 h-[600px] bg-black border border-black relative items-center justify-center overflow-hidden">
             <img src={payinaLogo} alt="Payina Logo" className="absolute top-6 left-6 h-8 z-10" />
             <img src={backgroundImage} alt="Background" className="absolute inset-0 object-cover w-full h-full" />
             <img src={dashboardImage} alt="Dashboard" className="absolute inset-0 object-contain max-w-full max-h-full" />
           </div>
 
-          {/* Right side with success message */}
-          <div className="w-1/2 h-[600px] bg-[#161616] p-10 border border-black border-l-0 flex items-center justify-center relative">
+          {/* Right side with success message - full width on mobile */}
+          <div className="w-full md:w-1/2 h-[600px] bg-[#161616] p-6 md:p-10 border border-black md:border-l-0 flex items-center justify-center relative">
             <div className="w-full max-w-md text-center">
-              <h1 className="text-[#006181] mb-4 font-semibold text-3xl">
+              <h1 className="text-[#006181] mb-4 font-semibold text-2xl md:text-3xl">
                 Token Sent Successfully
               </h1>
-              <div className="text-white text-sm md:text-md mb-6">
-                Check your email for reset instructions
-              </div>
-
+              {isSubmitted && (
+                <div className="text-white text-center text-sm md:text-md mb-4">
+                  Check your email for reset instructions
+                </div>
+              )}  
               <div className="bg-green-500/10 border border-green-500 text-green-500 px-4 py-3 rounded-md mb-6 text-sm">
                 We've sent a password reset token to <strong>{submittedEmail}</strong>. Please check your email.
               </div>
 
-              <div className="text-center">
+              <div className="text-center space-y-4">
+                <button 
+                  onClick={handleResendToken}
+                  className="text-[#006181] hover:underline text-sm flex items-center justify-center gap-2 mx-auto"
+                >
+                  Didn't receive it? Resend token
+                </button>
+                
                 <Link 
                   to="/" 
                   className="text-[#006181] hover:underline text-sm flex items-center justify-center gap-2"
@@ -110,18 +149,18 @@ const ForgotPasswordPage = () => {
       <img src={yellowCircle} className="absolute top-[27.5rem] right-10 h-36 z-0 pointer-events-none" alt="yellow circle" />
 
       <div className="flex w-full max-w-6xl relative z-10">
-        {/* Left side with images */}
-        <div className="w-1/2 h-[600px] bg-black border border-black relative flex items-center justify-center overflow-hidden">
+        {/* Left side with images - hidden on mobile and small screens */}
+        <div className="hidden md:flex w-1/2 h-[600px] bg-black border border-black relative items-center justify-center overflow-hidden">
           <img src={payinaLogo} alt="Payina Logo" className="absolute top-6 left-6 h-8 z-10" />
           <img src={backgroundImage} alt="Background" className="absolute inset-0 object-cover w-full h-full" />
           <img src={dashboardImage} alt="Dashboard" className="absolute inset-0 object-contain max-w-full max-h-full" />
         </div>
 
-        {/* Right side with form */}
-        <div className="w-1/2 h-[600px] bg-[#161616] p-10 border border-black border-l-0 flex items-center justify-center relative">
+        {/* Right side with form - full width on mobile */}
+        <div className="w-full md:w-1/2 h-[600px] bg-[#161616] p-6 md:p-10 border border-black md:border-l-0 flex items-center justify-center relative">
           <div className="w-full max-w-md">
-            <h1 className="text-[#006181] text-center mb-4 font-semibold text-3xl">
-              Request Token
+            <h1 className="text-[#006181] text-center mb-4 font-semibold text-2xl md:text-3xl">
+              Request OTP
             </h1>
             <div className="text-white text-center text-sm md:text-md mb-6">
               Enter your email address to request for token
@@ -138,7 +177,7 @@ const ForgotPasswordPage = () => {
               validationSchema={ForgotPasswordSchema}
               onSubmit={handleSubmit}
             >
-              {() => (
+              {({ isValid, dirty }) => (
                 <Form>
                   <div className="flex flex-col space-y-2 mb-4">
                     <label htmlFor="email" className="text-lg font-normal text-white">
@@ -158,7 +197,7 @@ const ForgotPasswordPage = () => {
 
                   <button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || !isValid || !dirty}
                     className="w-full bg-[#006181] hover:opacity-90 py-3 mb-4 rounded-md text-white font-normal text-lg disabled:opacity-50 transition-opacity flex items-center justify-center gap-2"
                   >
                     {isLoading && <ButtonLoader />}
@@ -171,7 +210,7 @@ const ForgotPasswordPage = () => {
 
                   <div className="text-center">
                     <Link 
-                      to="/login" 
+                      to="/" 
                       className="text-[#006181] hover:underline text-sm flex items-center justify-center gap-2"
                     >
                       <ArrowLeft className="w-4 h-4" />
@@ -188,4 +227,4 @@ const ForgotPasswordPage = () => {
   )
 }
 
-export default ForgotPasswordPage
+export default ForgotPasswordPage;

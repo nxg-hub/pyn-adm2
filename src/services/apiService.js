@@ -560,10 +560,11 @@ try {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-      },
+          },
         }
       );
        const data = await response.json();
+      
 
       if (!response.ok) {
         throw new Error(data.message || 'Failed to fetch all users');
@@ -574,8 +575,67 @@ try {
       console.error('Fetch users error:', error);
       throw error;
     }
+  },
+
+ forgotPassword: async (email) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/auth/initiate-password-reset?email=${email}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const text = await response.text(); 
+      // console.log('Raw response text:', text);
+      // console.log("response:", data)
+
+     let data;
+      try {
+        data = text ? JSON.parse(text) : {}; 
+      } catch (parseError) {
+        throw new Error('Invalid JSON response from server');
+      }
+
+
+      if (!response.ok) {
+        throw new Error(data?.message || 'Something went wrong');
+      }
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
   },  
-  
+
+  // resendOTP: async (email) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL}/api/v1/auth/resend-otp`,
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ email }),
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(data.message || 'Failed to resend OTP');
+  //     }
+
+  //     return data;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // },
+
 };
 
 export default apiService;
