@@ -102,13 +102,10 @@ export function AdminSidebar() {
       location.pathname === path || location.pathname.startsWith(`${path}/`)
     );
   };
-  // const adminRole = localStorage.getItem("adminRole"); 
-
-  // const hiddenFor = ["CUSTOMER_CARE_REP", "FINANCE_MANAGER"]; 
-
+  
   return (
-    <div className="w-64 border-r bg-card h-screen overflow-y-auto">
-      <div className="flex h-14 items-center border-b px-4">
+    <div className="w-64 border-r bg-card h-screen overflow-y-auto hide-scrollbar">
+      <div className="flex h-16 items-center border-b px-4">
         <img src={logo} alt='logo'/>
       </div>
       <nav className="space-y-1 p-2">

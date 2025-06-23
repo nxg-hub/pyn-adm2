@@ -135,3 +135,12 @@
 .action-menu-content {
     z-index: 1000;
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

@@ -41,8 +41,8 @@ function RecentlyActive() {
    const GetRecentlyActive= async () => {
     setLoading(true);
     const queryParams = new URLSearchParams({
-      page: 0,
-      size: 100,
+      page: 1,
+      size: 10,
     }).toString();
 
  try {

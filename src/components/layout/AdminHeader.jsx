@@ -15,53 +15,46 @@ import {
 import { useAdmin } from "../../contexts/AdminContext"
 import { Badge } from "../ui/badge"
 import { useSelector } from "react-redux"
+import GlobalSearchBar from "../common/GlobalSearchBar"
+
 
 export function AdminHeader({ title, subtitle }) {
   const [searchQuery, setSearchQuery] = useState("")
   const admin = useSelector((state) => state.admin.admin);
   const { currentRole, setCurrentRole, allRoles } = useAdmin()
 
+  
   return (
     <header className="border-b">
       <div className="flex h-16 items-center px-4 gap-4">
         <h1 className="text-xl font-semibold">{title}</h1>
         {subtitle && <span className="text-sm text-muted-foreground">{subtitle}</span>}
 
-        <div className="ml-auto flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+       <div className="ml-auto flex items-center gap-4">
+          {/* <div className="relative"> */} 
+            {/* <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search..."
               className="w-[200px] pl-8"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+            /> */}
+            <GlobalSearchBar/>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2">
                 <span>Role:</span>
                 <Badge variant="secondary" className="font-normal">
-                  {admin?.adminUserType}
-                </Badge>
+        {admin?.adminUserType
+         ?.replace(/_/g, ' ')
+         .toLowerCase()
+         .replace(/\b\w/g, c => c.toUpperCase())}   
+                 </Badge>
               </Button>
             </DropdownMenuTrigger>
-            {/* <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden ">             
-              <DropdownMenuLabel>Switch Admin Role</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {allRoles.map((role) => (
-                <DropdownMenuItem
-                  key={role}
-                  onClick={() => setCurrentRole(role)}
-                  className={currentRole === role ? "bg-muted" : ""}
-                >
-                  {role}
-                  {currentRole === role && <span className="ml-auto">✓</span>}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent> */}
+            
           </DropdownMenu>
 
           <Button variant="outline" size="icon" className="relative">

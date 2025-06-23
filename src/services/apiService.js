@@ -1,4 +1,6 @@
 const token = localStorage.getItem('token')
+//  const email =  localStorage.getItem("email")
+
 
 const apiService = {
   login: async (email, password) => {
@@ -96,7 +98,7 @@ const apiService = {
   
   getRecentlyActiveUsers: async (queryParams) => {
      try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_RECENTLY_ACTIVE_USERS}?${queryParams}`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_RECENTLY_ACTIVE_USERS}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -111,7 +113,7 @@ const apiService = {
   },
 
   suspendUser: async (requestData, AdminId) => {
-    const response = await fetch(`${import.meta.env.VITE_SUSPEND_USER}/${userId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_SUSPEND_USER}`, {
       method: 'PUT',
      headers: {
         'Content-Type': 'application/json',
@@ -167,7 +169,7 @@ const apiService = {
 
   unflagUser: async (requestData, AdminId) => {
     const response = await fetch(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_UNFLAG_USER}`, {
-      method: 'PUT',
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
        'X-Admin-Id': AdminId
@@ -305,10 +307,10 @@ try {
       throw error
     }
   },
-  FetchSupportTickets: async () => {
+  FetchSupportTickets: async (queryParams) => {
     try {
       const response = await fetch(
-         `${import.meta.env.VITE_BASE_URL}/api/support/tickets?status=status&priority=priority&category=category&page=0&size=10&sortBy=createdAt&sortDir=desc`,
+         `${import.meta.env.VITE_BASE_URL}/api/support/tickets?${queryParams}`,
         {
           method: 'GET',
           headers: {
@@ -455,7 +457,7 @@ try {
         throw new Error(data.message || 'Failed to fetch admins');
       }
 
-      return data.data.content;
+      return data;
     } catch (error) {
       throw error;
     }
@@ -482,7 +484,9 @@ try {
       throw error;
     }
   },
-  fetchAdmin: async (email) => {
+  fetchAdmin: async () => {
+     const email =  localStorage.getItem("email")
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_GET_ADMIN_DETAILS}?email=${email}`,
@@ -499,7 +503,7 @@ try {
         throw new Error(data.message || 'Failed to fetch admin');
       }
 
-      return data.data.content;
+      return data;
     } catch (error) {
       throw error;
     }
