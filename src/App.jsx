@@ -8,6 +8,10 @@ import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 // Auth
 import LoginForm from "./pages/Login/login.jsx";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.jsx";
+import SignUpForm from "./pages/Signup/signup.jsx";
+// import RegisterPage from "./pages/auth/RegisterPage.jsx";
+import OTPValidationPage from "./pages/auth/OTPValidationPage.jsx"
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage.jsx";
 
 // Dashboard
 import Dashboard from "./pages/Dashboard";
@@ -81,6 +85,7 @@ import Report from "./pages/reports/page";
 import PageNotFound from "./pages/PageNotFound.jsx";
 
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -88,10 +93,13 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LoginForm />} />
-        <Route path="/completereg" element={<CompleteRegForm />} />
+        <Route path="/complete-reg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/sign-up" element={<SignUpForm />} />
+        <Route path="/otp-validation" element={<OTPValidationPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>

@@ -414,32 +414,32 @@ try {
   },
 
   fetchActivities: async (adminId, superAdminId, queryParams) => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/activity-logs?${queryParams}`,
-      {
-        method: 'GET',
-        headers: {
-          'X-Admin-Id': superAdminId,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/activity-logs?${queryParams}`,
+        {
+          method: 'GET',
+          headers: {
+            'X-Admin-Id': superAdminId,
+            "Content-Type": "application/json",
+          },
+        }
+      );
     
-    const data = await response.json();
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch activities');
+      }
 
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to fetch activities');
+      return {
+        data: data, 
+        success: true
+      };
+    } catch (error) {
+      throw error;
     }
-
-    return {
-      data: data, 
-      success: true
-    };
-  } catch (error) {
-    throw error;
-  }
-},
+  },
   fetchAdmins: async () => {
     try {
       const response = await fetch(
@@ -564,10 +564,11 @@ try {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-      },
+          },
         }
       );
        const data = await response.json();
+      
 
       if (!response.ok) {
         throw new Error(data.message || 'Failed to fetch all users');
@@ -578,8 +579,125 @@ try {
       console.error('Fetch users error:', error);
       throw error;
     }
+  },
+
+  forgotPassword: async (email) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/auth/initiate-password-reset?email=${email}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      const text = await response.text(); 
+      // console.log('Raw response text:', text);
+      // console.log("response:", data)
+
+     let data;
+      try {
+        data = text ? JSON.parse(text) : {}; 
+      } catch (parseError) {
+        throw new Error('Invalid JSON response from server');
+      }
+
+
+      if (!response.ok) {
+        throw new Error(data?.message || 'Failed to send password reset OTP');
+      }
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
   },  
+
+  // validateOTP: async (email, otp) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL}/api/v1/auth/validate-otp`,
+  //       {
+  //         method: 'POST', 
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ email, otp }),
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(data.message || 'OTP validation failed. Please try again.');
+  //     }
+
+  //     return data;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // },
+
+  // Reset password with validated OTP
+  // resetPasswordWithOTP: async (email, otp, newPassword, confirmPassword) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL}/api/v1/auth/reset-password`,
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ 
+  //           email, 
+  //           otp, 
+  //           newPassword, 
+  //           confirmPassword 
+  //         }),
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(data.message || 'Failed to reset password');
+  //     }
+
+  //     return data;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // },
   
+
+  // resendOTP: async (email) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL}/api/v1/auth/resend-otp`,
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ email }),
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(data.message || 'Failed to resend OTP');
+  //     }
+
+  //     return data;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // },
+
 };
 
 export default apiService;
