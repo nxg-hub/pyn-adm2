@@ -31,11 +31,12 @@ const ForgotPasswordPage = () => {
     try {
       // const token = localStorage.getItem('token')
       const response = await apiService.forgotPassword(values.email)
+      console.log('OTP sent:', response);
       
       setIsLoading(false)
       setIsSubmitted(true)
       setSubmittedEmail(values.email)
-      setSuccessMessage(response.message || 'Token sent successfully!')
+      setSuccessMessage(response.message || 'OTP sent successfully!')
       resetForm()
 
       setTimeout(() => {
@@ -56,28 +57,28 @@ const ForgotPasswordPage = () => {
     }
   }
 
-  const handleResendToken = async () => {
-    if (!submittedEmail) return
+  // const handleResendToken = async () => {
+  //   if (!submittedEmail) return
     
-    setIsLoading(true)
-    setErrorMessage('')
+  //   setIsLoading(true)
+  //   setErrorMessage('')
     
-    try {
-      const response = await apiService.forgotPassword(submittedEmail)
-      setSuccessMessage(response.message || 'Token resent successfully!')
-      setIsLoading(false)
-    } catch (error) {
-      setErrorMessage(error.message || 'Failed to resend token. Please try again.')
-      setIsLoading(false)
-    }
-  }
+  //   try {
+  //     const response = await apiService.resendPasswordResetOTP(submittedEmail)
+  //     setSuccessMessage(response.message || 'Token resent successfully!')
+  //     setIsLoading(false)
+  //   } catch (error) {
+  //     setErrorMessage(error.message || 'Failed to resend token. Please try again.')
+  //     setIsLoading(false)
+  //   }
+  // }
 
-  const resetForm = () => {
-    setIsSubmitted(false)
-    setSubmittedEmail('')
-    setErrorMessage('')
-    setSuccessMessage('')
-  }
+  // const resetForm = () => {
+  //   setIsSubmitted(false)
+  //   setSubmittedEmail('')
+  //   setErrorMessage('')
+  //   setSuccessMessage('')
+  // }
 
   // Success state - when token has been sent
   if (isSubmitted) {
@@ -116,7 +117,7 @@ const ForgotPasswordPage = () => {
 
               <div className="text-center space-y-4">
                 <button 
-                  onClick={handleResendToken}
+                  // onClick={handleResendToken}
                   className="text-[#006181] hover:underline text-sm flex items-center justify-center gap-2 mx-auto"
                 >
                   Didn't receive it? Resend token
@@ -189,7 +190,7 @@ const ForgotPasswordPage = () => {
                         name="email"
                         type="email"
                         placeholder="Enter Email Address"
-                        className="w-full h-10 border border-[#9ca3af] rounded-[5px] pl-10 pr-3 py-2 text-base font-light text-gray-900 outline-none focus:border-[#006181]"
+                        className="w-full h-10 border border-[#9ca3af] rounded-[5px] pl-10 pr-3 py-2 text-base font-light text-white outline-none focus:border-[#006181]"
                       />
                     </div>
                     <ErrorMessage name="email" component="span" className="text-[#db3a3a] text-sm" />

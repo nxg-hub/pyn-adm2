@@ -11,6 +11,7 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.jsx";
 import SignUpForm from "./pages/Signup/signup.jsx";
 // import RegisterPage from "./pages/auth/RegisterPage.jsx";
 import OTPValidationPage from "./pages/auth/OTPValidationPage.jsx"
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage.jsx";
 
 // Dashboard
 import Dashboard from "./pages/Dashboard";
@@ -97,8 +98,8 @@ function App() {
         <Route path="*" element={<PageNotFound />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/sign-up" element={<SignUpForm />} />
-        {/* <Route path="/register" element={<RegisterPage />} /> */}
         <Route path="/otp-validation" element={<OTPValidationPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute><AdminProvider><AdminLayout /></AdminProvider></ProtectedRoute>}>

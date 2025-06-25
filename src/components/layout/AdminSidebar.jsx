@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import {
   AlertTriangle,
@@ -33,11 +32,39 @@ import {
   Globe,
   QrCode,
   Briefcase,
+  Receipt,
+  Ellipsis,
+  ShieldCheck,
+  MonitorX,
+  ShieldPlus,
+  Flag,
+  FileSliders,
+  BanknoteArrowDown,
+  HandCoinsIcon,
+  UserRound,
+  MonitorCog,
+  Save,
+  ListChecks,
+  Check,
+  Monitor,
+  ChartLine,
+  ArrowLeftRight,
+  ArrowUpFromLine,
+  FunnelIcon,
+  ChartNoAxesCombined,
+  Notebook,
+  Logs,
+  Mail,
+  FileBarChart2,
+  RectangleHorizontalIcon,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import logo from '../../assets/logo.png'
 import { useAdmin } from "../../contexts/AdminContext";
 import { cn } from "../../lib/utils";
+import { FunnelChart } from "recharts";
 
 // Sidebar item component
 const SidebarItem = ({
@@ -47,24 +74,64 @@ const SidebarItem = ({
   isActive,
   hasPermission = true,
   children,
+  defaultExpanded = false, 
 }) => {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (children && location.pathname.startsWith(href)) {
+      setIsExpanded(true);
+    }
+  }, [location.pathname, href, children]);
+
   if (!hasPermission) return null;
+
+  const handleToggle = (e) => {
+    if (children) {
+      e.preventDefault();
+      setIsExpanded(!isExpanded);
+    }
+  };
 
   return (
     <li className="px-3 py-2">
-      <Link
-        to={href}
-        className={cn(
-          "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-          isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-        )}>
-        <Icon className="h-4 w-4" />
-        <span>{label}</span>
-      </Link>
-      {children && <ul className="mt-2 space-y-1 pl-6">{children}</ul>}
+      <div className="flex items-center">
+        <Link
+          to={href}
+          className={cn(
+            "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors flex-1",
+            isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+          )}
+        >
+          <Icon className="h-4 w-4" />
+          <span>{label}</span>
+        </Link>
+        {children && (
+          <button
+            onClick={handleToggle}
+            className={cn(
+              "p-1 rounded-md transition-colors ml-1",
+              isActive ? "text-primary-foreground hover:bg-primary/80" : "hover:bg-muted"
+            )}
+          >
+            {isExpanded ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
+          </button>
+        )}
+      </div>
+      {children && isExpanded && (
+        <ul className="mt-2 space-y-1 pl-6 animate-in slide-in-from-top-1 duration-200">
+          {children}
+        </ul>
+      )}
     </li>
   );
 };
+
 
 // Sidebar subitem component
 const SidebarSubItem = ({
@@ -129,37 +196,44 @@ export function AdminSidebar() {
               label="All Users"
               href="/dashboard/users"
               isActive={location.pathname === "/dashboard/users"}
+              icon={Users}
             />
             <SidebarSubItem
               label="Pending Verification"
               href="/dashboard/users/pending"
               isActive={location.pathname === "/dashboard/users/pending"}
+              icon={Ellipsis}
             />
             <SidebarSubItem
               label="Recently Active"
               href="/dashboard/users/active"
               isActive={location.pathname === "/dashboard/users/active"}
+              icon={ShieldCheck}
             />
             <SidebarSubItem
               label="Suspended Accounts"
               href="/dashboard/users/suspended"
               isActive={location.pathname === "/dashboard/users/suspended"}
+              icon={MonitorX}
             />
             <SidebarSubItem
               label="Reactivated Accounts"
               href="/dashboard/users/unsuspended"
               isActive={location.pathname === "/dashboard/users/unsuspended"}
+              icon={ShieldPlus}
             />
                <SidebarSubItem
               label="Flagged Accounts"
               href="/dashboard/users/flagged"
               isActive={location.pathname === "/dashboard/users/flagged"}
+              icon={Flag}
             />
   <SidebarSubItem
     label="Admin Users"
     href="/dashboard/users/admin-users"
     isActive={location.pathname === "/dashboard/users/admin-users"}
     hasPermission={hasPermission("manageAdmins")}
+    icon={FileSliders}
   />
 
 </SidebarItem>
@@ -169,11 +243,13 @@ export function AdminSidebar() {
             label="Transactions"
             href="/dashboard/transactions"
             isActive={isActive("/dashboard/transactions")}
-            hasPermission={hasPermission("monitorTransactionFlow")}>
+            hasPermission={hasPermission("monitorTransactionFlow")}
+            defaultExpanded={true}>
             <SidebarSubItem
               label="All Transactions"
               href="/dashboard/transactions"
               isActive={location.pathname === "/dashboard/transactions"}
+              icon={DollarSign}
             />
             <SidebarSubItem
               label="Money Transfers"
@@ -187,17 +263,7 @@ export function AdminSidebar() {
               label="Bills & Utilities"
               href="/dashboard/transactions/bills"
               isActive={location.pathname === "/dashboard/transactions/bills"}
-            />
-
-             <SidebarSubItem
-              label="Loans"
-              href="/dashboard/transactions/loan"
-              isActive={location.pathname === "/dashboard/transactions/loan"}
-            />
-             <SidebarSubItem
-              label="Savings"
-              href="/dashboard/transactions/savings"
-              isActive={location.pathname === "/dashboard/transactions/savings"}
+              icon={Receipt}
             />
             <SidebarSubItem
               label="Airtime & Data"
@@ -303,28 +369,53 @@ export function AdminSidebar() {
               isActive={
                 location.pathname === "/dashboard/wallets/virtual-cards"
               }
+              icon={Wallet}
             />
             <SidebarSubItem
               label="Funding Withdrawals"
               href="/dashboard/wallets/withdrawals"
               isActive={location.pathname === "/dashboard/wallets/withdrawals"}
               hasPermission={hasPermission("approveWithdrawals")}
+              icon={BanknoteArrowDown}
             />
             <SidebarSubItem
               label="Payment Gateways"
               href="/dashboard/wallets/gateways"
               isActive={location.pathname === "/dashboard/wallets/gateways"}
+              icon={HandCoinsIcon}
             />
             <SidebarSubItem
               label="Corporate Accounts"
               href="/dashboard/wallets/corporate"
               isActive={location.pathname === "/dashboard/wallets/corporate"}
+              icon={UserRound}
             />
             <SidebarSubItem
               label="System Balance"
               href="/dashboard/wallets/system"
               isActive={location.pathname === "/dashboard/wallets/system"}
               hasPermission={hasPermission("viewFinancialReports")}
+              icon={MonitorCog}
+            />
+          </SidebarItem>
+          
+          <SidebarItem
+            icon={Wallet}
+            label="Finances"
+            href="/dashboard/finances"
+            isActive={isActive("/dashboard/finances")}
+            hasPermission={hasPermission("monitorTransactionFlow")}>
+            <SidebarSubItem
+              label="Loans"
+              href="/dashboard/finances/loan"
+              isActive={location.pathname === "/dashboard/finances/loan"}
+              icon={HandCoinsIcon}
+            />
+             <SidebarSubItem
+              label="Savings"
+              href="/dashboard/finances/savings"
+              isActive={location.pathname === "/dashboard/finances/savings"}
+              icon={Save}
             />
           </SidebarItem>
 
@@ -372,12 +463,14 @@ export function AdminSidebar() {
               label="KYC Verification"
               href="/dashboard/compliance/kyc"
               isActive={location.pathname === "/dashboard/compliance/kyc"}
+              icon={Check}
             />
             <SidebarSubItem
               label="AML Monitoring"
               href="/dashboard/compliance/aml"
               isActive={location.pathname === "/dashboard/compliance/aml"}
               hasPermission={hasPermission("monitorHighRiskTransactions")}
+              icon={Monitor}
             />
             <SidebarSubItem
               label="Suspicious Activities"
@@ -387,12 +480,14 @@ export function AdminSidebar() {
                 "/dashboard/compliance/suspicious-activities"
               }
               hasPermission={hasPermission("monitorHighRiskTransactions")}
+              icon={MonitorX}
             />
             <SidebarSubItem
               label="Audit Logs"
               href="/dashboard/compliance/audit"
               isActive={location.pathname === "/dashboard/compliance/audit"}
               hasPermission={hasPermission("viewAdminActivityLogs")}
+              icon={ListChecks}
             />
           </SidebarItem>
 
@@ -406,11 +501,13 @@ export function AdminSidebar() {
               label="Revenue Analytics"
               href="/dashboard/analytics"
               isActive={location.pathname === "/dashboard/analytics"}
+              icon={ChartLine}
             />
             <SidebarSubItem
               label="User Analytics"
               href="/dashboard/analytics/users"
               isActive={location.pathname === "/dashboard/analytics/users"}
+              icon={BarChart3}
             />
             <SidebarSubItem
               label="Transaction Analytics"
@@ -418,11 +515,13 @@ export function AdminSidebar() {
               isActive={
                 location.pathname === "/dashboard/analytics/transactions"
               }
+              icon={ArrowLeftRight}
             />
             <SidebarSubItem
               label="Funnel Charts"
               href="/dashboard/analytics/funnels"
               isActive={location.pathname === "/dashboard/analytics/funnels"}
+              icon={ChartNoAxesCombined}
             />
             <SidebarSubItem
               label="Performance Reports"
@@ -430,11 +529,13 @@ export function AdminSidebar() {
               isActive={
                 location.pathname === "/dashboard/analytics/performance"
               }
+              icon={Notebook}
             />
             <SidebarSubItem
               label="Export Reports"
               href="/dashboard/analytics/export"
               isActive={location.pathname === "/dashboard/analytics/export"}
+              icon={ArrowUpFromLine}
             />
           </SidebarItem>
 
@@ -453,11 +554,13 @@ export function AdminSidebar() {
               label="SMS Alerts"
               href="/dashboard/notifications/sms"
               isActive={location.pathname === "/dashboard/notifications/sms"}
+              icon={Bell}
             />
             <SidebarSubItem
               label="Email Campaigns"
               href="/dashboard/notifications/email"
               isActive={location.pathname === "/dashboard/notifications/email"}
+              icon={Mail}
             />
             <SidebarSubItem
               label="Scheduled Messages"
@@ -465,11 +568,13 @@ export function AdminSidebar() {
               isActive={
                 location.pathname === "/dashboard/notifications/scheduled"
               }
+              icon={MessageSquare}
             />
             <SidebarSubItem
               label="Delivery Logs"
               href="/dashboard/notifications/logs"
               isActive={location.pathname === "/dashboard/notifications/logs"}
+              icon={Logs}
             />
           </SidebarItem>
 
@@ -488,12 +593,14 @@ export function AdminSidebar() {
               href="/dashboard/settings/limits"
               isActive={location.pathname === "/dashboard/settings/limits"}
               hasPermission={hasPermission("setTransactionLimits")}
+              icon={ArrowLeftRight}
             />
             <SidebarSubItem
               label="Service Fees"
               href="/dashboard/settings/fees"
               isActive={location.pathname === "/dashboard/settings/fees"}
               hasPermission={hasPermission("setTransactionLimits")}
+              icon={CreditCard}
             />
             <SidebarSubItem
               label="Security Settings"
@@ -534,21 +641,25 @@ export function AdminSidebar() {
               label="Daily Reports"
               href="/dashboard/reports/daily"
               isActive={location.pathname === "/dashboard/reports/daily"}
+              icon={FileBarChart2}
             />
             <SidebarSubItem
               label="Weekly Reports"
               href="/dashboard/reports/weekly"
               isActive={location.pathname === "/dashboard/reports/weekly"}
+              icon={FileBarChart2}
             />
             <SidebarSubItem
               label="Monthly Reports"
               href="/dashboard/reports/monthly"
               isActive={location.pathname === "/dashboard/reports/monthly"}
+              icon={FileBarChart2}
             />
             <SidebarSubItem
               label="Custom Reports"
               href="/dashboard/reports/custom"
               isActive={location.pathname === "/dashboard/reports/custom"}
+              icon={FileBarChart2}
             />
             <SidebarSubItem
               label="Reconciliation"
@@ -557,11 +668,13 @@ export function AdminSidebar() {
                 location.pathname === "/dashboard/reports/reconciliation"
               }
               hasPermission={hasPermission("reconcileFinancialDiscrepancies")}
+              icon={RectangleHorizontalIcon}
             />
             <SidebarSubItem
               label="Admin Reports"
               href="/dashboard/reports/admin"
               isActive={location.pathname === "/dashboard/reports/admin"}
+              icon={FileBarChart2}
             />
           </SidebarItem>
 

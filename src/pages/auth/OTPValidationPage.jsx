@@ -14,7 +14,6 @@ import backgroundImage from '../../assets/vector.png'
 import apiService from '../../services/apiService'
 import { OTPValidationSchema } from './schema/OTPValidationSchema'
 
-
 const OTPValidationPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isResending, setIsResending] = useState(false)
@@ -24,15 +23,17 @@ const OTPValidationPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   
-  // Get email from navigation state
+  // Get data from navigation state
   const email = location.state?.email || ''
+  const isPasswordReset = location.state?.resetPassword || false
+  const fromForgotPassword = location.state?.fromForgotPassword || false
 
   // Redirect if no email provided
-  useEffect(() => {
-    if (!email) {
-      navigate('/forgot-password')
-    }
-  }, [email, navigate])
+  // useEffect(() => {
+  //   if (!email) {
+  //     navigate(isPasswordReset ? '/forgot-password' : '/forgot-password')
+  //   }
+  // }, [email, navigate, isPasswordReset])
 
   // Countdown timer for resend OTP
   useEffect(() => {
@@ -49,21 +50,44 @@ const OTPValidationPage = () => {
     setSuccessMessage('')
 
     try {
-      const response = await apiService.validateOTP(email, values.otp)
+      let response;
       
-      setIsLoading(false)
-      setSuccessMessage('OTP validated successfully!')
-      
-      // Navigate to complete registration page after a short delay
-      setTimeout(() => {
-        navigate('/complete-reg', { 
-          state: { 
-            email, 
-            otpValidated: true,
-            token: response.token || response.data?.token 
-          } 
-        })
-      }, 1500)
+      if (isPasswordReset) {
+        // Validate OTP for password reset
+        response = await apiService.validatePasswordResetOTP(email, values.otp)
+        
+        setIsLoading(false)
+        setSuccessMessage('OTP validated successfully!')
+        
+        // Navigate to reset password page
+        setTimeout(() => {
+          navigate('/reset-password', { 
+            state: { 
+              email, 
+              otp: values.otp,
+              otpValidated: true,
+              token: response.token || response.data?.token 
+            } 
+          })
+        }, 1500)
+      } else {
+        // Regular OTP validation (for registration or other purposes)
+        response = await apiService.validateOTP(email, values.otp)
+        
+        setIsLoading(false)
+        setSuccessMessage('OTP validated successfully!')
+        
+        // Navigate to complete registration page
+        setTimeout(() => {
+          navigate('/complete-reg', { 
+            state: { 
+              email, 
+              otpValidated: true,
+              token: response.token || response.data?.token 
+            } 
+          })
+        }, 1500)
+      }
       
       resetForm()
     } catch (error) {
@@ -72,28 +96,47 @@ const OTPValidationPage = () => {
     }
   }
 
-  // const handleResendOTP = async () => {
-  //   if (countdown > 0) return
+  const handleResendOTP = async () => {
+    if (countdown > 0) return
     
-  //   setIsResending(true)
-  //   setErrorMessage('')
-  //   setSuccessMessage('')
+    setIsResending(true)
+    setErrorMessage('')
+    setSuccessMessage('')
     
-  //   try {
-  //     const response = await apiService.resendOTP(email)
-  //     setSuccessMessage('OTP resent successfully!')
-  //     setCountdown(60) // 60 seconds countdown
-  //     setIsResending(false)
-  //   } catch (error) {
-  //     setErrorMessage(error.message || 'Failed to resend OTP. Please try again.')
-  //     setIsResending(false)
-  //   }
-  // }
+    try {
+      let response;
+      
+      if (isPasswordReset) {
+        response = await apiService.resendOTP(email)
+      }
+      
+      setSuccessMessage('OTP resent successfully!')
+      setCountdown(60) // 60 seconds countdown
+      setIsResending(false)
+    } catch (error) {
+      setErrorMessage(error.message || 'Failed to resend OTP. Please try again.')
+      setIsResending(false)
+    }
+  }
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const getBackLink = () => {
+    if (isPasswordReset || fromForgotPassword) {
+      return '/forgot-password'
+    }
+    return '/forgot-password' // Default back link
+  }
+
+  const getBackLinkText = () => {
+    if (isPasswordReset || fromForgotPassword) {
+      return 'Back to forgot password'
+    }
+    return 'Back to previous page'
   }
 
   return (
@@ -118,10 +161,14 @@ const OTPValidationPage = () => {
         <div className="w-full md:w-1/2 h-[600px] bg-[#161616] p-6 md:p-10 border border-black md:border-l-0 flex items-center justify-center relative">
           <div className="w-full max-w-md">
             <h1 className="text-[#006181] text-center mb-4 font-semibold text-2xl md:text-3xl">
-              Verify OTP
+              {isPasswordReset ? 'Verify Code' : 'Verify OTP'}
             </h1>
             <div className="text-white text-center text-sm md:text-md mb-6">
-              Enter the 6-digit code sent to <span className="text-[#006181] font-medium">{email}</span>
+              {isPasswordReset 
+                ? `Enter the 6-digit verification code sent to ` 
+                : `Enter the 6-digit code sent to `}
+              <span className="text-[#006181] font-medium">{email}</span>
+              {isPasswordReset && ' to reset your password'}
             </div>
 
             {errorMessage && (
@@ -145,16 +192,16 @@ const OTPValidationPage = () => {
                 <Form>
                   <div className="flex flex-col space-y-2 mb-4">
                     <label htmlFor="otp" className="text-lg font-normal text-white">
-                      OTP Code
+                      {isPasswordReset ? 'Verification Code' : 'OTP Code'}
                     </label>
                     <div className="relative">
                       <Shield className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Field
                         name="otp"
                         type="text"
-                        placeholder="Enter 6-digit OTP"
+                        placeholder="Enter 6-digit code"
                         maxLength="6"
-                        className="w-full h-10 border border-[#9ca3af] rounded-[5px] pl-10 pr-3 py-2 text-base font-light text-gray-900 outline-none focus:border-[#006181] text-center tracking-widest"
+                        className="w-full h-10 border border-[#9ca3af] rounded-[5px] pl-10 pr-3 py-2 text-base font-light text-white outline-none focus:border-[#006181] text-center tracking-widest"
                         onChange={(e) => {
                           const value = e.target.value.replace(/\D/g, '') // Only allow digits
                           setFieldValue('otp', value)
@@ -170,13 +217,13 @@ const OTPValidationPage = () => {
                     className="w-full bg-[#006181] hover:opacity-90 py-3 mb-4 rounded-md text-white font-normal text-lg disabled:opacity-50 transition-opacity flex items-center justify-center gap-2"
                   >
                     {isLoading && <ButtonLoader />}
-                    {isLoading ? 'Verifying...' : 'Verify OTP'}
+                    {isLoading ? 'Verifying...' : 'Verify Code'}
                   </button>
 
                   <div className="text-center mb-4">
                     <button
                       type="button"
-                      // onClick={handleResendOTP}
+                      onClick={handleResendOTP}
                       disabled={countdown > 0 || isResending}
                       className="text-[#006181] hover:underline text-sm flex items-center justify-center gap-2 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -186,25 +233,25 @@ const OTPValidationPage = () => {
                           Resending...
                         </>
                       ) : countdown > 0 ? (
-                        `Resend OTP in ${formatTime(countdown)}`
+                        `Resend code in ${formatTime(countdown)}`
                       ) : (
-                        'Resend OTP'
+                        'Resend verification code'
                       )}
                     </button>
                   </div>
 
                   <div className="text-white text-center text-sm md:text-md mb-4">
-                    Didn't receive the OTP? Check your spam folder or contact support.
+                    Didn't receive the code? Check your spam folder or contact support.
                   </div>
 
                   {/* Back to previous page link */}
                   <div className="text-center">
                     <Link
-                      to="/forgot-password"
+                      to={getBackLink()}
                       className="text-gray-400 hover:text-[#006181] text-sm flex items-center justify-center gap-2 transition-colors"
                     >
                       <ArrowLeft className="w-4 h-4" />
-                      Back to forgot password
+                      {getBackLinkText()}
                     </Link>
                   </div>
                 </Form>
