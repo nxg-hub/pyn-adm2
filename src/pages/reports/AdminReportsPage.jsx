@@ -86,19 +86,19 @@ const AdminReportsPage = () => {
     { label: "Reports", href: "/admin/reports" },
   ]
 
-  // if (!hasPermission("reports", "view")) {
-  //   return (
-  //     <div className="flex flex-col">
-  //       <AdminHeader title="Admin Reports" subtitle="Monitor admin activities and account status changes" />
-  //       <main className="flex-1 p-4 md:p-6">
-  //         <Breadcrumb items={breadcrumbItems} />
-  //         <div className="mt-6 rounded-md bg-yellow-50 p-4 text-yellow-700">
-  //           You don't have permission to access this page. Please contact a Super Admin for assistance.
-  //         </div>
-  //       </main>
-  //     </div>
-  //   )
-  // }
+  if (!hasPermission("viewFinancialReports")) {
+    return (
+      <div className="flex flex-col">
+        <AdminHeader title="Admin Reports" subtitle="Monitor admin activities and account status changes" />
+        <main className="flex-1 p-4 md:p-6">
+          <Breadcrumb items={breadcrumbItems} />
+          <div className="mt-6 rounded-md bg-yellow-50 p-4 text-yellow-700">
+            You don't have permission to access this page. Please contact a Super Admin for assistance.
+          </div>
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col">

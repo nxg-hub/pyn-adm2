@@ -45,7 +45,7 @@ const DailyReportsPage = () => {
     report.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  if (!hasPermission("reports", "view")) {
+  if (!hasPermission("viewFinancialReports")) {
     return (
       <div className="flex flex-col">
         <AdminHeader title="Daily Reports" subtitle="View and manage daily report logs" />

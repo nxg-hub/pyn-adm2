@@ -414,32 +414,32 @@ try {
   },
 
   fetchActivities: async (adminId, superAdminId, queryParams) => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/activity-logs?${queryParams}`,
-      {
-        method: 'GET',
-        headers: {
-          'X-Admin-Id': superAdminId,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/admin/management/${adminId}/activity-logs?${queryParams}`,
+        {
+          method: 'GET',
+          headers: {
+            'X-Admin-Id': superAdminId,
+            "Content-Type": "application/json",
+          },
+        }
+      );
     
-    const data = await response.json();
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch activities');
+      }
 
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to fetch activities');
+      return {
+        data: data, 
+        success: true
+      };
+    } catch (error) {
+      throw error;
     }
-
-    return {
-      data: data, 
-      success: true
-    };
-  } catch (error) {
-    throw error;
-  }
-},
+  },
   fetchAdmins: async () => {
     try {
       const response = await fetch(
@@ -564,10 +564,11 @@ try {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-      },
+          },
         }
       );
        const data = await response.json();
+      
 
       if (!response.ok) {
         throw new Error(data.message || 'Failed to fetch all users');
