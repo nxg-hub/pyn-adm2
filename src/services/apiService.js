@@ -578,8 +578,31 @@ try {
       console.error('Fetch users error:', error);
       throw error;
     }
-  },  
-  
+  }, 
+ fetchWallets: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/get-all-wallet?page=0&size=3000&start=0`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            apiKey: import.meta.env.VITE_API_KEY
+      },
+        }
+      );
+       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch wallets');
+      }
+
+      return data.data.content
+    } catch (error) {
+      console.error('Error fetching wallets:', error);
+      throw error;
+    }
+  },   
 };
 
 export default apiService;

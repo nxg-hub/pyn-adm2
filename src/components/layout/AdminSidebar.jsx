@@ -33,8 +33,8 @@ import {
   Globe,
   QrCode,
   Briefcase,
+  LogOut
 } from "lucide-react";
-import { useEffect } from "react";
 import logo from '../../assets/logo.png'
 import { useAdmin } from "../../contexts/AdminContext";
 import { cn } from "../../lib/utils";
@@ -50,6 +50,7 @@ const SidebarItem = ({
 }) => {
   if (!hasPermission) return null;
 
+  
   return (
     <li className="px-3 py-2">
       <Link
@@ -96,6 +97,7 @@ const SidebarSubItem = ({
 export function AdminSidebar() {
   const location = useLocation();
   const { hasPermission } = useAdmin();
+
 
   const isActive = (path) => {
     return (
@@ -571,6 +573,11 @@ export function AdminSidebar() {
             href="/dashboard/system"
             isActive={isActive("/dashboard/system")}
             hasPermission={hasPermission("manageAdmins")}
+          />
+          <SidebarItem
+          icon = {LogOut}
+          label= "Log Out"
+          href= "/logout"          
           />
         </ul>
       </nav>

@@ -65,7 +65,7 @@ const handleBack = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Tier Level</p>
-              <p className="text-lg font-medium">{selectedUser?.tierLevel || user?.tierLevel}</p>
+              <p className="text-lg font-medium">{selectedUser?.walletId || user?.walletId}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Status</p>

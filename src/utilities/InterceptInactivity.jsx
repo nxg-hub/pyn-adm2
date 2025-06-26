@@ -23,7 +23,7 @@ const InactivityInterceptor = () => {
       countdownRef.current -= 1;
 
       if (countdownRef.current <= 0) {
-        handleLogout();
+    navigate('/logout');
       } else {
         forceUpdate({});
       }
@@ -65,7 +65,7 @@ const InactivityInterceptor = () => {
     
 
     // Redirect to login
-    navigate('/');
+    navigate('/logout');
   };
 
   const handleCancel = useCallback(

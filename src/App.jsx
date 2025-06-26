@@ -4,6 +4,7 @@ import RouteWrapper from "./components/RouteWrapper";
 import AdminLayout from "./components/layout/AdminLayout";
 import ProtectedRoute from "./utilities/ProtectedRoutes.jsx";
 import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
+import LogOutHandler from "./pages/LogOutHandler.jsx";
 
 // Auth
 import LoginForm from "./pages/Login/login.jsx";
@@ -91,6 +92,7 @@ function App() {
         <Route path="/completereg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<PageNotFound />} />
+        <Route path="/logout" element={<LogOutHandler />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* Protected Admin Routes */}

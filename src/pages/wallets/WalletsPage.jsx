@@ -14,6 +14,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu"
+import { useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
+import { fetchWallets } from "../../redux/fetchWalletsSlice"
+import Pagination from "../../components/ui/pagination"
 
 const wallets = [
   {
@@ -57,11 +61,18 @@ const wallets = [
     lastTransaction: "2024-04-21 02:10 PM",
   },
 ]
+const ITEMS_PER_PAGE = 10;
+
+const itemsPerPage = ITEMS_PER_PAGE;
 
 function WalletsPage() {
   const [searchQuery, setSearchQuery] = useState("")
-    const [loading, setLoading] = useState(true);
-    const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const wallets = useSelector((state) => state.wallets.all);
+
   
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -78,6 +89,30 @@ function WalletsPage() {
   
       return () => clearTimeout(timer);
     }, []);
+
+     useEffect(() => {
+      dispatch(fetchWallets());
+    }, []);
+
+    const filteredData = (wallets).filter((wallet) => {
+    const emailMatch = wallet.email?.toLowerCase().includes(searchQuery.toLowerCase());
+    return  emailMatch;
+  });
+
+const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedData = filteredData.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  const totalWallets = wallets?.length || 0;
+  console.log (paginatedData)
+
+  const activeWallets = wallets?.filter (wallet => wallet.blocked === false);
+
+  const totalActive = activeWallets.length
+
 
   return (
     <div className="flex flex-col">
@@ -128,7 +163,7 @@ function WalletsPage() {
               <CardTitle className="text-sm font-medium">Total Wallets</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">24,521</div>
+              <div className="text-2xl font-bold">{totalWallets}</div>
               <p className="text-xs text-muted-foreground">+12.5% from last month</p>
             </CardContent>
           </Card>
@@ -146,7 +181,7 @@ function WalletsPage() {
               <CardTitle className="text-sm font-medium">Active Wallets</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">21,345</div>
+              <div className="text-2xl font-bold">{totalActive}</div>
               <p className="text-xs text-muted-foreground">87% of total wallets</p>
             </CardContent>
           </Card>
@@ -171,11 +206,12 @@ function WalletsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {wallets.map((wallet) => (
-                  <TableRow key={wallet.id}>
-                    <TableCell className="font-medium">{wallet.id}</TableCell>
-                    <TableCell>{wallet.user}</TableCell>
-                    <TableCell>${wallet.balance.toFixed(2)}</TableCell>
+                {paginatedData.map((wallet) => (
+                  <TableRow key={wallet.walletId}>
+                    <TableCell className="font-medium">{wallet.walletId}</TableCell>
+                    <TableCell>{wallet.name}</TableCell>
+                    <TableCell>  {wallet.balance.currency} {wallet.balance.amount.toLocaleString()}
+</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {wallet.type === "Personal" ? (
@@ -183,25 +219,25 @@ function WalletsPage() {
                         ) : (
                           <CreditCard className="h-4 w-4 text-purple-500" />
                         )}
-                        {wallet.type}
+  {wallet.type.charAt(0).toUpperCase() + wallet.type.slice(1).toLowerCase()}
                       </div>
                     </TableCell>
                     <TableCell>
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          wallet.status === "Active"
+                          wallet.blocked === false
                             ? "bg-green-100 text-green-800"
-                            : wallet.status === "Inactive"
+                            : wallet.blocked === true
                               ? "bg-yellow-100 text-yellow-800"
                               : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {wallet.status}
+                        {wallet.blocked === false ? "Active" : wallet.blocked === "Inactive"}
                       </span>
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <DropdownMenuTrigger>
                           <Button variant="ghost" size="icon">
                             <MoreHorizontal className="h-4 w-4" />
                             <span className="sr-only">Open menu</span>
@@ -227,26 +263,17 @@ function WalletsPage() {
                 ))}
               </TableBody>
             </Table>
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">Showing 1-5 of 24,521 wallets</div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" disabled>
-                  Previous
-                </Button>
-                <Button variant="outline" size="sm" className="bg-blue-600 text-white hover:bg-blue-700">
-                  1
-                </Button>
-                <Button variant="outline" size="sm">
-                  2
-                </Button>
-                <Button variant="outline" size="sm">
-                  3
-                </Button>
-                <Button variant="outline" size="sm">
-                  Next
-                </Button>
+           
+                        <div className="flex items-center justify-between mt-4">
+             <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                itemLabel="Wallets"
+                itemsPerPage={itemsPerPage}
+                onPageChange={(page) => setCurrentPage(page)}
+                totalItems={totalWallets}
+              />
               </div>
-            </div>
           </CardContent>
         </Card>
       </main>
