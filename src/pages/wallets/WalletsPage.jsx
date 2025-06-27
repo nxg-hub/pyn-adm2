@@ -14,53 +14,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu"
+import { useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { useDispatch } from "react-redux"
 import { fetchWallets } from "../../redux/fetchWalletsSlice"
 import Pagination from "../../components/ui/pagination"
-
-const wallets = [
-  {
-    id: "WAL-001",
-    user: "John Doe",
-    balance: 2500.0,
-    type: "Personal",
-    status: "Active",
-    lastTransaction: "2024-04-23 10:45 AM",
-  },
-  {
-    id: "WAL-002",
-    user: "Sarah Miller",
-    balance: 1200.0,
-    type: "Business",
-    status: "Active",
-    lastTransaction: "2024-04-23 11:30 AM",
-  },
-  {
-    id: "WAL-003",
-    user: "Robert Johnson",
-    balance: 0.0,
-    type: "Personal",
-    status: "Inactive",
-    lastTransaction: "2024-04-22 03:15 PM",
-  },
-  {
-    id: "WAL-004",
-    user: "Emily Davis",
-    balance: 5000.0,
-    type: "Business",
-    status: "Active",
-    lastTransaction: "2024-04-22 09:20 AM",
-  },
-  {
-    id: "WAL-005",
-    user: "Michael Wilson",
-    balance: 1800.0,
-    type: "Personal",
-    status: "Suspended",
-    lastTransaction: "2024-04-21 02:10 PM",
-  },
-]
+import { setSelectedWallet } from "../../redux/fetchWalletsSlice"
+import ViewWalletDetails from "./ActionPages/ViewWalletDetails"
+import { setSelectedWalletId } from "../../redux/fetchUserTransactionsSlice"
 const ITEMS_PER_PAGE = 10;
 
 const itemsPerPage = ITEMS_PER_PAGE;
@@ -70,6 +31,8 @@ function WalletsPage() {
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [detailsModal, setDetailsModal] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const wallets = useSelector((state) => state.wallets.all);
 
@@ -95,7 +58,7 @@ function WalletsPage() {
     }, []);
 
     const filteredData = (wallets).filter((wallet) => {
-    const emailMatch = wallet.email?.toLowerCase().includes(searchQuery.toLowerCase());
+    const emailMatch = wallet.name?.toLowerCase().includes(searchQuery.toLowerCase());
     return  emailMatch;
   });
 
@@ -115,6 +78,10 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
 
   return (
+    <div>
+      {loading? (
+        <TableLoader/>
+      ) : (
     <div className="flex flex-col">
       <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
@@ -244,9 +211,18 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             >
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">View Details</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">Transaction History</DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]" onClick= {() => {
+                            dispatch(setSelectedWallet(wallet));
+                            setDetailsModal(true)
+                          }}>View Details</DropdownMenuItem>
+                          <DropdownMenuItem className="hover:bg-[#3A859E]" onClick = {() => {
+                            dispatch(setSelectedWallet(wallet));
+                            dispatch(setSelectedWalletId(wallet.walletId))
+                            navigate('/wallets/transactions');
+                          }}>Transaction History</DropdownMenuItem>
                           <DropdownMenuItem className="hover:bg-[#3A859E]">Edit Wallet</DropdownMenuItem>
+                           <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">Freeze Wallet</DropdownMenuItem>
+
                           {wallet.status === "Active" && (
                             <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">Suspend Wallet</DropdownMenuItem>
                           )}
@@ -261,6 +237,10 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                     </TableCell>
                   </TableRow>
                 ))}
+                <ViewWalletDetails
+                isOpen={detailsModal}
+                onClose={() => setDetailsModal(false)}
+                />
               </TableBody>
             </Table>
            
@@ -278,6 +258,8 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
         </Card>
       </main>
     </div>
+      )}
+      </div>
   )
 }
 

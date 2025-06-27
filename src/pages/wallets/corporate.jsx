@@ -13,7 +13,7 @@ import {
 } from "../../components/ui/dropdown-menu";
 import Pagination from "../../components/ui/pagination";
 import { useSelector } from "react-redux";
-
+import apiService from "../../services/apiService";
 
 
 const ITEMS_PER_PAGE = 10;
@@ -22,6 +22,8 @@ const itemsPerPage = ITEMS_PER_PAGE;
 
 export function CorporateAccountsPage() {
   const [loading, setLoading] = useState(true);
+  const [balance, setBalance] = useState([]);
+
   const users = useSelector((state) => state.users.users);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,6 +58,28 @@ console.log(paginatedData)
 
     return () => clearTimeout(timer);
   }, []);
+
+  const handleFetchBalance = async (Id) => {
+  setLoading(true);
+
+  try {
+    const balance = await apiService.fetchBalance(Id);
+setBalance(balance || []);
+    
+  } catch (error) {
+    
+  const message = error.message || 'Unexpected error';
+    setErrorMessage(`Failed to load balance: ${message}`);
+  } finally {
+    setLoading(false);
+  }
+
+  };
+
+  useEffect(() => {
+    (handleFetchBalance());
+  }, []);
+
 
   return (
     <div className="flex flex-col">
@@ -98,7 +122,7 @@ console.log(paginatedData)
                   </DropdownMenu>
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">Account Manager: {account.accountManager} None For now</p>
-                <p className="text-sm text-muted-foreground mb-2">Balance: ${account.balance}</p>
+                {/* <p className="text-sm text-muted-foreground mb-2">Balance: {balance.balance.currency} {balance.balance.amount.toLocaleString()}</p> */}
                 <p className="text-sm text-muted-foreground mb-2">Last Transaction: {account.lastTransaction}</p>
                 <span
                   className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${

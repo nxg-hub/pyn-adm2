@@ -14,59 +14,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
+import { fetchVirtualCards, setSelectedCard } from "../../redux/fetchVirtualCardsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import Pagination from "../../components/ui/pagination";
 
-const cards = [
-  {
-    id: "CARD-001",
-    cardNumber: "1234 5678 9876 5432",
-    cardholder: "John Doe",
-    balance: 1234.56,
-    currency: "USD",
-    status: "Active",
-    expiryDate: "12/25",
-  },
-  {
-    id: "CARD-002",
-    cardNumber: "9876 5432 1234 5678",
-    cardholder: "Jane Smith",
-    balance: 567.89,
-    currency: "EUR",
-    status: "Active",
-    expiryDate: "11/24",
-  },
-  {
-    id: "CARD-003",
-    cardNumber: "5678 1234 5432 9876",
-    cardholder: "Bob Johnson",
-    balance: 0.05,
-    currency: "BTC",
-    status: "Frozen",
-    expiryDate: "01/26",
-  },
-  {
-    id: "CARD-004",
-    cardNumber: "4321 8765 2345 6789",
-    cardholder: "Alice Brown",
-    balance: 2345.67,
-    currency: "GBP",
-    status: "Active",
-    expiryDate: "05/23",
-  },
-  {
-    id: "CARD-005",
-    cardNumber: "8765 4321 3456 7890",
-    cardholder: "Charlie Wilson",
-    balance: 1.5,
-    currency: "ETH",
-    status: "Frozen",
-    expiryDate: "08/24",
-  },
-];
+const ITEMS_PER_PAGE = 10;
+
+const itemsPerPage = ITEMS_PER_PAGE;
 
 function VirtualCardsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const dispatch = useDispatch();
+  const cards = useSelector((state) => state.virtualCards.all);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -83,6 +45,29 @@ function VirtualCardsPage() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    dispatch(fetchVirtualCards());
+  }, [])
+
+  const filteredData = (cards).filter((card) => {
+    const name = card.name_on_card?.toLowerCase().includes(searchQuery.toLowerCase());
+    return  name;
+  });
+
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedData = filteredData.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  const totalCards = cards?.length
+
+  const activeCards = cards?.filter (card => card.active === true);
+
+  const totalActive = activeCards.length
+    console.log (paginatedData)
 
   return (
     <div className="flex flex-col">
@@ -133,7 +118,7 @@ function VirtualCardsPage() {
                   <CardTitle className="text-sm font-medium">Total Cards</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">5,432</div>
+                  <div className="text-2xl font-bold">{totalCards}</div>
                   <p className="text-xs text-muted-foreground">+8.4% from last month</p>
                 </CardContent>
               </Card>
@@ -151,7 +136,7 @@ function VirtualCardsPage() {
                   <CardTitle className="text-sm font-medium">Active Cards</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">4,890</div>
+                  <div className="text-2xl font-bold">{totalActive}</div>
                   <p className="text-xs text-muted-foreground">90% of total cards</p>
                 </CardContent>
               </Card>
@@ -168,7 +153,7 @@ function VirtualCardsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>CARD ID</TableHead>
-                  <TableHead>CARD NUMBER</TableHead>
+                  <TableHead>CARD TYPE</TableHead>
                   <TableHead>CARDHOLDER</TableHead>
                   <TableHead>BALANCE</TableHead>
                   <TableHead>CURRENCY</TableHead>
@@ -185,19 +170,19 @@ function VirtualCardsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  cards.map((card) => (
+                  paginatedData.map((card) => (
                     <TableRow key={card.id}>
                       <TableCell className="font-medium">{card.id}</TableCell>
-                      <TableCell>{card.cardNumber}</TableCell>
-                      <TableCell>{card.cardholder}</TableCell>
-                      <TableCell>{card.balance}</TableCell>
+                      <TableCell>{card.card_type}</TableCell>
+                      <TableCell>{card.name_on_card}</TableCell>
+                      <TableCell>{card.amount}</TableCell>
                       <TableCell>{card.currency}</TableCell>
-                      <TableCell>{card.expiryDate}</TableCell>
+                      <TableCell>{card.expiration}</TableCell>
                       <TableCell>
                         <span
-                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${card.status === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${card.active === true ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
                         >
-                          {card.status}
+                          {card.active === true ? "Active" : "Inactive"}
                         </span>
                       </TableCell>
                       <TableCell>
@@ -226,6 +211,17 @@ function VirtualCardsPage() {
               </TableBody>
 
             </Table>
+            
+                        <div className="flex items-center justify-between mt-4">
+             <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                itemLabel="Virtua Cards"
+                itemsPerPage={itemsPerPage}
+                onPageChange={(page) => setCurrentPage(page)}
+                totalItems={totalCards}
+              />
+              </div>
           </CardContent>
         </Card>
       </main>
