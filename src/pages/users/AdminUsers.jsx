@@ -59,7 +59,6 @@ function AdminsPage() {
   };
   const selectedAdmins = adminSections[activeSection] || [];
 
-  // Then, filter it
   const filteredData = selectedAdmins.filter((admin) => {
     const firstNameMatch = admin.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
     const emailMatch = admin.email?.toLowerCase().includes(searchQuery.toLowerCase());

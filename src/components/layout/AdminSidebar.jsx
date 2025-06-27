@@ -32,6 +32,7 @@ import {
   Globe,
   QrCode,
   Briefcase,
+  LogOut,
   Receipt,
   Ellipsis,
   ShieldCheck,
@@ -94,6 +95,7 @@ const SidebarItem = ({
     }
   };
 
+  
   return (
     <li className="px-3 py-2">
       <div className="flex items-center">
@@ -163,6 +165,7 @@ const SidebarSubItem = ({
 export function AdminSidebar() {
   const location = useLocation();
   const { hasPermission } = useAdmin();
+
 
   const isActive = (path) => {
     return (
@@ -684,6 +687,11 @@ export function AdminSidebar() {
             href="/dashboard/system"
             isActive={isActive("/dashboard/system")}
             hasPermission={hasPermission("manageAdmins")}
+          />
+          <SidebarItem
+          icon = {LogOut}
+          label= "Log Out"
+          href= "/logout"          
           />
         </ul>
       </nav>

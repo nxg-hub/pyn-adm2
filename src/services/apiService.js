@@ -579,125 +579,78 @@ try {
       console.error('Fetch users error:', error);
       throw error;
     }
-  },
-
-  forgotPassword: async (email) => {
+  }, 
+ fetchWallets: async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/v1/auth/initiate-password-reset?email=${email}`,
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/get-all-wallet?page=0&size=3000&start=0`,
         {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email }),
+            apiKey: import.meta.env.VITE_API_KEY
+      },
         }
       );
-
-      const text = await response.text(); 
-      // console.log('Raw response text:', text);
-      // console.log("response:", data)
-
-     let data;
-      try {
-        data = text ? JSON.parse(text) : {}; 
-      } catch (parseError) {
-        throw new Error('Invalid JSON response from server');
-      }
-
+       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data?.message || 'Failed to send password reset OTP');
+        throw new Error(data.message || 'Failed to fetch wallets');
       }
 
-      return data;
+      return data.data.content
     } catch (error) {
+      console.error('Error fetching wallets:', error);
       throw error;
     }
-  },  
+  },   
+  fetchVirtualCards: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/flutterwave/virtual-cards`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+      },
+        }
+      );
+       const data = await response.json();
 
-  // validateOTP: async (email, otp) => {
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_BASE_URL}/api/v1/auth/validate-otp`,
-  //       {
-  //         method: 'POST', 
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ email, otp }),
-  //       }
-  //     );
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch wallets');
+      }
 
-  //     const data = await response.json();
+      return data.data
+    } catch (error) {
+      console.error('Error fetching wallets:', error);
+      throw error;
+    }
+  }, 
+  fetchBalance: async (Id) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/balance?id=${Id}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            apiKey: import.meta.env.VITE_API_KEY
+      },
+        }
+      );
+       const data = await response.json();
 
-  //     if (!response.ok) {
-  //       throw new Error(data.message || 'OTP validation failed. Please try again.');
-  //     }
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch wallets');
+      }
 
-  //     return data;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // },
-
-  // Reset password with validated OTP
-  // resetPasswordWithOTP: async (email, otp, newPassword, confirmPassword) => {
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_BASE_URL}/api/v1/auth/reset-password`,
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ 
-  //           email, 
-  //           otp, 
-  //           newPassword, 
-  //           confirmPassword 
-  //         }),
-  //       }
-  //     );
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       throw new Error(data.message || 'Failed to reset password');
-  //     }
-
-  //     return data;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // },
-  
-
-  // resendOTP: async (email) => {
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_BASE_URL}/api/v1/auth/resend-otp`,
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ email }),
-  //       }
-  //     );
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       throw new Error(data.message || 'Failed to resend OTP');
-  //     }
-
-  //     return data;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // },
-
+      return data.data
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+      throw error;
+    }
+  },     
 };
 
 export default apiService;

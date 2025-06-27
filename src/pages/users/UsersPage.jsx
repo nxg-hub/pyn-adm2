@@ -29,15 +29,16 @@ import FlagUser from "./ActionPages/FlagUser";
 import UnflagUserModal from "./ActionPages/UnflagUser";
 import InitiatePasswordReset from "./ActionPages/ChangePassword"
 import PasswordManagerResetModal from "./ActionPages/ChangePassword";
-
+import AddNewUser from "./AddNewUser";
   
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const itemsPerPage = ITEMS_PER_PAGE;
 
 function UsersPage() {
   const dispatch = useDispatch();
   const users = useSelector((state) => state.users.users);
+  const admin = useSelector((state) => state.admin.admin);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("personalUsers");
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,6 +47,7 @@ function UsersPage() {
   const [showFlagModal, setShowFlagModal] = useState(false);
   const [showInitiatePasswordModal, setInitiatePasswordModal] = useState(false);
   const [showPasswordManagerResetModal, setShowPasswordManagerResetModal] = useState(false);
+  const [AddUserModal, setAddUserModal] = useState('')
 
 
 
@@ -72,61 +74,85 @@ function UsersPage() {
 
   const totalUsers = users?.length || 0;
 
-  return (
-    <div className="flex flex-col">
-      <header className="border-b">
-        <div className="flex h-16 items-center px-4 gap-4">
+  const handleAddUserClick = () => {
+    setAddUserModal(true);
+  };
+
+ return (
+  <div className="flex flex-col">
+    <header className="border-b">
+      <div className="flex flex-col gap-2 px-4 py-2 sm:flex-row sm:items-center sm:justify-between">
+        {/* Left side: Title and subtitle */}
+        <div>
           <h1 className="text-xl font-semibold">User Management</h1>
           <span className="text-sm text-muted-foreground">
             View and manage all users
           </span>
-          <div className="ml-auto flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search users..."
-                className="w-[250px] pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
-            <Button>
-              <UserPlus className="mr-2 h-4 w-4" />
-              Add New User
-            </Button>
-          </div>
         </div>
-      </header>
 
-      <main className="flex-1 p-4 md:p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Users</CardTitle>
-          </CardHeader>
-          <div className="flex gap-10 px-6 py-4 border-b text-gray-600">
-        {["personalUsers", "businessUsers"].map((section) => (
-          <div
-            key={section}
-            className="cursor-pointer group"
-            onClick={() => setActiveSection(section)}>
-            <h1
-              className={`relative text-base font-semibold transition-colors duration-300 ${
-                activeSection === section ? "text-white bg-gray-600 px-2 rounded-md" : "text-white"
-              }`}
-            >
-              {section.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
-              
-            </h1>
+        {/* Right side: Search and buttons */}
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+          <div className="relative w-[300px] sm:w-[250px]">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search users..."
+              className="w-full pl-8"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-        ))}
+          <Button variant="outline" className="w-[250px] sm:w-auto">
+            <Filter className="mr-2 h-4 w-4" />
+            Filter
+          </Button>
+          {admin?.adminUserType === "SUPER_ADMIN" && (
+         <Button 
+          onClick={handleAddUserClick}
+          className="w-full sm:w-auto">
+            <UserPlus className="mr-2 h-4 w-4" />
+            Add New User
+          </Button>
+          )}
+          
+          
+        </div>
       </div>
-          <CardContent>
-            <Table>
+    </header>
+
+    <main className="flex-1 p-4 md:p-6 overflow-x-auto">
+      <Card className="w-full overflow-x-auto">
+        <CardHeader>
+          <CardTitle>Users</CardTitle>
+        </CardHeader>
+
+        {/* Section Tabs */}
+        <div className="flex flex-wrap gap-4 px-6 py-4 border-b text-gray-600">
+          {["personalUsers", "businessUsers"].map((section) => (
+            <div
+              key={section}
+              className="cursor-pointer group"
+              onClick={() => setActiveSection(section)}
+            >
+              <h1
+                className={`relative text-base font-semibold transition-colors duration-300 ${
+                  activeSection === section
+                    ? "text-white bg-gray-600 px-2 rounded-md"
+                    : "text-white"
+                }`}
+              >
+                {section
+                  .replace(/([A-Z])/g, " $1")
+                  .replace(/^./, (str) => str.toUpperCase())}
+              </h1>
+            </div>
+          ))}
+        </div>
+
+        {/* Table with horizontal scroll */}
+        <CardContent>
+          <div className="w-full overflow-x-auto">
+            <Table className="min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead>NAME</TableHead>
@@ -241,6 +267,12 @@ function UsersPage() {
                   isOpen={showInitiatePasswordModal}
                   onClose={() => setInitiatePasswordModal(false)}
                 />
+                {AddUserModal && (
+                <AddNewUser
+                 isOpen={AddUserModal}
+                 onClose={() => setAddUserModal(false)}
+                />
+                )}
                 {/* <PasswordManagerResetModal
                   isOpen={showPasswordManagerResetModal}
                   onClose={() => setShowPasswordManagerResetModal(false)}
@@ -260,7 +292,8 @@ function UsersPage() {
                     : totalUsers
                 }
               />
-            </div>
+              </div>
+              </div>
           </CardContent>
         </Card>
       </main>

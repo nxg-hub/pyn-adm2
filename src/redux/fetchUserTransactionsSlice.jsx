@@ -14,7 +14,7 @@ export const fetchTransactions = createAsyncThunk(
         walletId: walletId,
       }).toString();
 
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/transactions/customer-transaction-history?${queryParams}`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/transactions/customer-transaction-history?${queryParams}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -44,6 +44,9 @@ const transactionsSlice = createSlice({
     setSelectedWalletId: (state, action) => {
       state.walletId = action.payload;
     },
+     clearSelectedWalletId: (state) => {
+    state.walletId = null;
+  },
   },
   extraReducers: (builder) => {
     builder
@@ -61,6 +64,6 @@ const transactionsSlice = createSlice({
   },
 });
 
-export const { setSelectedWalletId } = transactionsSlice.actions;
+export const { setSelectedWalletId, clearSelectedWalletId } = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

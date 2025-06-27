@@ -24,15 +24,16 @@ import { useLocation } from "react-router-dom";
   const itemsPerPage =  ITEMS_PER_PAGE;
   
   
-  function ViewTransactions() {
+  function TransactionHistory() {
     const dispatch = useDispatch();
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [activeSection, setActiveSection] = useState("Credit");
     const { selectedWallet } = useSelector((state) => state.wallets);
 
+    const walletSectionId = selectedWallet?.walletId
 
-    const { walletId: reduxWalletId,  transactions, loading, error } = useSelector((state) => state.transactions);
+    const { walletId: reduxWalletId, transactions, loading, error } = useSelector((state) => state.transactions);
     const user = useSelector((state) => state.users.selectedUser);
         const navigate = useNavigate();
     const location = useLocation();
@@ -43,7 +44,7 @@ import { useLocation } from "react-router-dom";
 
   
     // Determine the walletId to use
-    const walletIdToUse = selectedWalletId || reduxWalletId 
+    const walletIdToUse =  selectedWalletId || reduxWalletId
   
     const handleBack = () => {
       navigate(-1);
@@ -55,6 +56,7 @@ import { useLocation } from "react-router-dom";
         dispatch(fetchTransactions(walletIdToUse));
       }
     }, [walletIdToUse, dispatch]);
+  
 
     
 const Credit = transactions?.filter((t) => t.type === "CREDIT") ;
@@ -218,4 +220,4 @@ const totalTransactions = transactions.length
 
 
 
-export default ViewTransactions;
+export default TransactionHistory;

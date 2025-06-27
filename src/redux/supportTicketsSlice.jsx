@@ -5,7 +5,7 @@ import apiService from '../services/apiService';
 
 export const fetchSupportTickets = createAsyncThunk(
   'supportTickets/fetchSupportTickets',
-  async ({ status, priority, category, searchQuery}, thunkAPI) => {
+  async ({  priority, category}, thunkAPI) => {
 
 
     try {

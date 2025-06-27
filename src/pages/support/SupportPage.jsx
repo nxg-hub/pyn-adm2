@@ -35,18 +35,28 @@ const SupportPage = () => {
   const { activeTicket } = useSelector((state) => state.supportTickets);
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useDispatch();
+  const [priority, setPriority] = useState('');
+  const [category, setCategory] = useState(''); 
   const { tickets, loading, error } = useSelector((state) => state.supportTickets); 
   
 useEffect(() => {
-    dispatch(fetchSupportTickets());
-  }, [dispatch]);
+  dispatch(fetchSupportTickets({ priority, category}));
+  }, [dispatch, priority, category]);
+
 
   const ITEMS_PER_PAGE = 5;
   const itemsPerPage = ITEMS_PER_PAGE;
 
-  const filteredData = (tickets)?.filter((ticket) => {
-  const Id = ticket.customerId?.toLowerCase().includes(searchQuery.toLowerCase())
-  return Id 
+   const filteredData = (tickets)?.filter((ticket) => {
+  const matchesSearch =
+    ticket.customerId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ticket.customerName?.toLowerCase().includes(searchQuery.toLowerCase());
+
+  const matchesPriority = priority ? ticket.priority === priority : true;
+  const matchesCategory = category ? ticket.category === category : true;
+
+  return  matchesSearch && matchesPriority && matchesCategory;
+
 })
 
 const totalTickets= tickets.length

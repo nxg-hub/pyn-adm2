@@ -4,6 +4,7 @@ import RouteWrapper from "./components/RouteWrapper";
 import AdminLayout from "./components/layout/AdminLayout";
 import ProtectedRoute from "./utilities/ProtectedRoutes.jsx";
 import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
+import LogOutHandler from "./pages/LogOutHandler.jsx";
 
 // Auth
 import LoginForm from "./pages/Login/login.jsx";
@@ -32,7 +33,7 @@ import ActivityLogs from "./pages/users/AdminActionPages/ViewActivities.jsx";
 import ViewSuspension from "./pages/users/ActionPages/ViewSuspensionDetails.jsx";
 import FlaggedAccounts from "./pages/users/FlaggedUsers.jsx";
 import ViewFlagDetails from "./pages/users/ActionPages/ViewFlaggedDetails.jsx";
-
+import ViewEmployees from "./pages/users/ActionPages/ViewEmployees.jsx";
 // Transactions
 import Transactions from "./pages/transactions/page";
 import LoanPage from "./pages/transactions/LoanPage.jsx";
@@ -45,6 +46,7 @@ import FundingWithdrawalsPage from "./pages/wallets/withdrawals.jsx";
 import PaymentGatewaysPage from "./pages/wallets/gateways.jsx";
 import CorporateAccountsPage from "./pages/wallets/corporate.jsx";
 import SystemBalancePage from "./pages/wallets/system.jsx";
+import TransactionHistory from "./pages/wallets/ActionPages/TransactionHistory.jsx";
 
 // Analytics
 import AnalyticsPage from "./pages/analytics/AnalyticsPage";
@@ -96,6 +98,7 @@ function App() {
         <Route path="/complete-reg" element={<CompleteRegForm />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="*" element={<PageNotFound />} />
+        <Route path="/logout" element={<LogOutHandler />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/otp-validation" element={<OTPValidationPage />} />
@@ -122,7 +125,8 @@ function App() {
           <Route path="/view-activities" element={<ActivityLogs />} />
           <Route path="/view-details" element={<ViewSuspension />} />
           <Route path="/view-flag-details" element={<ViewFlagDetails/>} />
-  
+          <Route path="/employees" element={<ViewEmployees/>} />
+
 
           {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />
@@ -137,6 +141,8 @@ function App() {
             <Route path="dashboard/wallets/gateways" element={<PaymentGatewaysPage />} />
             <Route path="dashboard/wallets/corporate" element={<CorporateAccountsPage />} />
             <Route path="dashboard/wallets/system" element={<SystemBalancePage />} />
+            <Route path="/wallets/transactions" element={<TransactionHistory />} />
+
 
 
           {/* Analytics */}
