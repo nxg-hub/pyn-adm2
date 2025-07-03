@@ -130,8 +130,8 @@ function App() {
 
           {/* Transactions */}
           <Route path="dashboard/transactions/*" element={<Transactions />} />
-          <Route path="dashboard/transactions/loan" element={<LoanPage />} />
-          <Route path="dashboard/transactions/savings" element={<SavingsPage />} />
+          <Route path="dashboard/finances/loan" element={<LoanPage />} />
+          <Route path="dashboard/finances/savings" element={<SavingsPage />} />
 
 
             {/* Wallets */}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -18,18 +18,19 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
 import Pagination from "../../components/ui/pagination"
+import apiService from "../../services/apiService"
 
-const virtualCardTransactions = [
-  { id: "VC-001", cardHolder: "John Doe", amount: 100, date: "2024-04-12", time: "9:24am", status: "Successful",},
-  { id: "VC-002", cardHolder: "Jane Smith", amount: 50, date: "2024-04-15", time: "9:24am", status: "Pending",},
-  { id: "VC-003", cardHolder: "Robert Brown", amount: 200, date: "2024-04-18", time: "9:24am", status: "Failed",},
-  { id: "VC-004", cardHolder: "John Doe", amount: 100, date: "2024-04-12", time: "9:24am", status: "Successful",},
-  { id: "VC-005", cardHolder: "Jane Smith", amount: 50, date: "2024-04-15", time: "9:24am", status: "Pending",},
-  { id: "VC-006", cardHolder: "Robert Brown", amount: 200, date: "2024-04-18", time: "9:24am", status: "Failed",},
-  { id: "VC-007", cardHolder: "John Doe", amount: 100, date: "2024-04-12", time: "9:24am", status: "Successful",},
-  { id: "VC-008", cardHolder: "Jane Smith", amount: 50, date: "2024-04-15", time: "9:24am", status: "Pending",},
-  { id: "VC-009", cardHolder: "Robert Brown", amount: 200, date: "2024-04-18", time: "9:24am", status: "Failed",},
-]
+// const virtualCardTransactions = [
+//   { id: "VC-001", cardHolder: "John Doe", amount: 100, date: "2024-04-12", time: "9:24am", status: "Successful",},
+//   { id: "VC-002", cardHolder: "Jane Smith", amount: 50, date: "2024-04-15", time: "9:24am", status: "Pending",},
+//   { id: "VC-003", cardHolder: "Robert Brown", amount: 200, date: "2024-04-18", time: "9:24am", status: "Failed",},
+//   { id: "VC-004", cardHolder: "John Doe", amount: 100, date: "2024-04-12", time: "9:24am", status: "Successful",},
+//   { id: "VC-005", cardHolder: "Jane Smith", amount: 50, date: "2024-04-15", time: "9:24am", status: "Pending",},
+//   { id: "VC-006", cardHolder: "Robert Brown", amount: 200, date: "2024-04-18", time: "9:24am", status: "Failed",},
+//   { id: "VC-007", cardHolder: "John Doe", amount: 100, date: "2024-04-12", time: "9:24am", status: "Successful",},
+//   { id: "VC-008", cardHolder: "Jane Smith", amount: 50, date: "2024-04-15", time: "9:24am", status: "Pending",},
+//   { id: "VC-009", cardHolder: "Robert Brown", amount: 200, date: "2024-04-18", time: "9:24am", status: "Failed",},
+// ]
 
 function VirtualCardsPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -41,6 +42,28 @@ function VirtualCardsPage() {
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false);
+  const [transactions, setTransactions] = useState([])
+
+
+  const handleFetchTransactions = async () => {
+    setIsLoading(true);
+    try {
+      const transactions = await apiService.fetchVirtualCardsTransactions();
+
+      console.log ('V.card Transactions:', transactions)
+      setTransactions(transactions || []);
+    } catch (error) {
+      const message = error.message || "Unexpected error";
+      console.error(`Failed to fetch: ${message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect (() => {
+    (handleFetchTransactions())
+  }, []);
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -69,11 +92,13 @@ function VirtualCardsPage() {
     // You can replace the console log with actual logic like fetching a PDF or image.
   }
 
-  const filteredTransactions = virtualCardTransactions.filter((transaction) =>
+  const filteredTransactions = (transactions).filter((transaction) =>
     transaction.cardHolder.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const ITEMS_PER_PAGE = 5;
+
+  const totalTransactions = transactions.length
   
   const paginatedTransactions = filteredTransactions.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -210,7 +235,6 @@ function VirtualCardsPage() {
                             </DropdownMenuItem>
                           )}
 
-                          {hasPermission("monitorSuspiciousVirtualCardTransactions") && (
                             <DropdownMenuItem  className="hover:bg-[#3A859E]" 
                               onClick={() => {
                                 setSelectedTransaction(transaction)
@@ -219,7 +243,7 @@ function VirtualCardsPage() {
                             >
                               <AlertCircle className="mr-2 h-4 w-4 text-red-600" /> Flag as Suspicious
                             </DropdownMenuItem>
-                          )}
+                        
 
                           {hasPermission("adjustVirtualCardAmounts") && (
                             <DropdownMenuItem  className="hover:bg-[#3A859E]" 
@@ -247,8 +271,9 @@ function VirtualCardsPage() {
             <div className="flex justify-end mt-4">
               <Pagination
                 currentPage={currentPage}
-                totalItems={filteredTransactions.length}
+                totalItems={totalTransactions}
                 itemsPerPage={ITEMS_PER_PAGE}
+                itemLabel="Virtual Card Transactions"
                 onPageChange={(page) => setCurrentPage(page)}
               />
             </div>

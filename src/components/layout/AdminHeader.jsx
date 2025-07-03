@@ -23,7 +23,11 @@ export function AdminHeader({ title, subtitle }) {
   const admin = useSelector((state) => state.admin.admin);
   const { currentRole, setCurrentRole, allRoles } = useAdmin()
 
-  
+ const role = localStorage.getItem('adminRole')
+ localStorage.setItem('adminName', `${admin?.firstName} ${admin?.lastName}` )
+
+ const adminName = localStorage.getItem('adminName')
+
   return (
     <header className="border-b">
       <div className="flex h-16 items-center px-4 gap-4">
@@ -47,7 +51,7 @@ export function AdminHeader({ title, subtitle }) {
               <Button variant="outline" className="gap-2">
                 <span>Role:</span>
                 <Badge variant="secondary" className="font-normal">
-        {admin?.adminUserType
+        {role
          ?.replace(/_/g, ' ')
          .toLowerCase()
          .replace(/\b\w/g, c => c.toUpperCase())}   
@@ -68,7 +72,7 @@ export function AdminHeader({ title, subtitle }) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="gap-2">
                 <User className="h-4 w-4" />
-                <span>{admin?.firstName} {admin?.lastName}</span>
+                <span>{adminName}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent   className="absolute right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "     >        

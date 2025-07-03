@@ -15,39 +15,40 @@ import Pagination from '../../../components/ui/pagination';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { fetchEmployees, setSelectedCustomerId } from '../../../redux/fetchCorporateCustomerEmployees';
+import { fetchEmployees } from '../../../redux/fetchCorporateCustomerEmployees';
 import ViewEmployeesAccount from './ViewEmployeesAccount';
+import ViewEmployeesPayroll from './ViewEmployeesPayroll';
+
 
 function ViewEmployees  ()  {
     const dispatch = useDispatch();
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const[detailsModal, setDetailsModal] = useState(false)
-        const navigate = useNavigate();
+    const[payrollModal, setPayrollModal] = useState(false)
+
+    const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+    const navigate = useNavigate();
 
 
-    const { customerId: reduxWalletId,  employees, loading, error } = useSelector((state) => state.employees);
+    const { customerId: reduxCustomerId,  employees, loading, error } = useSelector((state) => state.employees);
     const user = useSelector((state) => state.users.selectedUser);
-    const location = useLocation();
 const ITEMS_PER_PAGE = 10;
 
   const itemsPerPage =  ITEMS_PER_PAGE;
   
-    const selectedCustomerId = location.state?.id;
 
-    const customerIdToUse = selectedCustomerId || reduxWalletId 
-
-
+localStorage.setItem('customerId', reduxCustomerId)
     const handleBack = () => {
       navigate(-1);
     };
   
  useEffect(() => {
       // Only dispatch the action if we have a valid walletId
-      if (customerIdToUse) {
-        dispatch(fetchEmployees(customerIdToUse));
+      if (reduxCustomerId) {
+        dispatch(fetchEmployees(reduxCustomerId));
       }
-    }, [customerIdToUse, dispatch]);
+    }, [reduxCustomerId, dispatch]);
 
 const filteredData = (employees)?.filter((employee) => {
   const matchesSearch =
@@ -86,7 +87,8 @@ const totalEmployees = employees.length
           No employees found.
         </div>
       ) : (
-        paginatedData.map((employee) => (
+        paginatedData.map((employee) => {
+          return (
           <Card key={employee.id} className="p-6 shadow-md space-y-4">
             <div className="flex items-center justify-between mb-2">
               <div>
@@ -98,8 +100,7 @@ const totalEmployees = employees.length
                 </p>
               </div>
 
-              {/* Dropdown for actions */}
-              {/* <DropdownMenu>
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                    <Button variant="ghost" size="icon">
                 <MoreHorizontal className="h-5 w-5" />
@@ -108,11 +109,14 @@ const totalEmployees = employees.length
                         <DropdownMenuContent   className=" right-0 mb-5 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "      >       
                   <DropdownMenuItem onClick = {() => {
                     setDetailsModal(true)
-                    dispatch(setSelectedCustomerId(employee.id))
-                  }}>View Details</DropdownMenuItem>
-                  
+                    setSelectedEmployeeId(employee.id);  
+                  }}>View Account Details</DropdownMenuItem>
+                  <DropdownMenuItem onClick = {() => {
+                    setPayrollModal(true)
+                    setSelectedEmployeeId(employee.id);  
+                  }}>View Payroll</DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu> */}
+              </DropdownMenu> 
             </div>
 
             <div className="space-y-1 text-sm text-muted-foreground">
@@ -124,23 +128,38 @@ const totalEmployees = employees.length
                 <span className="font-medium text-white">Role:</span>{" "}
                 {employee.employeeRole}
               </p>
+               <p>
+                <span className="font-medium text-white">Employment Date:</span>{" "}
+                {new Date(employee.employmentDetails.employmentDate).toLocaleDateString(undefined, {
+                  year: 'numeric',
+                  month: 'long',
+                 day: 'numeric',
+                })}
+              </p>
             </div>
           </Card>
+          
+      
+                )
       
 
-      
-
-        ))
+        })
       )}
       <ViewEmployeesAccount
       isOpen= {detailsModal}
       onClose= {() => setDetailsModal(false)}
+      selectedEmployeeId={selectedEmployeeId}
+      />
+       <ViewEmployeesPayroll
+      isOpen= {payrollModal}
+      onClose= {() => setPayrollModal(false)}
+      selectedEmployeeId={selectedEmployeeId}
       />
        <div className="flex items-center justify-between mt-4">
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                itemLabel="Corporate Accounts"
+                itemLabel="Employees"
                 itemsPerPage={itemsPerPage}
                 onPageChange={(page) => setCurrentPage(page)}
                 totalItems={totalEmployees }

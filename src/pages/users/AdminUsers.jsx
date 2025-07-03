@@ -105,7 +105,6 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
       <header className="border-b">
         <div className="flex h-16 items-center px-4 gap-4">
           <h1 className="text-xl font-semibold">Admins</h1>
-          <span className="text-sm text-muted-foreground">View and manage all admins</span>
           <div className="ml-auto flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

@@ -22,6 +22,10 @@ import Pagination from "../../components/ui/pagination"
 import { setSelectedWallet } from "../../redux/fetchWalletsSlice"
 import ViewWalletDetails from "./ActionPages/ViewWalletDetails"
 import { setSelectedWalletId } from "../../redux/fetchUserTransactionsSlice"
+import FreezeWallet from "./ActionPages/FreezeWallet"
+import UnfreezeWallet from "./ActionPages/UnfreezeWallet"
+
+
 const ITEMS_PER_PAGE = 10;
 
 const itemsPerPage = ITEMS_PER_PAGE;
@@ -34,6 +38,9 @@ function WalletsPage() {
   const navigate = useNavigate();
   const [detailsModal, setDetailsModal] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
+  const [freezeModal, setFreezeModal] = useState(false);
+  const [unfreezeModal, setUnfreezeModal] = useState(false)
+
   const wallets = useSelector((state) => state.wallets.all);
 
   
@@ -75,6 +82,9 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   const activeWallets = wallets?.filter (wallet => wallet.blocked === false);
 
   const totalActive = activeWallets.length
+
+  const totalBalance = wallets?.reduce((sum, wallet) => sum + Number(wallet.balance.amount || 0), 0);
+
 
 
   return (
@@ -139,7 +149,7 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
               <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$4,587,345.75</div>
+              <div className="text-2xl font-bold"> ₦{totalBalance.toLocaleString()}</div>
               <p className="text-xs text-green-500">+8.3% from last month</p>
             </CardContent>
           </Card>
@@ -166,7 +176,7 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                 <TableRow>
                   <TableHead>WALLET ID</TableHead>
                   <TableHead>USER</TableHead>
-                  <TableHead>BALANCE</TableHead>
+                  <TableHead>BALANCE (NGN)</TableHead>
                   <TableHead>TYPE</TableHead>
                   <TableHead>STATUS</TableHead>
                   <TableHead>ACTIONS</TableHead>
@@ -177,7 +187,7 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                   <TableRow key={wallet.walletId}>
                     <TableCell className="font-medium">{wallet.walletId}</TableCell>
                     <TableCell>{wallet.name}</TableCell>
-                    <TableCell>  {wallet.balance.currency} {wallet.balance.amount.toLocaleString()}
+                    <TableCell>  {wallet.balance.amount.toLocaleString()}
 </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -199,7 +209,7 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                               : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {wallet.blocked === false ? "Active" : wallet.blocked === "Inactive"}
+                        {wallet.blocked === false ? "Active" : wallet.blocked === true ? "Inactive" : ""}
                       </span>
                     </TableCell>
                     <TableCell>
@@ -220,11 +230,17 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                             dispatch(setSelectedWalletId(wallet.walletId))
                             navigate('/wallets/transactions');
                           }}>Transaction History</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]">Edit Wallet</DropdownMenuItem>
-                           <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">Freeze Wallet</DropdownMenuItem>
-
-                          {wallet.status === "Active" && (
-                            <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">Suspend Wallet</DropdownMenuItem>
+                          {/* <DropdownMenuItem className="hover:bg-[#3A859E]">Edit Wallet</DropdownMenuItem> */}
+                           {wallet.blocked === false && (
+                           <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]" onClick= {() => {
+                            dispatch(setSelectedWallet(wallet));
+                            setFreezeModal(true)}}>Freeze Wallet</DropdownMenuItem>
+                           )}
+                          {wallet.blocked === true && (
+                            <DropdownMenuItem className="text-green-600 hover:bg-[#3A859E]"
+                             onClick= {() => {
+                            dispatch(setSelectedWallet(wallet));
+                            setUnfreezeModal(true)}}>Unfreeze Wallet</DropdownMenuItem>
                           )}
                           {wallet.status === "Suspended" && (
                             <DropdownMenuItem className="text-green-600 hover:bg-[#3A859E]">Reactivate Wallet</DropdownMenuItem>
@@ -240,6 +256,14 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
                 <ViewWalletDetails
                 isOpen={detailsModal}
                 onClose={() => setDetailsModal(false)}
+                />
+                <FreezeWallet
+                isOpen = {freezeModal}
+                onClose={() => setFreezeModal(false)}
+                />
+                 <UnfreezeWallet
+                isOpen = {unfreezeModal}
+                onClose={() => setUnfreezeModal(false)}
                 />
               </TableBody>
             </Table>

@@ -1,4 +1,4 @@
-import { BarChart3, ChevronRight, Clock, DollarSign, Users } from "lucide-react"
+import { BarChart3, ChevronRight, Clock, Users } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
 import { Button } from "../components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
@@ -73,10 +73,10 @@ console.log(f)
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Successful Transactions</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              {/* <DollarSign className="h-4 w-4 text-muted-foreground" /> */}
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">3,487</div>
+              <div className="text-2xl font-bold">000</div>
               <p className="text-xs text-muted-foreground">+8.2% from last week</p>
             </CardContent>
           </Card>
@@ -86,7 +86,7 @@ console.log(f)
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$45,289</div>
+              <div className="text-2xl font-bold">000</div>
               <p className="text-xs text-muted-foreground">+5.1% from last month</p>
             </CardContent>
           </Card>
@@ -96,7 +96,7 @@ console.log(f)
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">42</div>
+              <div className="text-2xl font-bold">0</div>
               <p className="text-xs text-red-500">Require attention</p>
             </CardContent>
           </Card>

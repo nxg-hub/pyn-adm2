@@ -17,7 +17,7 @@ import {
 import { fetchVirtualCards, setSelectedCard } from "../../redux/fetchVirtualCardsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Pagination from "../../components/ui/pagination";
-
+import ViewCardDetails from "./ActionPages/virtualCardDetails";
 const ITEMS_PER_PAGE = 10;
 
 const itemsPerPage = ITEMS_PER_PAGE;
@@ -28,6 +28,7 @@ function VirtualCardsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const dispatch = useDispatch();
+  const [detailsModal, setDetailsModal] = useState(false)
   const cards = useSelector((state) => state.virtualCards.all);
 
   useEffect(() => {
@@ -67,6 +68,8 @@ function VirtualCardsPage() {
   const activeCards = cards?.filter (card => card.active === true);
 
   const totalActive = activeCards.length
+  const totalBalance = cards?.reduce((sum, card) => sum + Number(card.amount || 0), 0);
+
     console.log (paginatedData)
 
   return (
@@ -127,7 +130,7 @@ function VirtualCardsPage() {
                   <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$1,234,567.89</div>
+                  <div className="text-2xl font-bold"> ₦{totalBalance.toLocaleString()}</div>
                   <p className="text-xs text-green-500">+7.1% from last month</p>
                 </CardContent>
               </Card>
@@ -155,7 +158,7 @@ function VirtualCardsPage() {
                   <TableHead>CARD ID</TableHead>
                   <TableHead>CARD TYPE</TableHead>
                   <TableHead>CARDHOLDER</TableHead>
-                  <TableHead>BALANCE</TableHead>
+                  <TableHead>BALANCE (NGN)</TableHead>
                   <TableHead>CURRENCY</TableHead>
                   <TableHead>EXPIRY DATE</TableHead>
                   <TableHead>STATUS</TableHead>
@@ -173,7 +176,8 @@ function VirtualCardsPage() {
                   paginatedData.map((card) => (
                     <TableRow key={card.id}>
                       <TableCell className="font-medium">{card.id}</TableCell>
-                      <TableCell>{card.card_type}</TableCell>
+                      <TableCell>  {card.card_type.charAt(0).toUpperCase() + card.card_type.slice(1).toLowerCase()}
+</TableCell>
                       <TableCell>{card.name_on_card}</TableCell>
                       <TableCell>{card.amount}</TableCell>
                       <TableCell>{card.currency}</TableCell>
@@ -193,7 +197,9 @@ function VirtualCardsPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             >
-                            <DropdownMenuItem className="hover:bg-[#3A859E]">View Details</DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-[#3A859E]" onClick= {() => {
+                                                        dispatch(setSelectedCard(card));
+                                                        setDetailsModal(true)}}>View Details</DropdownMenuItem>
                             <DropdownMenuItem className="hover:bg-[#3A859E]">Transaction History</DropdownMenuItem>
                             <DropdownMenuItem className="hover:bg-[#3A859E]">Edit Card</DropdownMenuItem>
                             {card.status === "Active" && (
@@ -208,9 +214,15 @@ function VirtualCardsPage() {
                     </TableRow>
                   ))
                 )}
+                <ViewCardDetails
+                isOpen= {detailsModal}
+                onClose={() => setDetailsModal(false)}
+                
+                />
               </TableBody>
 
             </Table>
+            
             
                         <div className="flex items-center justify-between mt-4">
              <Pagination
