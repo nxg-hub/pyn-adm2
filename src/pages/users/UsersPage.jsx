@@ -169,14 +169,14 @@ function UsersPage() {
                         <Avatar>
                           <img
                             src={user.passportUrl || avatar}
-                            alt="oyu"
+                            alt="img"
                             className="w-10 h-10 rounded-full object-cover"
                           />
                         </Avatar>
                         <div>
                           <div>
-                            {user.firstName} {user.lastName}
-                          </div>
+                         {user?.accountName?.split('/')[1]}                        
+                           </div>
                           <div className="text-xs text-muted-foreground">
                             ID: {user.id}
                           </div>

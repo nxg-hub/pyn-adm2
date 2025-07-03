@@ -31,6 +31,7 @@ const rolePermissions = {
     reconcileFinancialDiscrepancies: true,
     monitorHighRiskTransactions: true,
     assignSupportTickets: true,
+    monitorSuspiciousVirtualCardTransactions: true
   },
   "GENERAL_MANAGER": {
     manageAdmins: true,

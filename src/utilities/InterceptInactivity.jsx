@@ -9,7 +9,7 @@ const InactivityInterceptor = () => {
   const countdownTimerRef = useRef(null);
   const [, forceUpdate] = React.useState({});
 
-  const INACTIVITY_TIMEOUT = 40; // 5 minutes in seconds
+  const INACTIVITY_TIMEOUT = 200; // 5 minutes in seconds
 
   const startCountdown = useCallback(() => {
     if (countdownTimerRef.current) {

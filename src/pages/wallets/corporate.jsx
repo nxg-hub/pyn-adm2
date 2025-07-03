@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { Wallet, MoreHorizontal } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { CardLoader } from "../../components/ui/loader";
@@ -12,18 +12,20 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import Pagination from "../../components/ui/pagination";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useRef } from "react";
+import { setSelectedUser } from "../../redux/UsersSlice";
 import apiService from "../../services/apiService";
-
+import ViewCorporateAccountWallet from "./ActionPages/ViewCorporateAccountWallet";
 
 const ITEMS_PER_PAGE = 10;
 
 const itemsPerPage = ITEMS_PER_PAGE;
 
 export function CorporateAccountsPage() {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-  const [balance, setBalance] = useState([]);
-
+  const [walletDetails, setWalletDetails] = useState(false)
   const users = useSelector((state) => state.users.users);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,7 +35,7 @@ export function CorporateAccountsPage() {
 
 const filteredData = (businessUsers)?.filter((account) => {
   const matchesSearch =
-    account.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    account.businessId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     account.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
 
  
@@ -49,7 +51,7 @@ const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
     startIndex,
     startIndex + ITEMS_PER_PAGE
   );
-console.log(paginatedData)
+console.log("paginatedData",paginatedData)
   useEffect(() => {
     // Simulate a network request
     const timer = setTimeout(() => {
@@ -59,26 +61,7 @@ console.log(paginatedData)
     return () => clearTimeout(timer);
   }, []);
 
-  const handleFetchBalance = async (Id) => {
-  setLoading(true);
 
-  try {
-    const balance = await apiService.fetchBalance(Id);
-setBalance(balance || []);
-    
-  } catch (error) {
-    
-  const message = error.message || 'Unexpected error';
-    setErrorMessage(`Failed to load balance: ${message}`);
-  } finally {
-    setLoading(false);
-  }
-
-  };
-
-  useEffect(() => {
-    (handleFetchBalance());
-  }, []);
 
 
   return (
@@ -93,10 +76,12 @@ setBalance(balance || []);
       <main className="p-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {loading
           ? Array.from({ length: 5 }).map((_, index) => (
-              <CardLoader key={index} /> // Make sure CardLoader returns skeleton-style cards
+              <CardLoader key={index} /> 
             ))
-          : paginatedData.map((account) => (
+          : paginatedData.map((account) => {
+              return (
               <Card key={account.id} className="p-6 shadow-md">
+                
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold">{account.accountName?.split('/')[1] || "No Name"}</h2>
                   <DropdownMenu>
@@ -106,9 +91,13 @@ setBalance(balance || []);
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             >
-                      <DropdownMenuItem className="hover:bg-[#3A859E]">View Details</DropdownMenuItem>
+                      <DropdownMenuItem className="hover:bg-[#3A859E]"
+                      onClick={() => {
+                        dispatch(setSelectedUser(account));
+                        setWalletDetails(true)
+                      }}>View Wallet Details</DropdownMenuItem>
                       <DropdownMenuItem className="hover:bg-[#3A859E]">Transaction History</DropdownMenuItem>
-                      <DropdownMenuItem className="hover:bg-[#3A859E]">Employees Account</DropdownMenuItem>
+                      {/* <DropdownMenuItem className="hover:bg-[#3A859E]">Employees Account</DropdownMenuItem> */}
                       {account.enabled === true && (
                         <DropdownMenuItem className="text-red-600 hover:bg-[#3A859E]">Suspend Account</DropdownMenuItem>
                       )}
@@ -122,7 +111,7 @@ setBalance(balance || []);
                   </DropdownMenu>
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">Account Manager: {account.accountManager} None For now</p>
-                {/* <p className="text-sm text-muted-foreground mb-2">Balance: {balance.balance.currency} {balance.balance.amount.toLocaleString()}</p> */}
+               
                 <p className="text-sm text-muted-foreground mb-2">Last Transaction: {account.lastTransaction}</p>
                 <span
                   className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
@@ -137,7 +126,13 @@ setBalance(balance || []);
                 </span>
                 
               </Card>
-            ))}
+              )
+})}
+<ViewCorporateAccountWallet
+isOpen={walletDetails}
+onClose={() => setWalletDetails(false)}
+
+/>
             <div className="flex items-center justify-between mt-4">
               <Pagination
                 currentPage={currentPage}

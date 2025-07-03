@@ -1,5 +1,4 @@
 const token = localStorage.getItem('token')
-//  const email =  localStorage.getItem("email")
 
 
 const apiService = {
@@ -580,6 +579,30 @@ try {
       throw error;
     }
   }, 
+  fetchEmployeesPayroll: async (customerId) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/employees/payrolls/corporate/${customerId}/payrolls`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+       const data = await response.json();
+      
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch payroll');
+      }
+
+      return data
+    } catch (error) {
+      console.error('Fetch users error:', error);
+      throw error;
+    }
+  }, 
  fetchWallets: async () => {
     try {
       const response = await fetch(
@@ -627,10 +650,10 @@ try {
       throw error;
     }
   }, 
-  fetchBalance: async (Id) => {
+  fetchBalance: async (businessId) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/balance?id=${Id}`,
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/balance?id=${businessId}`,
         {
           method: 'GET',
           headers: {
@@ -650,7 +673,385 @@ try {
       console.error('Error fetching balance:', error);
       throw error;
     }
-  },     
+  }, 
+   freezeWallet: async (walletId) => {
+    const response = await fetch(`${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/${walletId}/freeze`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to freeze wallet');
+    }
+  },
+   unfreezeWallet: async (walletId) => {
+    const response = await fetch(`${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/${walletId}/unfreeze`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error( result.debugMessage || 'Failed to unfreeze wallet');
+    }
+  },   
+    
+  fetchVirtualCardsTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/virtual-cards`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+   fetchTVTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/tv`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+
+
+   fetchTransportTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/transport`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+   fetchScanToPayTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/scan-to-pay`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+  
+   fetchPayrollTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/payroll`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+  
+   fetchMoneyTransferTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/money-transfers`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+  
+   fetchInternationalAirtimeTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/international-airtime`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+  
+   fetchEventsTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/events`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+  
+   fetchElectricityTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/electricity`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  
+  
+   fetchCollectionsTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/collections`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+  
+   fetchChurchCollectionTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/church`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+  
+   fetchBillsTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/bills`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+   fetchBettingTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/betting`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
+
+   fetchAirtimeTransactions: async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_WALLET_BASE_URL}/api/v1/transactions/airtime`, 
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch transactions');
+      }
+
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  }, 
+
 };
 
 export default apiService;
