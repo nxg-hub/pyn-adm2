@@ -67,7 +67,6 @@ import { useAdmin } from "../../contexts/AdminContext";
 import { cn } from "../../lib/utils";
 import { FunnelChart } from "recharts";
 
-// Sidebar item component
 const SidebarItem = ({
   icon: Icon,
   label,
@@ -134,8 +133,6 @@ const SidebarItem = ({
   );
 };
 
-
-// Sidebar subitem component
 const SidebarSubItem = ({
   label,
   href,

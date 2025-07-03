@@ -8,7 +8,6 @@ const SearchFilterBar = ({ searchQuery, onSearchChange, filters = [] }) => {
 
   return (
     <div className="ml-auto flex flex-col gap-2 w-full max-w-xl">
-      {/* Search Bar */}
       <div className="flex items-center gap-4">
         <div className="relative w-full">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
