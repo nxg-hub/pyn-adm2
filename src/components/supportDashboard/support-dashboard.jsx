@@ -22,7 +22,6 @@ export function SupportDashboard() {
   const [selectedTicket, setSelectedTicket] = useState(null)
   const [replyText, setReplyText] = useState("")
 
-  // Sample data for support tickets
   const supportTickets = [
     {
       id: "TICKET-1001",
