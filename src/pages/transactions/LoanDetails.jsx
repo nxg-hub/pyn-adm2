@@ -1,11 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 
 // import { useAdmin } from "./admin-context";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
+import { Button } from "../../components/ui/button";
+import { Textarea } from "../../components/ui/textarea";
 import { ChevronLeft } from "lucide-react";
 
 import { Building2, CheckCircle, XCircle } from "lucide-react";
@@ -15,10 +20,10 @@ import {
   fetchLoanApprovalSummary,
   rejectLoan,
   setRejectState,
-} from "../redux/LoanApprovalSummarySlice";
-import { DetailsModal } from "./ui/modal";
-import { ButtonLoader } from "./ui/loader";
-import { fetchLoan, fetchLoanSchedule } from "../redux/loanSlice";
+} from "../../redux/LoanApprovalSummarySlice";
+import { DetailsModal } from "../../components/ui/modal";
+import { ButtonLoader } from "../../components/ui/loader";
+import { fetchLoan, fetchLoanSchedule } from "../../redux/loanSlice";
 import { useNavigate } from "react-router-dom";
 
 const LoanDetails = ({}) => {
