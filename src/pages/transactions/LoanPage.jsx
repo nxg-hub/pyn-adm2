@@ -1,422 +1,411 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download } from "lucide-react"
-import { Button } from "../../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
-import { Input } from "../../components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table"
-import { useAdmin } from "../../contexts/AdminContext"
+import { useEffect, useState } from "react";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog"
-import { Label } from "../../components/ui/label"
-import { Textarea } from "../../components/ui/textarea"
-import Pagination from "../../components/ui/pagination"
-
-const loansAndSavingTransactions = [
-    { id: "BILL-001", user: "John Doe", provider: "ElectricityCorp", amount: 200, date: "2024-04-12", time: "5:26pm", status: "Successful", },
-    { id: "BILL-002", user: "Emma Green", provider: "WaterServices", amount: 80, date: "2024-04-15", time: "3:06am", status: "Pending", },
-    { id: "BILL-003", user: "Olivia White", provider: "GasPlus", amount: 50, date: "2024-04-20", time: "4:21pm", status: "Failed", },
-    { id: "BILL-004", user: "John Doe", provider: "ElectricityCorp", amount: 200, date: "2024-04-12", time: "5:56pm", status: "Successful", },
-    { id: "BILL-005", user: "Emma Green", provider: "WaterServices", amount: 80, date: "2024-04-15", time: "2:14am", status: "Pending", },
-    { id: "BILL-006", user: "Olivia White", provider: "GasPlus", amount: 50, date: "2024-04-20", time: "1:19pm", status: "Failed", },
-    { id: "BILL-007", user: "John Doe", provider: "ElectricityCorp", amount: 200, date: "2024-04-12", time: "2:26am", status: "Successful", },
-    { id: "BILL-008", user: "Emma Green", provider: "WaterServices", amount: 80, date: "2024-04-15", time: "5:26pm", status: "Pending", },
-    { id: "BILL-009", user: "Olivia White", provider: "GasPlus", amount: 50, date: "2024-04-20", time: "5:26pm", status: "Failed", },
-]
+  Search,
+  MoreHorizontal,
+  CheckCircle,
+  AlertCircle,
+  Pencil,
+  Download,
+} from "lucide-react";
+import { Button } from "../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../components/ui/table";
+import { useAdmin } from "../../contexts/AdminContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../components/ui/dialog";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
+import Pagination from "../../components/ui/pagination";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLoan, setSelectedLoan } from "../../redux/loanSlice";
+import { useNavigate } from "react-router-dom";
+import { TableLoader } from "../../components/ui/loader";
 
 function LoanPage() {
-    const [searchQuery, setSearchQuery] = useState("")
-    const { hasPermission } = useAdmin()
-    const [selectedTransaction, setSelectedTransaction] = useState(null)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false)
-    const [showFlagDialog, setShowFlagDialog] = useState(false)
-    const [showAdjustDialog, setShowAdjustDialog] = useState(false)
-    const [flagReason, setFlagReason] = useState("")
-    const [adjustAmount, setAdjustAmount] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
+  const { hasPermission } = useAdmin();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showMarkSuccessDialog, setShowMarkSuccessDialog] = useState(false);
+  const [showFlagDialog, setShowFlagDialog] = useState(false);
+  const [showAdjustDialog, setShowAdjustDialog] = useState(false);
+  const [flagReason, setFlagReason] = useState("");
+  const [adjustAmount, setAdjustAmount] = useState("");
+  const allLoans = useSelector((state) => state.loan.allLoan);
+  const loading = useSelector((state) => state.loan.loading);
+  // const success = useSelector((state) => state.loan.success);
 
-    const handleViewDetails = (transaction) => {
-        setSelectedTransaction(transaction)
-    }
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    // if (success) {
+    //   return;
+    // }
+    dispatch(fetchLoan());
+  }, []);
 
-    const handleMarkSuccess = () => {
-        setShowMarkSuccessDialog(false)
-        // logic to mark as success
-    }
+  const handleViewDetails = (transaction) => {
+    dispatch(setSelectedLoan(transaction));
+    navigate("/dashboard/transactions/loan/details");
+  };
 
-    const handleFlagTransaction = () => {
-        setShowFlagDialog(false)
-        setFlagReason("")
-        // logic to flag transaction
-    }
+  const handleMarkSuccess = () => {
+    setShowMarkSuccessDialog(false);
+    // logic to mark as success
+  };
 
-    const handleAdjustAmount = () => {
-        setShowAdjustDialog(false)
-        setAdjustAmount("")
-        // logic to adjust amount
-    }
+  const handleFlagTransaction = () => {
+    setShowFlagDialog(false);
+    setFlagReason("");
+    // logic to flag transaction
+  };
 
-    const handleDownloadReceipt = (id) => {
-        // This is where the actual download logic would go. For now, let's log the ID.
-        console.log(`Download receipt for transaction: ${id}`)
-        // You can replace the console log with actual logic like fetching a PDF or image.
-    }
+  const handleAdjustAmount = () => {
+    setShowAdjustDialog(false);
+    setAdjustAmount("");
+    // logic to adjust amount
+  };
 
-    const filteredTransactions = loansAndSavingTransactions.filter((transaction) =>
-        transaction.user.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+  const handleDownloadReceipt = (id) => {
+    // This is where the actual download logic would go. For now, let's log the ID.
+    console.log(`Download receipt for transaction: ${id}`);
+    // You can replace the console log with actual logic like fetching a PDF or image.
+  };
+  const filteredTransactions = allLoans.filter(
+    (transaction) =>
+      transaction.customer.firstName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      transaction.customer.lastName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      transaction.status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    const ITEMS_PER_PAGE = 5;
+  const ITEMS_PER_PAGE = 5;
 
-    const paginatedTransactions = filteredTransactions.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE
-    );
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+  const approvedCount = allLoans?.filter(
+    (loan) => loan.status === "APPROVED"
+  ).length;
 
+  const repaidCount = allLoans?.filter(
+    (loan) => loan.status === "REPAID"
+  ).length;
 
-    return (
-        <div className="flex flex-col">
-            <header className="border-b">
-                <div className="flex h-16 items-center px-4 gap-4">
-                    <h1 className="text-xl font-semibold">  Loans  Overview</h1>
-                    <span className="text-sm text-muted-foreground">Manage Loans</span>
-                    <div className="ml-auto flex items-center gap-4">
-                        <div className="relative">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Search transactions..."
-                                className="w-[250px] pl-8"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                        <Button>Export</Button>
-                    </div>
-                </div>
-            </header>
+  const rejectCount = allLoans?.filter(
+    (loan) => loan.status === "REJECTED"
+  ).length;
 
-            <div className="grid gap-6 md:grid-cols-3 p-6">
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Total Loans</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">320</div>
-                        <p className="text-xs text-muted-foreground">+4.5% from last month</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Successful Amount</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">$7,000</div>
-                        <p className="text-xs text-muted-foreground">+3.2% from last month</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Failed Transactions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">10</div>
-                        <p className="text-xs text-red-500">3.2% failure rate</p>
-                    </CardContent>
-                </Card>
+  if (loading) {
+    return <TableLoader />;
+  }
+  return (
+    <div className="flex flex-col">
+      <header className="border-b">
+        <div className="flex h-16 items-center px-4 gap-4">
+          <h1 className="text-xl font-semibold"> Loans Overview</h1>
+          <span className="text-sm text-muted-foreground">Manage Loans</span>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search transactions..."
+                className="w-[250px] pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-
-            <main className="grid gap-6 md:grid-cols-7">
-                <Card className="md:col-span-4">
-                    <CardHeader>
-                        <CardTitle>Recent Loan Transactions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>ID</TableHead>
-                                    <TableHead>User</TableHead>
-                                    <TableHead>Provider</TableHead>
-                                    <TableHead>Amount</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {paginatedTransactions.map((transaction) => (
-                                    <TableRow key={transaction.id}>
-                                        <TableCell>{transaction.id}</TableCell>
-                                        <TableCell>{transaction.user}</TableCell>
-                                        <TableCell>{transaction.provider}</TableCell>
-                                        <TableCell>${transaction.amount}</TableCell>
-                                        <TableCell>{transaction.date}</TableCell>
-                                        <TableCell>
-                                            <span
-                                                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${transaction.status === "Successful"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : transaction.status === "Pending"
-                                                        ? "bg-yellow-100 text-yellow-800"
-                                                        : "bg-red-100 text-red-800"
-                                                    }`}
-                                            >
-                                                {transaction.status}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden " >
-                                                    <DropdownMenuItem className="hover:bg-[#3A859E]"  onClick={() => handleViewDetails(transaction)}>
-                                                        <CheckCircle className="mr-2 h-4 w-4" /> View Details
-                                                    </DropdownMenuItem>
-
-                                                    {transaction.status === "Successful" && (
-                                                        <DropdownMenuItem  className="hover:bg-[#3A859E]" onClick={() => handleDownloadReceipt(transaction.id)}>
-                                                            <Download className="mr-2 h-4 w-4 text-blue-600" /> Download Receipt
-                                                        </DropdownMenuItem>
-                                                    )}
-
-                                                    {hasPermission("manageBillsAndUtilitiesTransactions") && transaction.status === "Pending" && (
-                                                        <DropdownMenuItem className="hover:bg-[#3A859E]" 
-                                                            onClick={() => {
-                                                                setSelectedTransaction(transaction)
-                                                                setShowMarkSuccessDialog(true)
-                                                            }}
-                                                        >
-                                                            <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Mark as Successful
-                                                        </DropdownMenuItem>
-                                                    )}
-
-                                                    {hasPermission("monitorHighRiskTransactions") && (
-                                                        <DropdownMenuItem className="hover:bg-[#3A859E]" 
-                                                            onClick={() => {
-                                                                setSelectedTransaction(transaction)
-                                                                setShowFlagDialog(true)
-                                                            }}
-                                                        >
-                                                            <AlertCircle className="mr-2 h-4 w-4 text-red-600" /> Flag as Suspicious
-                                                        </DropdownMenuItem>
-                                                    )}
-
-                                                    {hasPermission("adjustTransactionAmounts") && (
-                                                        <DropdownMenuItem className="hover:bg-[#3A859E]" 
-                                                            onClick={() => {
-                                                                setSelectedTransaction(transaction)
-                                                                setAdjustAmount(transaction.amount.toString())
-                                                                setShowAdjustDialog(true)
-                                                            }}
-                                                        >
-                                                            <Pencil className="mr-2 h-4 w-4 text-blue-600" /> Adjust Amount
-                                                        </DropdownMenuItem>
-                                                    )}
-
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem className="hover:bg-[#3A859E]" >
-                                                        <AlertCircle className="mr-2 h-4 w-4" /> Contact User
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                        <div className="flex justify-end mt-4">
-                            <Pagination
-                                currentPage={currentPage}
-                                totalItems={filteredTransactions.length}
-                                itemsPerPage={ITEMS_PER_PAGE}
-                                onPageChange={(page) => setCurrentPage(page)}
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="md:col-span-3">
-                    <CardHeader>
-                        <CardTitle>Transaction Details</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        {selectedTransaction ? (
-                            <div className="space-y-4">
-                                <div>
-                                    <h3 className="text-sm font-medium text-muted-foreground">TRANSACTION TYPE</h3>
-                                    <p>Money Transfer</p>
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-medium text-muted-foreground">TRANSACTION ID</h3>
-                                    <p>{selectedTransaction.id}</p>
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-medium text-muted-foreground">SENDER</h3>
-                                    <p>{selectedTransaction.user}</p>
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-medium text-muted-foreground">RECIPIENT</h3>
-                                    <p>{selectedTransaction.provider}</p>
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-medium text-muted-foreground">AMOUNT</h3>
-                                    <p className="text-xl font-bold">${selectedTransaction.amount.toFixed(2)}</p>
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-medium text-muted-foreground">STATUS</h3>
-                                    <p>
-                                        <span
-                                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${selectedTransaction.status === "Success"
-                                                ? "bg-green-100 text-green-800"
-                                                : selectedTransaction.status === "Pending"
-                                                    ? "bg-yellow-100 text-yellow-800"
-                                                    : "bg-red-100 text-red-800"
-                                                }`}
-                                        >
-                                            {selectedTransaction.status}
-                                        </span>
-                                    </p>
-                                </div>
-                                {hasPermission("monitorHighRiskTransactions") && selectedTransaction.riskLevel && (
-                                    <div>
-                                        <h3 className="text-sm font-medium text-muted-foreground">RISK LEVEL</h3>
-                                        <p>
-                                            <span
-                                                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${selectedTransaction.riskLevel === "Low"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : selectedTransaction.riskLevel === "Medium"
-                                                        ? "bg-yellow-100 text-yellow-800"
-                                                        : "bg-red-100 text-red-800"
-                                                    }`}
-                                            >
-                                                {selectedTransaction.riskLevel}
-                                            </span>
-                                        </p>
-                                    </div>
-                                )}
-                                {selectedTransaction.status === "Failed" && (
-                                    <div>
-                                        <h3 className="text-sm font-medium text-muted-foreground">FAILURE REASON</h3>
-                                        <p className="text-red-500">Insufficient funds in sender's wallet</p>
-                                    </div>
-                                )}
-                                <div>
-                                    <h3 className="text-sm font-medium text-muted-foreground">DATE & TIME</h3>
-                                    <p>{selectedTransaction.date} {selectedTransaction.time}</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    {hasPermission("approveRejectTransactions") && selectedTransaction.status === "Pending" && (
-                                        <>
-                                            <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                                                Approve
-                                            </Button>
-                                            <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50">
-                                                Decline
-                                            </Button>
-                                        </>
-                                    )}
-                                    {hasPermission("approveRejectTransactions") && selectedTransaction.status === "Success" && (
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="text-amber-600 border-amber-200 hover:bg-amber-50"
-                                            onClick={() => setShowReverseDialog(true)}
-                                        >
-                                            Reverse Transaction
-                                        </Button>
-                                    )}
-                                    <Button variant="outline" size="sm">
-                                        Contact User
-                                    </Button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex h-[300px] items-center justify-center text-center">
-                                <div>
-                                    <p className="text-muted-foreground">Select a transaction to view details</p>
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            </main>
-
-            {/* Mark Successful Modal */}
-            <Dialog open={showMarkSuccessDialog} onOpenChange={setShowMarkSuccessDialog}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Mark Transaction as Successful?</DialogTitle>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button variant="ghost" onClick={() => setShowMarkSuccessDialog(false)}>
-                            Cancel
-                        </Button>
-                        <Button onClick={handleMarkSuccess}>Confirm</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            {/* Flag Transaction Modal */}
-            <Dialog open={showFlagDialog} onOpenChange={setShowFlagDialog}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Flag Transaction as Suspicious</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                        <Label>Reason</Label>
-                        <Textarea
-                            placeholder="Enter reason for flagging"
-                            value={flagReason}
-                            onChange={(e) => setFlagReason(e.target.value)}
-                        />
-                    </div>
-                    <DialogFooter>
-                        <Button variant="ghost" onClick={() => setShowFlagDialog(false)}>
-                            Cancel
-                        </Button>
-                        <Button onClick={handleFlagTransaction} disabled={!flagReason.trim()}>
-                            Flag Transaction
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            {/* Adjust Amount Modal */}
-            <Dialog open={showAdjustDialog} onOpenChange={setShowAdjustDialog}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Adjust Transaction Amount</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                        <Label>New Amount</Label>
-                        <Input
-                            value={adjustAmount}
-                            onChange={(e) => setAdjustAmount(e.target.value)}
-                            type="number"
-                        />
-                    </div>
-                    <DialogFooter>
-                        <Button variant="ghost" onClick={() => setShowAdjustDialog(false)}>
-                            Cancel
-                        </Button>
-                        <Button onClick={handleAdjustAmount} disabled={!adjustAmount.trim()}>
-                            Adjust Amount
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <Button>Export</Button>
+          </div>
         </div>
-    )
+      </header>
+
+      <div className="grid gap-6 md:grid-cols-3 p-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Loans</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{allLoans.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">
+              Approved Loans
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{approvedCount}</div>
+            {/* <p className="text-xs text-muted-foreground">
+              +3.2% from last month
+            </p> */}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">
+              Rejected Loans
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{rejectCount}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Repaid Loans</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{repaidCount}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <main className="grid gap-6 md:grid-cols-5">
+        <Card className="md:col-span-5">
+          <CardHeader>
+            <CardTitle>Recent Loan Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Loan Amount</TableHead>
+                  <TableHead>Monthly Repayment</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedTransactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>{transaction.id}</TableCell>
+                    <TableCell>{`${transaction.customer.firstName} ${transaction.customer.lastName}`}</TableCell>
+                    <TableCell>
+                      {transaction.loanDuration === 1
+                        ? `${transaction.loanDuration} Month`
+                        : `${transaction.loanDuration} Months`}
+                    </TableCell>
+                    <TableCell>
+                      ₦{transaction?.loanAmount.toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      ₦{transaction.monthlyRepayment.toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          transaction.status === "APPROVED"
+                            ? "bg-green-100 text-green-800"
+                            : transaction.status === "PENDING_ADMIN_APPROVAL" ||
+                              transaction.status === "PENDING_USER_ACTION"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : transaction.status === "REPAID"
+                            ? "bg-blue-700 text-white"
+                            : "bg-red-100 text-red-800"
+                        }`}>
+                        {transaction.status}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="right-0 mt-2 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden ">
+                          <DropdownMenuItem
+                            className="hover:bg-[#3A859E]"
+                            onClick={() => handleViewDetails(transaction)}>
+                            <CheckCircle className="mr-2 h-4 w-4" /> View
+                            Details
+                          </DropdownMenuItem>
+
+                          {transaction.status === "Successful" && (
+                            <DropdownMenuItem
+                              className="hover:bg-[#3A859E]"
+                              onClick={() =>
+                                handleDownloadReceipt(transaction.id)
+                              }>
+                              <Download className="mr-2 h-4 w-4 text-blue-600" />{" "}
+                              Download Receipt
+                            </DropdownMenuItem>
+                          )}
+
+                          {hasPermission(
+                            "manageBillsAndUtilitiesTransactions"
+                          ) &&
+                            transaction.status === "Pending" && (
+                              <DropdownMenuItem
+                                className="hover:bg-[#3A859E]"
+                                onClick={() => {
+                                  setSelectedTransaction(transaction);
+                                  setShowMarkSuccessDialog(true);
+                                }}>
+                                <CheckCircle className="mr-2 h-4 w-4 text-green-600" />{" "}
+                                Mark as Successful
+                              </DropdownMenuItem>
+                            )}
+
+                          {hasPermission("monitorHighRiskTransactions") && (
+                            <DropdownMenuItem
+                              className="hover:bg-[#3A859E]"
+                              onClick={() => {
+                                setSelectedTransaction(transaction);
+                                setShowFlagDialog(true);
+                              }}>
+                              <AlertCircle className="mr-2 h-4 w-4 text-red-600" />{" "}
+                              Flag as Suspicious
+                            </DropdownMenuItem>
+                          )}
+
+                          {hasPermission("adjustTransactionAmounts") && (
+                            <DropdownMenuItem
+                              className="hover:bg-[#3A859E]"
+                              onClick={() => {
+                                setSelectedTransaction(transaction);
+                                setAdjustAmount(transaction.amount.toString());
+                                setShowAdjustDialog(true);
+                              }}>
+                              <Pencil className="mr-2 h-4 w-4 text-blue-600" />{" "}
+                              Adjust Amount
+                            </DropdownMenuItem>
+                          )}
+
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="hover:bg-[#3A859E]">
+                            <AlertCircle className="mr-2 h-4 w-4" /> Contact
+                            User
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <div className="flex justify-end mt-4">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={filteredTransactions.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+
+      {/* Mark Successful Modal */}
+      <Dialog
+        open={showMarkSuccessDialog}
+        onOpenChange={setShowMarkSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mark Transaction as Successful?</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setShowMarkSuccessDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleMarkSuccess}>Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Flag Transaction Modal */}
+      <Dialog open={showFlagDialog} onOpenChange={setShowFlagDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Flag Transaction as Suspicious</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Label>Reason</Label>
+            <Textarea
+              placeholder="Enter reason for flagging"
+              value={flagReason}
+              onChange={(e) => setFlagReason(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowFlagDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleFlagTransaction}
+              disabled={!flagReason.trim()}>
+              Flag Transaction
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Adjust Amount Modal */}
+      <Dialog open={showAdjustDialog} onOpenChange={setShowAdjustDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Adjust Transaction Amount</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Label>New Amount</Label>
+            <Input
+              value={adjustAmount}
+              onChange={(e) => setAdjustAmount(e.target.value)}
+              type="number"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowAdjustDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAdjustAmount}
+              disabled={!adjustAmount.trim()}>
+              Adjust Amount
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 }
 
-export default LoanPage
+export default LoanPage;

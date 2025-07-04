@@ -15,22 +15,28 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table"
-import { Avatar, AvatarFallback } from "../../components/ui/avatar"
-import avatar from "../../assets/avatar.png"
-import Pagination from "../../components/ui/pagination"
-import { fetchUsers } from "../../redux/UsersSlice"
-import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedUser } from "../../redux/UsersSlice"
-import { setSelectedWalletId } from "../../redux/fetchUserTransactionsSlice"
+} from "../../components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../components/ui/table";
+import { Avatar, AvatarFallback } from "../../components/ui/avatar";
+import avatar from "../../assets/avatar.png";
+import Pagination from "../../components/ui/pagination";
+import { fetchUsers } from "../../redux/UsersSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedUser } from "../../redux/UsersSlice";
+import { setSelectedWalletId } from "../../redux/fetchUserTransactionsSlice";
 import { useNavigate } from "react-router-dom";
 import FlagUser from "./ActionPages/FlagUser";
 import UnflagUserModal from "./ActionPages/UnflagUser";
-import InitiatePasswordReset from "./ActionPages/ChangePassword"
+import InitiatePasswordReset from "./ActionPages/ChangePassword";
 import PasswordManagerResetModal from "./ActionPages/ChangePassword";
 
-  
 const ITEMS_PER_PAGE = 5;
 
 const itemsPerPage = ITEMS_PER_PAGE;
@@ -45,9 +51,8 @@ function UsersPage() {
   const [showUnflagModal, setShowUnflagModal] = useState(false);
   const [showFlagModal, setShowFlagModal] = useState(false);
   const [showInitiatePasswordModal, setInitiatePasswordModal] = useState(false);
-  const [showPasswordManagerResetModal, setShowPasswordManagerResetModal] = useState(false);
-
-
+  const [showPasswordManagerResetModal, setShowPasswordManagerResetModal] =
+    useState(false);
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -56,12 +61,17 @@ function UsersPage() {
   const personalUsers = users?.filter((u) => u.userType === "PERSONAL") || [];
   const businessUsers = users?.filter((u) => u.userType === "CORPORATE") || [];
 
-  const filteredData = (activeSection === "personalUsers" ? personalUsers : businessUsers).filter((user) => {
-    const firstNameMatch = user.firstName?.toLowerCase().includes(searchQuery.toLowerCase());
-    const emailMatch = user.email?.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredData = (
+    activeSection === "personalUsers" ? personalUsers : businessUsers
+  ).filter((user) => {
+    const firstNameMatch = user.firstName
+      ?.toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const emailMatch = user.email
+      ?.toLowerCase()
+      .includes(searchQuery.toLowerCase());
     return firstNameMatch || emailMatch;
   });
-
 
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -109,22 +119,24 @@ function UsersPage() {
             <CardTitle>Users</CardTitle>
           </CardHeader>
           <div className="flex gap-10 px-6 py-4 border-b text-gray-600">
-        {["personalUsers", "businessUsers"].map((section) => (
-          <div
-            key={section}
-            className="cursor-pointer group"
-            onClick={() => setActiveSection(section)}>
-            <h1
-              className={`relative text-base font-semibold transition-colors duration-300 ${
-                activeSection === section ? "text-white bg-gray-600 px-2 rounded-md" : "text-white"
-              }`}
-            >
-              {section.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
-              
-            </h1>
+            {["personalUsers", "businessUsers"].map((section) => (
+              <div
+                key={section}
+                className="cursor-pointer group"
+                onClick={() => setActiveSection(section)}>
+                <h1
+                  className={`relative text-base font-semibold transition-colors duration-300 ${
+                    activeSection === section
+                      ? "text-white bg-gray-600 px-2 rounded-md"
+                      : "text-white"
+                  }`}>
+                  {section
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^./, (str) => str.toUpperCase())}
+                </h1>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
           <CardContent>
             <Table>
               <TableHeader>
@@ -179,37 +191,56 @@ function UsersPage() {
                           </Button>
                         </DropdownMenuTrigger>
 
-                        <DropdownMenuContent   className=" right-0 mb-5 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden "             
-                        >
-                          <DropdownMenuItem className="hover:bg-[#3A859E]"
-                           onClick={() => {
-                            dispatch(setSelectedUser(user));
-                            navigate("/user-profile"); }}>View Profile</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
-                            dispatch(setSelectedUser(user));
-                            navigate("/edit-user"); }}>Edit User</DropdownMenuItem>
-                             <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
-    dispatch(setSelectedWalletId(user.walletId));
-    dispatch(setSelectedUser(user));
+                        <DropdownMenuContent className=" right-0 mb-5 min-w-[150px] bg-black border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden ">
+                          <DropdownMenuItem
+                            className="hover:bg-[#3A859E]"
+                            onClick={() => {
+                              dispatch(setSelectedUser(user));
+                              navigate("/user-profile");
+                            }}>
+                            View Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-[#3A859E]"
+                            onClick={() => {
+                              dispatch(setSelectedUser(user));
+                              navigate("/edit-user");
+                            }}>
+                            Edit User
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-[#3A859E]"
+                            onClick={() => {
+                              dispatch(setSelectedWalletId(user.walletId));
+                              dispatch(setSelectedUser(user));
 
-    navigate("/transactions"); }}>View Transactions</DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => {
-                            setInitiatePasswordModal(true);
-                            dispatch(setSelectedUser(user));
-                          }}>
+                              navigate("/transactions");
+                            }}>
+                            View Transactions
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="hover:bg-[#3A859E]"
+                            onClick={() => {
+                              setInitiatePasswordModal(true);
+                              dispatch(setSelectedUser(user));
+                            }}>
                             initiate Reset Password
                           </DropdownMenuItem>
                           {/* <DropdownMenuItem className="hover:bg-[#3A859E]"onClick={() => { setInitiatePasswordModal(true)
                               dispatch(setSelectedUser(user));
 
                              }}>initiate Reset Password</DropdownMenuItem> */}
-                             {user.enabled === true && (
-                            <DropdownMenuItem className="hover:bg-red-500"onClick={() => { setShowFlagModal(true)
-                              dispatch(setSelectedUser(user));
+                          {user.enabled === true && (
+                            <DropdownMenuItem
+                              className="hover:bg-red-500"
+                              onClick={() => {
+                                setShowFlagModal(true);
+                                dispatch(setSelectedUser(user));
+                              }}>
+                              Flag User
+                            </DropdownMenuItem>
+                          )}
 
-                                                         }}>Flag User</DropdownMenuItem>
-                                                        )}
-                        
                           {/* {user.enabled === false && (
                             <DropdownMenuItem className="hover:bg-green-400" onClick={() => { setShowUnflagModal(true)
                               dispatch(setSelectedUser(user))
@@ -230,18 +261,18 @@ function UsersPage() {
               </TableBody>
             </Table>
             <UnflagUserModal
-                  isOpen={showUnflagModal}
-                  onClose={() => setShowUnflagModal(false)}
-                />
-                <FlagUser
-                  isOpen={showFlagModal}
-                  onClose={() => setShowFlagModal(false)}
-                />
-                <InitiatePasswordReset
-                  isOpen={showInitiatePasswordModal}
-                  onClose={() => setInitiatePasswordModal(false)}
-                />
-                {/* <PasswordManagerResetModal
+              isOpen={showUnflagModal}
+              onClose={() => setShowUnflagModal(false)}
+            />
+            <FlagUser
+              isOpen={showFlagModal}
+              onClose={() => setShowFlagModal(false)}
+            />
+            <InitiatePasswordReset
+              isOpen={showInitiatePasswordModal}
+              onClose={() => setInitiatePasswordModal(false)}
+            />
+            {/* <PasswordManagerResetModal
                   isOpen={showPasswordManagerResetModal}
                   onClose={() => setShowPasswordManagerResetModal(false)}
                 /> */}

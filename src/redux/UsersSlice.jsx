@@ -7,7 +7,7 @@ export const fetchUsers = createAsyncThunk('user/fetchUsers',
 
   try {
     const res = await apiService.fetchUsers()
-    console.log("API response", res);
+    // console.log("API response", res);
     return res;
   } catch (error) {
     console.error("Error fetching users:", error);
