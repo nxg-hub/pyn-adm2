@@ -45,7 +45,7 @@ const ReconciliationReportsPage = () => {
     report.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  if (!hasPermission("reports", "view")) {
+  if (!hasPermission("viewFinancialReports")) {
     return (
       <div className="flex flex-col">
         <AdminHeader title="Reconciliation Reports" subtitle="Compare and match financial records" />

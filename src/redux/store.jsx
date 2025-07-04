@@ -13,23 +13,30 @@ import unsuspendedUsersReducer from "./unsuspendedAccounts";
 import supportTicketsReducer from "./supportTicketsSlice";
 import loanReducer from "./loanSlice";
 import loanApprovalSummaryReducer from "./LoanApprovalSummarySlice";
+import walletsReducer from "./fetchWalletsSlice";
+import virtualCardsReducer from './fetchVirtualCardsSlice';
+import employeesReducer from './fetchCorporateCustomerEmployees'
+
 
 // Configuration for redux-persist
 const persistConfig = {
   key: "root",
   storage,
   whitelist: [
-    "users",
-    "admins",
-    "admin",
-    "transactions",
-    "AdminActivities",
-    "suspendedUsers",
-    "unsuspendedUsers",
-    "flaggedUsers",
-    "supportTickets",
-    "loan",
-  ],
+    'users',
+    'admins',
+    'admin',
+    'transactions',
+    'AdminActivities',
+    'suspendedUsers',
+    'unsuspendedUsers',
+    'flaggedUsers',
+    'supportTickets',
+    'wallets',
+    'virtualCards',
+    'employees',
+    "loan"
+  ], 
 };
 
 const rootReducer = combineReducers({
@@ -44,6 +51,10 @@ const rootReducer = combineReducers({
   supportTickets: supportTicketsReducer,
   loan: loanReducer,
   loanApprovalSummary: loanApprovalSummaryReducer,
+  wallets: walletsReducer,
+  virtualCards: virtualCardsReducer,
+  employees: employeesReducer
+
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

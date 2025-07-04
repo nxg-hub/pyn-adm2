@@ -36,8 +36,8 @@ const LoginForm = () => {
     try {
       const result = await apiService.login(values.email, values.password);
 
-    const token = result?.data.token;
-    const role = result?.data.role;
+      const token = result?.data.token;
+      const role = result?.data.role;
 
         if (token) {
           localStorage.setItem('token', token);
@@ -84,7 +84,8 @@ const LoginForm = () => {
       </div>
 
       <div className="flex w-full max-w-6xl relative z-10">
-        <div className="w-1/2 h-[600px] bg-black border border-black flex items-center justify-center relative overflow-hidden">
+        {/* Left side with images - hidden on mobile and small screens */}
+        <div className="hidden md:flex w-1/2 h-[600px] bg-black border border-black items-center justify-center relative overflow-hidden">
           <div className="absolute top-6 left-6 z-10">
             <img src={payinaLogo} alt="Payina Logo" className="h-8 w-auto" />
           </div>
@@ -96,9 +97,10 @@ const LoginForm = () => {
           </div>
         </div>
 
-        <div className="w-1/2 h-[600px] bg-[#161616] border border-black border-l-0 flex items-center justify-center relative p-6">
+        {/* Right side with form - full width on mobile */}
+        <div className="w-full md:w-1/2 h-[600px] bg-[#161616] border border-black md:border-l-0 flex items-center justify-center relative p-6 md:p-6">
           <div className="w-full max-w-md">
-            <h1 className="text-[#006181] text-center mb-8 font-semibold text-2xl md:text-3xl xl:text-4xl">
+            <h1 className="text-[#006181] text-center mb-6 md:mb-8 font-semibold text-2xl md:text-3xl xl:text-4xl">
               Payina Back Office
             </h1>
             <div className="text-white text-center font-semibold text-lg md:text-xl mb-6">

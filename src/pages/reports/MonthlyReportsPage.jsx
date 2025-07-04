@@ -45,7 +45,7 @@ const MonthlyReportsPage = () => {
     report.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  if (!hasPermission("reports", "view")) {
+  if (!hasPermission("viewFinancialReports")) {
     return (
       <div className="flex flex-col">
         <AdminHeader title="Monthly Reports" subtitle="View and manage monthly report archives" />

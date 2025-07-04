@@ -12,10 +12,13 @@ import { useLocation } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
 import ClientsListModal from "./ViewClientsListModal";
 import { Users } from "lucide-react";
+import { setSelectedCustomerId } from "../../../redux/fetchCorporateCustomerEmployees";
+import { useDispatch } from "react-redux";
 
 const UserProfile = () => {
   const user = useSelector((state) => state.users.selectedUser);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const selectedUser = location.state?.selectedUser;
   const [showClientsModal, setShowClientsModal] = useState(false);
@@ -85,7 +88,7 @@ const UserProfile = () => {
             <div>
               <p className="text-sm text-muted-foreground">Tier Level</p>
               <p className="text-lg font-medium">
-                {selectedUser?.tierLevel || user?.tierLevel}
+                {selectedUser?.walletId || user?.walletId}
               </p>
             </div>
             <div>
@@ -166,6 +169,16 @@ const UserProfile = () => {
                 className="w-fit px-3 py-1  text-sm font-medium flex items-center gap-2 hover:bg-[#006181]">
                 <Users className="w-4 h-4" />
                 View Clients List
+              </Button>
+              <Button
+                onClick={() => {
+                  dispatch(setSelectedCustomerId(user?.corporateCustomer.id));
+                  navigate("/employees");
+                }}
+                variant="outline"
+                className="w-fit px-3 py-1  text-sm font-medium flex items-center gap-2 hover:bg-[#006181]">
+                <Users className="w-4 h-4" />
+                View Employees
               </Button>
             </div>
           </CardContent>

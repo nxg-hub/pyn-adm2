@@ -23,7 +23,6 @@ export function ComplianceDashboard() {
     onConfirm: () => {},
   })
 
-  // Sample data for KYC verifications
   const kycVerifications = [
     { id: 1, user: "John Doe", status: "pending", date: "2023-06-15", risk: "medium" },
     { id: 2, user: "Jane Smith", status: "approved", date: "2023-06-14", risk: "low" },
@@ -32,7 +31,6 @@ export function ComplianceDashboard() {
     { id: 5, user: "Charlie Wilson", status: "approved", date: "2023-06-11", risk: "low" },
   ]
 
-  // Sample data for suspicious activities
   const suspiciousActivities = [
     { id: 1, user: "Eve Davis", activity: "Multiple large transactions", date: "2023-06-15", risk: "high" },
     { id: 2, user: "Frank Miller", activity: "Unusual login location", date: "2023-06-14", risk: "medium" },
@@ -41,7 +39,6 @@ export function ComplianceDashboard() {
     { id: 5, user: "Ivy Martin", activity: "Suspicious transfer pattern", date: "2023-06-11", risk: "high" },
   ]
 
-  // Sample data for compliance reports
   const complianceReports = [
     { id: 1, title: "Monthly AML Report", date: "2023-06-01", status: "completed" },
     { id: 2, title: "Quarterly Compliance Review", date: "2023-04-01", status: "completed" },
@@ -50,7 +47,6 @@ export function ComplianceDashboard() {
     { id: 5, title: "Fraud Detection System Review", date: "2023-06-10", status: "in_progress" },
   ]
 
-  // KYC verifications columns
   const kycColumns = [
     { header: "User", accessorKey: "user" },
     {
@@ -110,7 +106,6 @@ export function ComplianceDashboard() {
     },
   ]
 
-  // Suspicious activities columns
   const activitiesColumns = [
     { header: "User", accessorKey: "user" },
     { header: "Suspicious Activity", accessorKey: "activity" },
@@ -152,7 +147,6 @@ export function ComplianceDashboard() {
     },
   ]
 
-  // Compliance reports columns
   const reportsColumns = [
     { header: "Report Title", accessorKey: "title" },
     { header: "Date", accessorKey: "date" },

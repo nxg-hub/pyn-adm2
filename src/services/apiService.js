@@ -1,8 +1,8 @@
 import axios from "axios";
 
+//  const email =  localStorage.getItem("email")
 const token = localStorage.getItem("token");
 
-//  const email =  localStorage.getItem("email")
 const apiService = {
   login: async (email, password) => {
     try {

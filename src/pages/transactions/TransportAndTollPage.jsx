@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -18,6 +18,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
 import Pagination from "../../components/ui/pagination"
+import apiService from "../../services/apiService"
+
 
 const transportAndTollTransactions = [
   { id: "TRANS-001", user: "John Doe", service: "City Bus", amount: 20, date: "2024-04-12", time: "11:41am", status: "Successful",},
@@ -38,6 +40,29 @@ function TransportAndTollPage() {
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false);
+  const [transactions, setTransactions] = useState([])
+
+
+  const handleFetchTransactions = async () => {
+    setIsLoading(true);
+    try {
+      const transactions = await apiService.fetchTransportTransactions();
+
+      console.log ('Transport Transactions:', transactions)
+      setTransactions(transactions || []);
+    } catch (error) {
+      const message = error.message || "Unexpected error";
+      console.error(`Failed to fetch: ${message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect (() => {
+    (handleFetchTransactions())
+  }, []);
+
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -66,7 +91,7 @@ function TransportAndTollPage() {
     // You can replace the console log with actual logic like fetching a PDF or image.
   }
 
-  const filteredTransactions = transportAndTollTransactions.filter((transaction) =>
+  const filteredTransactions = (transactions).filter((transaction) =>
     transaction.user.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -248,6 +273,7 @@ function TransportAndTollPage() {
                 currentPage={currentPage}
                 totalItems={filteredTransactions.length}
                 itemsPerPage={ITEMS_PER_PAGE}
+                itemLabel="Transportation Transactions"
                 onPageChange={(page) => setCurrentPage(page)}
               />
             </div>

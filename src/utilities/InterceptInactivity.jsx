@@ -9,7 +9,7 @@ const InactivityInterceptor = () => {
   const countdownTimerRef = useRef(null);
   const [, forceUpdate] = React.useState({});
 
-  const INACTIVITY_TIMEOUT = 40; // 5 minutes in seconds
+  const INACTIVITY_TIMEOUT = 200; // 5 minutes in seconds
 
   const startCountdown = useCallback(() => {
     if (countdownTimerRef.current) {
@@ -23,7 +23,7 @@ const InactivityInterceptor = () => {
       countdownRef.current -= 1;
 
       if (countdownRef.current <= 0) {
-        handleLogout();
+    navigate('/logout');
       } else {
         forceUpdate({});
       }
@@ -65,7 +65,7 @@ const InactivityInterceptor = () => {
     
 
     // Redirect to login
-    navigate('/');
+    navigate('/logout');
   };
 
   const handleCancel = useCallback(

@@ -52,7 +52,7 @@ const WeeklyReportsPage = () => {
     report.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  if (!hasPermission("reports", "view")) {
+  if (!hasPermission("viewFinancialReports")) {
     return (
       <div className="flex flex-col">
         <AdminHeader title="Weekly Reports" subtitle="View and manage weekly report summaries" />

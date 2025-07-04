@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
 import Pagination from "../../components/ui/pagination"
+import apiService from "../../services/apiService"
 
 const internationalAirtimeTransactions = [
   { id: "IA-001", country: "Nigeria", amount: 50, date: "2024-04-12", status: "Successful",},
@@ -38,7 +39,30 @@ function InternationalAirtimePage() {
   const [showAdjustDialog, setShowAdjustDialog] = useState(false)
   const [flagReason, setFlagReason] = useState("")
   const [adjustAmount, setAdjustAmount] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [transactions, setTransactions] = useState([])
+
+
+  const handleFetchTransactions = async () => {
+    setIsLoading(true);
+    try {
+      const transactions = await apiService.fetchInternationalAirtimeTransactions();
+
+      console.log ('Int. airtime Transactions:', transactions)
+      setTransactions(transactions || []);
+    } catch (error) {
+      const message = error.message || "Unexpected error";
+      console.error(`Failed to fetch: ${message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect (() => {
+    (handleFetchTransactions())
+  }, []);
+
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -67,7 +91,7 @@ function InternationalAirtimePage() {
     // You can replace the console log with actual logic like fetching a PDF or image.
   }
 
-  const filteredTransactions = internationalAirtimeTransactions.filter((transaction) =>
+  const filteredTransactions = (transactions).filter((transaction) =>
     transaction.country.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -247,6 +271,7 @@ function InternationalAirtimePage() {
                 currentPage={currentPage}
                 totalItems={filteredTransactions.length}
                 itemsPerPage={ITEMS_PER_PAGE}
+                itemLabel="Int. Airtime Transactions"
                 onPageChange={(page) => setCurrentPage(page)}
               />
             </div>

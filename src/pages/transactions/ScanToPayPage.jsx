@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect  } from "react"
 import { Search, MoreHorizontal, CheckCircle, AlertCircle, Pencil, Download, QrCode, Camera, Upload } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -18,15 +18,17 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Label } from "../../components/ui/label"
 import { Textarea } from "../../components/ui/textarea"
 import Pagination from "../../components/ui/pagination"
+import apiService from "../../services/apiService"
 
-const scanToPayTransactions = [
-  { id: "STP-001", payer: "John Doe", amount: 150, date: "2024-04-01", time: "8:42am", status: "Completed",},
-  { id: "STP-002", payer: "Jane Smith", amount: 200, date: "2024-04-05", time: "8:42am", status: "Pending",},
-  { id: "STP-003", payer: "Sam Brown", amount: 300, date: "2024-04-10", time: "8:42am", status: "Failed",},
-  { id: "STP-004", payer: "John Doe", amount: 150, date: "2024-04-01", time: "8:42am", status: "Completed",},
-  { id: "STP-005", payer: "Jane Smith", amount: 200, date: "2024-04-05", time: "8:42am", status: "Pending",},
-  { id: "STP-006", payer: "Sam Brown", amount: 300, date: "2024-04-10", time: "8:42am", status: "Failed",},
-]
+
+// const scanToPayTransactions = [
+//   { id: "STP-001", payer: "John Doe", amount: 150, date: "2024-04-01", time: "8:42am", status: "Completed",},
+//   { id: "STP-002", payer: "Jane Smith", amount: 200, date: "2024-04-05", time: "8:42am", status: "Pending",},
+//   { id: "STP-003", payer: "Sam Brown", amount: 300, date: "2024-04-10", time: "8:42am", status: "Failed",},
+//   { id: "STP-004", payer: "John Doe", amount: 150, date: "2024-04-01", time: "8:42am", status: "Completed",},
+//   { id: "STP-005", payer: "Jane Smith", amount: 200, date: "2024-04-05", time: "8:42am", status: "Pending",},
+//   { id: "STP-006", payer: "Sam Brown", amount: 300, date: "2024-04-10", time: "8:42am", status: "Failed",},
+// ]
 
 function ScanToPayPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -41,6 +43,28 @@ function ScanToPayPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [isScanning, setIsScanning] = useState(false)
   const [scannedCode, setScannedCode] = useState("")
+  const [isLoading, setIsLoading] = useState(false);
+  const [transactions, setTransactions] = useState([])
+
+
+  const handleFetchTransactions = async () => {
+    setIsLoading(true);
+    try {
+      const transactions = await apiService.fetchScanToPayTransactions();
+
+      console.log ('Scan to pay Transactions:', transactions)
+      setTransactions(transactions || []);
+    } catch (error) {
+      const message = error.message || "Unexpected error";
+      console.error(`Failed to fetch: ${message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect (() => {
+    (handleFetchTransactions())
+  }, []);
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction)
@@ -89,7 +113,7 @@ function ScanToPayPage() {
     }
   }
 
-  const filteredTransactions = scanToPayTransactions.filter((transaction) =>
+  const filteredTransactions = (transactions).filter((transaction) =>
     transaction.payer.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -277,7 +301,6 @@ function ScanToPayPage() {
                             </DropdownMenuItem>
                           )}
 
-                          {hasPermission("monitorSuspiciousScanToPayTransactions") && (
                             <DropdownMenuItem  className="hover:bg-[#3A859E]" 
                               onClick={() => {
                                 setSelectedTransaction(transaction)
@@ -286,9 +309,8 @@ function ScanToPayPage() {
                             >
                               <AlertCircle className="mr-2 h-4 w-4 text-red-600" /> Flag as Suspicious
                             </DropdownMenuItem>
-                          )}
+                          
 
-                          {hasPermission("adjustScanToPayAmounts") && (
                             <DropdownMenuItem  className="hover:bg-[#3A859E]" 
                               onClick={() => {
                                 setSelectedTransaction(transaction)
@@ -298,7 +320,7 @@ function ScanToPayPage() {
                             >
                               <Pencil className="mr-2 h-4 w-4 text-blue-600" /> Adjust Amount
                             </DropdownMenuItem>
-                          )}
+                          
 
                           <DropdownMenuSeparator />
                           <DropdownMenuItem  className="hover:bg-[#3A859E]" >
@@ -316,6 +338,7 @@ function ScanToPayPage() {
                 currentPage={currentPage}
                 totalItems={filteredTransactions.length}
                 itemsPerPage={ITEMS_PER_PAGE}
+                itemLabel="Scan to pay transactions"
                 onPageChange={(page) => setCurrentPage(page)}
               />
             </div>
