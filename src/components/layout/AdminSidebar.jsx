@@ -62,7 +62,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import logo from '../../assets/logo.png'
+import logo from "../../assets/logo.png";
 import { useAdmin } from "../../contexts/AdminContext";
 import { cn } from "../../lib/utils";
 import { FunnelChart } from "recharts";
@@ -74,7 +74,7 @@ const SidebarItem = ({
   isActive,
   hasPermission = true,
   children,
-  defaultExpanded = false, 
+  defaultExpanded = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const location = useLocation();
@@ -94,7 +94,6 @@ const SidebarItem = ({
     }
   };
 
-  
   return (
     <li className="px-3 py-2">
       <div className="flex items-center">
@@ -103,8 +102,7 @@ const SidebarItem = ({
           className={cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors flex-1",
             isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-          )}
-        >
+          )}>
           <Icon className="h-4 w-4" />
           <span>{label}</span>
         </Link>
@@ -113,9 +111,10 @@ const SidebarItem = ({
             onClick={handleToggle}
             className={cn(
               "p-1 rounded-md transition-colors ml-1",
-              isActive ? "text-primary-foreground hover:bg-primary/80" : "hover:bg-muted"
-            )}
-          >
+              isActive
+                ? "text-primary-foreground hover:bg-primary/80"
+                : "hover:bg-muted"
+            )}>
             {isExpanded ? (
               <ChevronDown className="h-4 w-4" />
             ) : (
@@ -163,17 +162,16 @@ export function AdminSidebar() {
   const location = useLocation();
   const { hasPermission } = useAdmin();
 
-
   const isActive = (path) => {
     return (
       location.pathname === path || location.pathname.startsWith(`${path}/`)
     );
   };
-  
+
   return (
     <div className="w-64 border-r bg-card h-screen overflow-y-auto hide-scrollbar">
       <div className="flex h-16 items-center border-b px-4">
-        <img src={logo} alt='logo'/>
+        <img src={logo} alt="logo" />
       </div>
       <nav className="space-y-1 p-2">
         <ul className="space-y-1">
@@ -222,21 +220,20 @@ export function AdminSidebar() {
               isActive={location.pathname === "/dashboard/users/unsuspended"}
               icon={ShieldPlus}
             />
-               <SidebarSubItem
+            <SidebarSubItem
               label="Flagged Accounts"
               href="/dashboard/users/flagged"
               isActive={location.pathname === "/dashboard/users/flagged"}
               icon={Flag}
             />
-  <SidebarSubItem
-    label="Admin Users"
-    href="/dashboard/users/admin-users"
-    isActive={location.pathname === "/dashboard/users/admin-users"}
-    hasPermission={hasPermission("manageAdmins")}
-    icon={FileSliders}
-  />
-
-</SidebarItem>
+            <SidebarSubItem
+              label="Admin Users"
+              href="/dashboard/users/admin-users"
+              isActive={location.pathname === "/dashboard/users/admin-users"}
+              hasPermission={hasPermission("manageAdmins")}
+              icon={FileSliders}
+            />
+          </SidebarItem>
 
           <SidebarItem
             icon={DollarSign}
@@ -258,6 +255,12 @@ export function AdminSidebar() {
                 location.pathname === "/dashboard/transactions/money-transfers"
               }
               icon={Send}
+            />
+            <SidebarSubItem
+              label="Loans"
+              href="/dashboard/transactions/loan"
+              isActive={location.pathname === "/dashboard/transactions/loan"}
+              icon={HandCoinsIcon}
             />
             <SidebarSubItem
               label="Bills & Utilities"
@@ -398,7 +401,7 @@ export function AdminSidebar() {
               icon={MonitorCog}
             />
           </SidebarItem>
-          
+
           <SidebarItem
             icon={Wallet}
             label="Finances"
@@ -411,7 +414,7 @@ export function AdminSidebar() {
               isActive={location.pathname === "/dashboard/finances/loan"}
               icon={HandCoinsIcon}
             />
-             <SidebarSubItem
+            <SidebarSubItem
               label="Savings"
               href="/dashboard/finances/savings"
               isActive={location.pathname === "/dashboard/finances/savings"}
@@ -685,11 +688,7 @@ export function AdminSidebar() {
             isActive={isActive("/dashboard/system")}
             hasPermission={hasPermission("manageAdmins")}
           />
-          <SidebarItem
-          icon = {LogOut}
-          label= "Log Out"
-          href= "/logout"          
-          />
+          <SidebarItem icon={LogOut} label="Log Out" href="/logout" />
         </ul>
       </nav>
     </div>

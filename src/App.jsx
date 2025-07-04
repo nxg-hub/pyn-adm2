@@ -86,6 +86,7 @@ import Report from "./pages/reports/page";
 
 import PageNotFound from "./pages/PageNotFound.jsx";
 import LoanDetails from "./components/loanDetails.jsx";
+// import LoanDetails from "./components/LoanDetails.jsx";
 
 function App() {
   return (
