@@ -1,9 +1,9 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import InactivityInterceptor from './InterceptInactivity';
+import { Navigate, useLocation } from "react-router-dom";
+import InactivityInterceptor from "./InterceptInactivity";
 
 const ProtectedRoute = ({ children }) => {
   const location = useLocation();
-  const authToken = localStorage.getItem('token');
+  const authToken = localStorage.getItem("token");
 
   if (!authToken) {
     return <Navigate to="/unauthorized" state={{ from: location }} replace />;
@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children }) => {
 
   return (
     <>
-    < InactivityInterceptor/>
+      {/* <InactivityInterceptor /> */}
       {children}
     </>
   );
