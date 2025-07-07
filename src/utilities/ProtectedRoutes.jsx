@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children }) => {
 
   return (
     <>
-      {/* <InactivityInterceptor /> */}
+      <InactivityInterceptor />
       {children}
     </>
   );
