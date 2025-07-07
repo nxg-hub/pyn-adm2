@@ -692,14 +692,10 @@ const apiService = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify({ approvedAmount: requestBody }),
         }
       );
       const data = await response.text();
-
-      if (!response.ok) {
-        throw new Error(data.message || "approve loan error");
-      }
 
       return data;
     } catch (error) {
@@ -725,13 +721,13 @@ const apiService = {
       const data = response;
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch all users");
+        throw new Error(data.message || "reject loan error");
       }
 
       return data;
     } catch (error) {
       console.log(error);
-      console.error("Fetch users error:", error);
+      console.error("reject loan error:", error);
       throw error;
     }
   },

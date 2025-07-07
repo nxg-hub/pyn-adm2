@@ -66,11 +66,10 @@ const LoanDetails = ({}) => {
   );
   const dispatch = useDispatch();
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
   const [summaryDialog, setSummaryDialog] = useState(false);
   const [formData, setFormData] = useState({ rejectionReason: "" });
-  const [requestBody] = useState({
-    approvedAmount: selectedLoan.loanAmount,
-  });
+  const [approvedAmount, setApprovedAmount] = useState("");
   // console.log(summary, summaryerror, selectedLoan);
   //   const { hasPermission } = useAdmin();
   const isCooperate = selectedLoan.customer?.userType === "CORPORATE";
@@ -78,12 +77,24 @@ const LoanDetails = ({}) => {
   const handleViewSummary = () => {
     setSummaryDialog(true);
   };
+
+  const handleApproveModal = () => {
+    setShowApproveModal(true);
+  };
   const handleApprove = () => {
-    if (selectedLoan.loanAmount === summary.loanAmount) {
-      dispatch(approveLoan({ id: selectedLoan.id, requestBody }));
+    if (Number(approvedAmount) > selectedLoan.loanAmount) {
+      return;
+    }
+    if (approvedAmount === "") {
+      return;
+    }
+    if (Number(approvedAmount) === selectedLoan.loanAmount) {
+      dispatch(
+        approveLoan({ id: selectedLoan.id, requestBody: approvedAmount })
+      );
     } else {
       dispatch(
-        approveLowerAmount({ id: selectedLoan.id, amount: summary.loanAmount })
+        approveLowerAmount({ id: selectedLoan.id, amount: approvedAmount })
       );
     }
   };
@@ -242,7 +253,7 @@ const LoanDetails = ({}) => {
                     {
                       selectedLoan.customer?.corporateCustomer
                         .businessDescription
-                    }{" "}
+                    }
                   </p>
                 </div>
                 <div>
@@ -401,12 +412,13 @@ const LoanDetails = ({}) => {
           <CardContent>
             {/* Action Buttons */}
             {(selectedLoan.status === "PENDING_ADMIN_APPROVAL" ||
-              selectedLoan.status === "PENDING_USER_ACTION") && (
+              selectedLoan.status === "PENDING_USER_ACTION" ||
+              selectedLoan.status === "USER_APPROVED_OFFER") && (
               <div className=" rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold  mb-4">Actions</h3>
                 <div className="space-y-3">
                   <button
-                    onClick={handleApprove}
+                    onClick={handleApproveModal}
                     disabled={approveLoading}
                     className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
                     {approveLoading ? (
@@ -421,12 +433,7 @@ const LoanDetails = ({}) => {
                       </>
                     )}
                   </button>
-                  {approveSuccess && (
-                    <p className="text-green-600 ">{approveRes}</p>
-                  )}
-                  {approveError && (
-                    <p className="text-red-600 ">Something went wrong.</p>
-                  )}
+
                   <button
                     onClick={() => setShowRejectModal(true)}
                     disabled={rejectLoading}
@@ -443,7 +450,8 @@ const LoanDetails = ({}) => {
           <CardContent>
             {/* Action Buttons */}
             {(selectedLoan.status === "PENDING_ADMIN_APPROVAL" ||
-              selectedLoan.status === "PENDING_USER_ACTION") && (
+              selectedLoan.status === "PENDING_USER_ACTION" ||
+              selectedLoan.status === "USER_APPROVED_OFFER") && (
               <div className=" rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold  mb-4">
                   Approval Summary.
@@ -499,7 +507,7 @@ const LoanDetails = ({}) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {loanSchedule.map((item) => (
+                      {loanSchedule?.map((item) => (
                         <tr
                           key={item.installmentNumber}
                           className="hover:bg-stone-700">
@@ -663,6 +671,68 @@ const LoanDetails = ({}) => {
 
               {rejectError && (
                 <p className="text-red-400"> Something went wrong.</p>
+              )}
+            </form>
+          </CardContent>
+        </Card>
+      </DetailsModal>
+      {/* Approve modal */}
+      <DetailsModal
+        isOpen={showApproveModal}
+        onClose={() => {
+          setShowApproveModal(false);
+        }}
+        title={"Approve Loan."}>
+        <Card>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4 py-4">
+              <div className="space-y-2">
+                <input
+                  className="w-[300px] h-[50px] m-auto px-4"
+                  id="approveAmount"
+                  name="approveAmount"
+                  placeholder="Enter Approved Amount"
+                  rows={4}
+                  value={approvedAmount}
+                  onChange={(e) => {
+                    setApprovedAmount(e.target.value);
+                  }}
+                  required
+                />
+              </div>
+
+              <div className="pt-4 flex justify-center space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowApproveModal(false);
+                    dispatch(setRejectState());
+                  }}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleApprove}
+                  disabled={approveLoading}
+                  className="">
+                  {approveLoading ? (
+                    <div className="flex items-center justify-end">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Processing...
+                    </div>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-5 h-5 mr-2" />
+                      Approve Loan
+                    </>
+                  )}
+                </Button>
+              </div>
+              {approveSuccess && (
+                <p className="text-green-600 ">{approveRes}</p>
+              )}
+              {approveError && (
+                <p className="text-red-600 ">Something went wrong.</p>
               )}
             </form>
           </CardContent>
